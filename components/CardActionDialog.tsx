@@ -1,6 +1,13 @@
-import { View, Text, StyleSheet, Keyboard, KeyboardAvoidingView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Keyboard,
+  Animated,
+} from 'react-native';
 import { Portal, Dialog, Button } from 'react-native-paper';
-import React, {useEffect} from 'react';
+import React, { useEffect, useRef } from 'react';
+
 
 interface Props {
   children: React.ReactNode;
@@ -22,27 +29,60 @@ const CardActionDialog: React.FC<Props> = ({
   dismiss,
   onCancel,
   onSubmit,
-
 }) => {
+  const slideAnimation = useRef<any>(new Animated.Value(0)).current;
 
   useEffect(() => {
-    
-  }, [])
+    const slideDialogUp = () => {
+      console.log('keyboard open');
+      Animated.spring(slideAnimation, {
+        toValue: -100,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const slideDialogDown = () => {
+      Animated.spring(slideAnimation, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const showSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      slideDialogUp
+    );
+
+    const hideSubscription = Keyboard.addListener(
+      'keyboardDidHide',
+      slideDialogDown
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <Portal>
-
-      <Dialog visible={visible} onDismiss={dismiss} style={styles.dialog}>
+      <Dialog
+        visible={visible}
+        onDismiss={dismiss}
+        style={[styles.dialog, { transform: [{ translateY: slideAnimation }] }]}
+      >
         <Dialog.Title style={styles.title}>{title}</Dialog.Title>
         {children}
         <View style={styles.buttonContainer}>
+          <Button style={styles.button} mode='contained' onPress={onCancel}>
+            {buttonTitle[0]}
+          </Button>
           <Button
             style={styles.button}
             mode='contained'
-            onPress={onCancel}
-            >
-            {buttonTitle[0]}
-          </Button>
-          <Button style={styles.button} mode='contained' onPress={onSubmit} disabled={disableSubmit}>
+            onPress={onSubmit}
+            disabled={disableSubmit}
+          >
             {buttonTitle[1]}
           </Button>
         </View>
@@ -52,25 +92,22 @@ const CardActionDialog: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-  },
   dialog: {
     padding: 20,
-    // marginBottom: 150
   },
   title: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 15
+    marginVertical: 15,
   },
   button: {
     width: '48%',
-    elevation: 0
+    elevation: 0,
   },
-})
+});
 
 export default CardActionDialog;
