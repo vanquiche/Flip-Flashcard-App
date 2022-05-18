@@ -11,6 +11,10 @@ export interface Category {
   id: string;
   name: string;
   color: string;
-  favorite: boolean;
-  createdAt?: Date;
+  createdAt: Date;
+}
+
+export interface PaletteProviderType {
+  selection: string | undefined;
+  setColor: React.Dispatch<string>;
 }

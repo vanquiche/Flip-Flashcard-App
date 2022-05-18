@@ -6,7 +6,7 @@ const AppBar = ({ navigation, route, back }: any) => {
   return (
     <Appbar.Header style={{ elevation: 0 }}>
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-      <Appbar.Content title={route.name} />
+      <Appbar.Content title={route.name} titleStyle={{ fontSize: 20 }} />
     </Appbar.Header>
   );
 };
