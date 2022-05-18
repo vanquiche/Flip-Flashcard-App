@@ -57,8 +57,8 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     'categories',
   ]);
 
-  const closeDialog = () => {
-    setCategory(INITIAL_STATE);
+  const closeDialog = async () => {
+    await setCategory(INITIAL_STATE);
     setEditMode(false);
     setShowDialog(false);
   };
@@ -147,7 +147,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
             value={category.name}
             onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}
             style={{ width: '80%', height: 40, margin: 0 }}
-            
+
 
           />
 
