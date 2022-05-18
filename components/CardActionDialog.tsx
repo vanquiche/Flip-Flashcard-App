@@ -1,13 +1,13 @@
+import { View, TextInput, StyleSheet, Keyboard, Animated } from 'react-native';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Keyboard,
-  Animated,
-} from 'react-native';
-import { Portal, Dialog, Button } from 'react-native-paper';
+  Portal,
+  Dialog,
+  Button,
+  IconButton,
+  useTheme,
+} from 'react-native-paper';
 import React, { useEffect, useRef } from 'react';
-
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface Props {
   children: React.ReactNode;
@@ -30,11 +30,11 @@ const CardActionDialog: React.FC<Props> = ({
   onCancel,
   onSubmit,
 }) => {
+  const { colors } = useTheme();
   const slideAnimation = useRef<any>(new Animated.Value(0)).current;
 
   useEffect(() => {
     const slideDialogUp = () => {
-      console.log('keyboard open');
       Animated.spring(slideAnimation, {
         toValue: -100,
         useNativeDriver: true,
@@ -49,12 +49,12 @@ const CardActionDialog: React.FC<Props> = ({
     };
 
     const showSubscription = Keyboard.addListener(
-      'keyboardDidShow',
+      'keyboardWillShow',
       slideDialogUp
     );
 
     const hideSubscription = Keyboard.addListener(
-      'keyboardDidHide',
+      'keyboardWillHide',
       slideDialogDown
     );
 
@@ -69,23 +69,38 @@ const CardActionDialog: React.FC<Props> = ({
       <Dialog
         visible={visible}
         onDismiss={dismiss}
-        style={[styles.dialog, { transform: [{ translateY: slideAnimation }] }]}
+        style={[
+          styles.dialog,
+          {
+            transform: [{ translateY: slideAnimation }],
+            backgroundColor: colors.primary,
+          },
+        ]}
+        dismissable={false}
       >
-        <Dialog.Title style={styles.title}>{title}</Dialog.Title>
-        {children}
-        <View style={styles.buttonContainer}>
-          <Button style={styles.button} mode='contained' onPress={onCancel}>
-            {buttonTitle[0]}
-          </Button>
-          <Button
-            style={styles.button}
-            mode='contained'
-            onPress={onSubmit}
-            disabled={disableSubmit}
-          >
-            {buttonTitle[1]}
-          </Button>
-        </View>
+        {/* scrollview to prevent taps outside of keyboard to register when open */}
+        <ScrollView>
+          <Dialog.Title style={[styles.title]}>{title}</Dialog.Title>
+          {children}
+          <View style={styles.buttonContainer}>
+            <IconButton
+              style={styles.button}
+              icon='close-circle-outline'
+              size={36}
+              color='white'
+              onPress={onCancel}
+            />
+
+            <IconButton
+              style={styles.button}
+              icon='check-circle-outline'
+              size={36}
+              color='white'
+              onPress={onSubmit}
+              disabled={disableSubmit}
+            />
+          </View>
+        </ScrollView>
       </Dialog>
     </Portal>
   );
@@ -97,12 +112,18 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+    fontFamily: 'BalooBhaiExtraBold',
+    fontSize: 26,
+    color: 'white'
+
   },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 15,
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 20,
+    marginTop: 15,
+    // marginVertical: 15,
   },
   button: {
     width: '48%',
