@@ -6,7 +6,7 @@ import uuid from 'react-native-uuid';
 
 import useGetFirestoreCollection from '../hooks/useGetFirestoreCollection';
 
-import Card from './Card';
+import TitleCard from './TitleCard';
 import CardActionDialog from './CardActionDialog';
 import CardSwatchDialog from './CardSwatchDialog';
 
@@ -30,17 +30,17 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const [docId, setDocId] = useState('1');
 
   const { colors } = useTheme();
-  const { id, title, color } = route.params;
+  const { categoryRef, categoryTitle, color } = route.params;
 
   // CRUD hooks
   const path = 'users/clover/sets';
-  const queryKey = ['sets', id];
+  const queryKey = ['sets', categoryRef];
 
   const { queries } = useGetFirestoreCollection(
     path,
     queryKey,
     'categoryRef',
-    id
+    categoryRef
   );
   const { addMutation } = useAddDocToFirestore(path, queryKey);
   const { deleteMutation } = useDeleteDocFromFirestore(path, docId, queryKey);
@@ -57,7 +57,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     const newSet: Set = {
       id: uuid.v4().toString(),
       createdAt: Timestamp.now().toDate(),
-      categoryRef: id,
+      categoryRef: categoryRef,
       ...cardSet,
     };
     addMutation.mutate(newSet);
@@ -81,11 +81,11 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     closeDialog();
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: title,
-    });
-  }, [title]);
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle: categoryTitle,
+  //   });
+  // }, [categoryTitle]);
 
   return (
     <View>
@@ -100,11 +100,12 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         <FlatList
           numColumns={2}
           data={queries.data.docs}
+          columnWrapperStyle={{ justifyContent: 'center' }}
           contentContainerStyle={{ paddingBottom: 75 }}
           keyExtractor={(item) => item.data().id}
           ListEmptyComponent={<Text>No Sets</Text>}
           renderItem={({ item }) => (
-            <Card
+            <TitleCard
               docId={item.id}
               card={item.data() as Set}
               color={color}
@@ -112,8 +113,10 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
               handleDelete={deleteSet}
               onPress={() =>
                 navigation.navigate('Cards', {
-                  // id: item.data().id,
-                  // title: item.data().name,
+                  setRef: item.data().id,
+                  setTitle: item.data().name,
+                  setColor: item.data().color,
+                  categoryRef
                 })
               }
             />

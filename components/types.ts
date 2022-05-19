@@ -4,7 +4,7 @@ import { RouteProp } from '@react-navigation/native';
 
 export interface StackNavigationTypes {
   navigation: StackNavigationProp<ParamListBase>;
-  route: RouteProp<{ params: { title: string; id: string, color?: string } }, 'params'>;
+  route: RouteProp<{ params: { categoryTitle: string; categoryRef: string, color?: string, setRef: string, setTitle: string } }, 'params'>;
 }
 
 export interface Category {
@@ -22,6 +22,14 @@ export interface Set {
   createdAt: Date;
 }
 
+export interface Flashcard {
+  setRef: string;
+  categoryRef: string;
+  id: string;
+  prompt: string;
+  solution: string;
+  createdAt: Date;
+}
 export interface PaletteProviderType {
   selection: string | undefined;
   setColor: React.Dispatch<string>;

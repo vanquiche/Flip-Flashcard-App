@@ -6,8 +6,8 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import { Button, IconButton, TextInput } from 'react-native-paper';
-import React, { useState } from 'react';
+import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
+import React, { useState, useCallback } from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
@@ -17,7 +17,7 @@ import { Timestamp } from 'firebase/firestore';
 
 // COMPONENTS
 import CardActionDialog from './CardActionDialog';
-import Card from './Card';
+import TitleCard from './TitleCard';
 import CardSwatchDialog from './CardSwatchDialog';
 
 // HOOKS
@@ -29,7 +29,6 @@ import useDeleteDocFromFirestore from '../hooks/useDeleteDocFromFirestore';
 // TYPES
 import { Category } from './types';
 import { StackNavigationTypes } from './types';
-
 
 const INITIAL_STATE = {
   name: '',
@@ -44,9 +43,8 @@ const Categories: React.FC<Props> = ({ navigation }) => {
   const [updateId, setUpdateId] = useState('1');
   const [category, setCategory] = useState(INITIAL_STATE);
 
-  const queryClient = useQueryClient();
-
   const path = 'users/clover/categories';
+  const { colors } = useTheme();
 
   const { queries } = useGetFirestoreCollection(path, ['categories']);
   const { addMutation } = useAddDocToFirestore(path, ['categories']);
@@ -63,7 +61,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     setShowDialog(false);
   };
 
-  const addNewCategory = () => {
+  const addNewCategory = useCallback(() => {
     if (category.name) {
       const newDoc: Category = {
         ...category,
@@ -73,10 +71,10 @@ const Categories: React.FC<Props> = ({ navigation }) => {
       addMutation.mutate(newDoc);
     }
     closeDialog();
-  };
+  }, [category]);
 
-  const editCategory = (category: Category, docId: string) => {
-    setUpdateId(docId);
+  const editCategory = async (category: Category, docId: string) => {
+    await setUpdateId(docId);
     setCategory({
       name: category.name,
       color: category.color,
@@ -94,12 +92,14 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     await setUpdateId(id);
     deleteMutation.mutate();
   };
+
   return (
-    <View>
+    <View >
       <IconButton
         icon='card-plus-outline'
         onPress={() => setShowDialog(true)}
       />
+
 
       {queries.isError && <Text>Error</Text>}
       {queries.isLoading && <ActivityIndicator size='large' />}
@@ -107,15 +107,23 @@ const Categories: React.FC<Props> = ({ navigation }) => {
         <FlatList
           numColumns={2}
           data={queries.data.docs}
+          columnWrapperStyle={{justifyContent: 'center'}}
           contentContainerStyle={{ paddingBottom: 75 }}
           keyExtractor={(item) => item.data().id}
+          ListEmptyComponent={<Text>No Categories</Text>}
           renderItem={({ item }) => (
-            <Card
-              category={item.data() as Category}
+            <TitleCard
+              card={item.data() as Category}
               docId={item.id}
               handleEdit={editCategory}
               handleDelete={deleteCategory}
-              onPress={() => navigation.navigate('Sets')}
+              onPress={() =>
+                navigation.navigate('Sets', {
+                  categoryRef: item.data().id,
+                  categoryTitle: item.data().name,
+
+                })
+              }
             />
           )}
         />
@@ -125,8 +133,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
       <CardActionDialog
         visible={showDialog}
         dismiss={() => setShowDialog(false)}
-        title={editMode ? 'Edit Category' : 'New Category'}
-        buttonTitle={['Cancel', editMode ? 'Update' : 'Save']}
+        title={editMode ? 'Edit Category' : 'NEW CATEGORY'}
         onCancel={closeDialog}
         onSubmit={editMode ? submitEdit : addNewCategory}
         disableSubmit={category.name ? false : true}
@@ -140,15 +147,13 @@ const Categories: React.FC<Props> = ({ navigation }) => {
         >
           <TextInput
             mode='outlined'
-            label='Category Name'
+            label='CATEGORY NAME'
             outlineColor='lightgrey'
-            activeOutlineColor='tomato'
+            activeOutlineColor={colors.secondary}
             maxLength={32}
             value={category.name}
             onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}
             style={{ width: '80%', height: 40, margin: 0 }}
-
-
           />
 
           <CardSwatchDialog

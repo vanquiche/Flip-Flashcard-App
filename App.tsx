@@ -108,7 +108,7 @@ export default function App() {
               }}
             />
             <Tab.Screen
-              name='Topics'
+              name='flashcards'
               component={CategoryScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
@@ -117,7 +117,7 @@ export default function App() {
               }}
             />
             <Tab.Screen
-              name='Shop-page'
+              name='store'
               component={ShopScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
