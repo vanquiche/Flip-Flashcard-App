@@ -17,9 +17,11 @@ import ShopScreen from './screens/ShopScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
 declare global {
-    namespace ReactNativePaper {
-
+  namespace ReactNativePaper {
+    interface ThemeColors {
+      secondary: string;
     }
+  }
 }
 
 const Tab = createMaterialBottomTabNavigator();
@@ -36,19 +38,16 @@ const customFonts = {
 export default function App() {
   const [loading, setLoading] = useState(true);
 
-
   const theme = {
     ...DefaultTheme,
     roundness: 10,
     colors: {
       ...DefaultTheme.colors,
       primary: '#FFD9D9',
+      secondary: '#f08080',
     },
     fonts: {
       ...DefaultTheme.fonts,
-      // regular: {
-      //   fontFamily: 'BalooBhaiRegular',
-      // },
       thin: {
         fontFamily: 'BalooBhaiMedium',
       },
@@ -62,6 +61,17 @@ export default function App() {
         fontFamily: 'BalooBhaiExtraBold',
       },
     },
+  };
+
+  const TabIcon = (props: {icon: string}) => {
+    return (
+      <IconButton
+        icon={props.icon}
+        size={26}
+        color={theme.colors.secondary}
+        style={{ marginTop: -5 }}
+      />
+    );
   };
 
   useEffect(() => {
@@ -86,7 +96,6 @@ export default function App() {
             barStyle={{
               backgroundColor: theme.colors.primary,
               elevation: 0,
-              // paddingBottom: 20,
             }}
           >
             <Tab.Screen
@@ -94,12 +103,7 @@ export default function App() {
               component={HomeScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    icon='home'
-                    size={26}
-                    color='white'
-                    style={{ marginTop: -5 }}
-                  />
+                <TabIcon icon='home'/>
                 ),
               }}
             />
@@ -108,12 +112,7 @@ export default function App() {
               component={CategoryScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    icon='cards'
-                    size={26}
-                    color='white'
-                    style={{ marginTop: -5 }}
-                  />
+                  <TabIcon icon='cards'/>
                 ),
               }}
             />
@@ -122,12 +121,7 @@ export default function App() {
               component={ShopScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    icon='store'
-                    size={26}
-                    color='white'
-                    style={{ marginTop: -5 }}
-                  />
+                  <TabIcon icon='store' />
                 ),
               }}
             />
@@ -136,12 +130,7 @@ export default function App() {
               component={ProfileScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    icon='heart'
-                    size={26}
-                    color='white'
-                    style={{ marginTop: -5 }}
-                  />
+                  <TabIcon icon='heart'/>
                 ),
               }}
             />
