@@ -4,10 +4,18 @@ import { RouteProp } from '@react-navigation/native';
 
 export interface StackNavigationTypes {
   navigation: StackNavigationProp<ParamListBase>;
-  route: RouteProp<{ params: { name: string; id: string } }, 'params'>;
+  route: RouteProp<{ params: { title: string; id: string, color?: string } }, 'params'>;
 }
 
 export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  createdAt: Date;
+}
+
+export interface Set {
+  categoryRef: string;
   id: string;
   name: string;
   color: string;

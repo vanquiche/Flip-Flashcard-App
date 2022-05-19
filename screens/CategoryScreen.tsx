@@ -5,12 +5,12 @@ import StackNavigator from '../components/StackNavigator';
 
 import Categories from '../components/Categories';
 import Sets from '../components/Sets';
-import Cards from '../components/Cards';
+import FlashCards from '../components/FlashCards';
 
 const screens = [
   { id: '1', name: 'Categories', component: Categories },
   { id: '2', name: 'Sets', component: Sets },
-  { id: '3', name: 'Cards', component: Cards },
+  { id: '3', name: 'Cards', component: FlashCards },
 ];
 
 const CategoryScreen = () => {

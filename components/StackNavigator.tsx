@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AppBar from './AppBar';
 import uuid from 'react-native-uuid'
 
-import { StackNavigationTypes } from './types';
 
 const Stack = createStackNavigator();
 
