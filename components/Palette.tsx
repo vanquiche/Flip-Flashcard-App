@@ -2,6 +2,7 @@ import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import uuid from 'react-native-uuid';
 
+import Animated, {FadeIn, ZoomIn} from 'react-native-reanimated';
 import PaletteContext from '../contexts/PaletteProvider';
 
 import Swatch from './Swatch';
@@ -15,7 +16,9 @@ interface Props {
 const Palette: React.FC<Props> = ({ palette, setColor, selection }) => {
   return (
     <PaletteContext.Provider value={{ selection, setColor }}>
-      <View style={styles.container} >
+      <Animated.View style={styles.container}
+      entering={ZoomIn}
+      >
         <ScrollView
           persistentScrollbar={true}
           showsVerticalScrollIndicator={true}
@@ -29,7 +32,7 @@ const Palette: React.FC<Props> = ({ palette, setColor, selection }) => {
             ))}
             </View>
         </ScrollView>
-      </View>
+      </Animated.View>
     </PaletteContext.Provider>
   );
 };

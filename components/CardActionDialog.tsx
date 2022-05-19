@@ -13,7 +13,6 @@ interface Props {
   children: React.ReactNode;
   visible: boolean;
   title: string;
-  buttonTitle: string[];
   disableSubmit?: boolean;
   dismiss: () => void;
   onCancel?: () => void;
@@ -24,7 +23,6 @@ const CardActionDialog: React.FC<Props> = ({
   title,
   children,
   visible,
-  buttonTitle,
   disableSubmit,
   dismiss,
   onCancel,
@@ -80,13 +78,13 @@ const CardActionDialog: React.FC<Props> = ({
       >
         {/* scrollview to prevent taps outside of keyboard to register when open */}
         <ScrollView>
-          <Dialog.Title style={[styles.title]}>{title}</Dialog.Title>
+          <Dialog.Title style={[styles.title, {color: colors.secondary}]}>{title}</Dialog.Title>
           {children}
           <View style={styles.buttonContainer}>
             <IconButton
               style={styles.button}
               icon='close-circle-outline'
-              size={36}
+              size={50}
               color='white'
               onPress={onCancel}
             />
@@ -94,7 +92,7 @@ const CardActionDialog: React.FC<Props> = ({
             <IconButton
               style={styles.button}
               icon='check-circle-outline'
-              size={36}
+              size={50}
               color='white'
               onPress={onSubmit}
               disabled={disableSubmit}
@@ -108,14 +106,13 @@ const CardActionDialog: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   dialog: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
   title: {
     textAlign: 'center',
     fontFamily: 'BalooBhaiExtraBold',
-    fontSize: 26,
-    color: 'white'
-
+    fontSize: 24,
   },
   buttonContainer: {
     display: 'flex',
@@ -123,7 +120,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     paddingHorizontal: 20,
     marginTop: 15,
-    // marginVertical: 15,
   },
   button: {
     width: '48%',

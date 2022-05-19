@@ -1,14 +1,13 @@
-import {
-  Pressable,
-  StyleSheet,
-} from 'react-native';
-import React, { useEffect, useContext } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import React, { useEffect, useContext, useCallback } from 'react';
 import { IconButton } from 'react-native-paper';
 
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  FadeIn,
+  withTiming,
 } from 'react-native-reanimated';
 import PaletteContext from '../contexts/PaletteProvider';
 
@@ -22,6 +21,7 @@ const Swatch: React.FC<Props> = ({ color }) => {
   const { selection, setColor } = useContext(PaletteContext);
 
   const swatchSize = useSharedValue(1);
+  const swatchOpacity = useSharedValue(0);
   const swatchAnimateStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: withSpring(swatchSize.value) }],
@@ -37,6 +37,8 @@ const Swatch: React.FC<Props> = ({ color }) => {
       style={[styles.swatch, { backgroundColor: color }, swatchAnimateStyle]}
       onPress={() => setColor(color)}
       onLongPress={(e) => e.preventDefault()}
+      // entering={FadeIn.delay(Math.random() * 100)}
+      // key={Math.random()}
     >
       {selection === color && (
         <IconButton

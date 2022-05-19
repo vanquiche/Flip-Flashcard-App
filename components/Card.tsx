@@ -3,33 +3,46 @@ import {Text} from 'react-native-paper'
 import React, { useState } from 'react';
 import * as Haptics from 'expo-haptics';
 
+import Animated, {useSharedValue, useAnimatedStyle, withSpring, withTiming, FadeIn, FadeOut} from 'react-native-reanimated';
+
 import { IconButton } from 'react-native-paper';
 import Tooltip from 'react-native-walkthrough-tooltip';
 
-import { Category } from './types';
+import { Category, Set } from './types';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 interface Props {
   docId: string;
-  category: Category;
-  handleEdit: (category: Category, id: string) => void;
+  card: any;
+  color?: string;
+  handleEdit: (card: Category | Set, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
 }
 
 const Card: React.FC<Props> = ({
-  category,
+  card,
   docId,
+  color,
   handleEdit,
   handleDelete,
-  handleColor,
   onPress,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const tooltipScale = useSharedValue(0);
+
+  const tooltipAnimateStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: withTiming(tooltipScale.value)}],
+    };
+  });
+
   const PopupIcons = () => {
     return (
-      <View style={styles.popup}>
+      <Animated.View style={[styles.popup, tooltipAnimateStyle]}>
         <IconButton
           icon='delete'
           onPress={() => {
@@ -40,28 +53,29 @@ const Card: React.FC<Props> = ({
         <IconButton
           icon='pencil'
           onPress={() => {
-            handleEdit(category, docId);
+            handleEdit(card, docId);
             setShowTooltip(false);
           }}
         />
         {/* <IconButton icon='palette' onPress={handleColor} /> */}
-      </View>
+      </Animated.View>
     );
   };
 
   const handleLongPress = () => {
+    tooltipScale.value = 1;
     setShowTooltip(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   return (
     <Pressable
-      key={category.id}
+      key={card.id}
       style={[
         styles.card,
         {
-          backgroundColor: category.color,
-        },
+          backgroundColor: card.color || color,
+        }
       ]}
       onPress={onPress}
       onLongPress={handleLongPress}
@@ -69,13 +83,13 @@ const Card: React.FC<Props> = ({
       <Tooltip
         placement='top'
         isVisible={showTooltip}
-        onClose={() => setShowTooltip(false)}
+        onClose={() => {setShowTooltip(false); tooltipScale.value = 0}}
         content={<PopupIcons />}
         showChildInTooltip={false}
         childContentSpacing={10} // closeOnContentInteraction={true}
         disableShadow={true}
       >
-        <Text style={styles.textContent}>{category.name}</Text>
+        <Text style={styles.textContent}>{card.name}</Text>
       </Tooltip>
     </Pressable>
   );
@@ -102,4 +116,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
-export default Card;
+export default React.memo(Card);
