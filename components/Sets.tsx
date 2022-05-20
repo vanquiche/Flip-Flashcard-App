@@ -4,17 +4,12 @@ import React, { useState, useEffect } from 'react';
 
 import uuid from 'react-native-uuid';
 
-import useGetFirestoreCollection from '../hooks/useGetFirestoreCollection';
 
 import TitleCard from './TitleCard';
 import CardActionDialog from './CardActionDialog';
 import CardSwatchDialog from './CardSwatchDialog';
 
 import { Set, StackNavigationTypes } from './types';
-import useAddDocToFirestore from '../hooks/useAddDocToFirestore';
-import { Timestamp } from 'firebase/firestore';
-import useDeleteDocFromFirestore from '../hooks/useDeleteDocFromFirestore';
-import useUpdateDocToFirestore from '../hooks/useUpdateDocToFirestore';
 
 interface Props extends StackNavigationTypes {}
 
@@ -36,15 +31,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const path = 'users/clover/sets';
   const queryKey = ['sets', categoryRef];
 
-  const { queries } = useGetFirestoreCollection(
-    path,
-    queryKey,
-    'categoryRef',
-    categoryRef
-  );
-  const { addMutation } = useAddDocToFirestore(path, queryKey);
-  const { deleteMutation } = useDeleteDocFromFirestore(path, docId, queryKey);
-  const { updateMutation } = useUpdateDocToFirestore(path, docId, queryKey);
 
   // CRUD functions
   const closeDialog = async () => {
@@ -56,17 +42,15 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const addNewSet = async () => {
     const newSet: Set = {
       id: uuid.v4().toString(),
-      createdAt: Timestamp.now().toDate(),
+      createdAt: new Date(),
       categoryRef: categoryRef,
       ...cardSet,
     };
-    addMutation.mutate(newSet);
     await closeDialog();
   };
 
   const deleteSet = async (id: string) => {
     await setDocId(id);
-    deleteMutation.mutate();
   };
 
   const editSet = async (set: any, id: string) => {
@@ -77,7 +61,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    updateMutation.mutate(cardSet);
     closeDialog();
   };
 
@@ -94,9 +77,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         onPress={() => setShowDialog(true)}
       />
 
-      {queries.isError && <Text>Error</Text>}
-      {queries.isLoading && <ActivityIndicator size='large' />}
-      {queries.isSuccess && (
+      {/* {queries.isSuccess && (
         <FlatList
           numColumns={2}
           data={queries.data.docs}
@@ -122,7 +103,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             />
           )}
         />
-      )}
+      )} */}
 
       {/* ADD NEW CATEGORY DIALOG */}
       <CardActionDialog

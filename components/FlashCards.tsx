@@ -2,10 +2,6 @@ import { View } from 'react-native';
 import React, { useState } from 'react';
 import { IconButton, useTheme, Text } from 'react-native-paper';
 
-import useGetFirestoreCollection from '../hooks/useGetFirestoreCollection';
-import useAddDocToFirestore from '../hooks/useAddDocToFirestore';
-import useDeleteDocFromFirestore from '../hooks/useDeleteDocFromFirestore';
-
 import { StackNavigationTypes } from './types';
 interface Props extends StackNavigationTypes {}
 
@@ -20,12 +16,6 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const path = 'users/clover/flashcards';
   const queryKey = ['flashcards', setRef];
 
-  const { queries } = useGetFirestoreCollection(
-    path,
-    queryKey,
-    'setRef',
-    setRef
-  );
   // const { addMutation } = useAddDocToFirestore(path, queryKey);
   // const { deleteMutation } = useDeleteDocFromFirestore(path, docId, queryKey);
   return (

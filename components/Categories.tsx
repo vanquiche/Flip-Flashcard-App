@@ -21,10 +21,7 @@ import TitleCard from './TitleCard';
 import CardSwatchDialog from './CardSwatchDialog';
 
 // HOOKS
-import useGetFirestoreCollection from '../hooks/useGetFirestoreCollection';
-import useAddDocToFirestore from '../hooks/useAddDocToFirestore';
-import useUpdateDocToFirestore from '../hooks/useUpdateDocToFirestore';
-import useDeleteDocFromFirestore from '../hooks/useDeleteDocFromFirestore';
+
 
 // TYPES
 import { Category } from './types';
@@ -46,14 +43,6 @@ const Categories: React.FC<Props> = ({ navigation }) => {
   const path = 'users/clover/categories';
   const { colors } = useTheme();
 
-  const { queries } = useGetFirestoreCollection(path, ['categories']);
-  const { addMutation } = useAddDocToFirestore(path, ['categories']);
-  const { updateMutation } = useUpdateDocToFirestore(path, updateId, [
-    'categories',
-  ]);
-  const { deleteMutation } = useDeleteDocFromFirestore(path, updateId, [
-    'categories',
-  ]);
 
   const closeDialog = async () => {
     await setCategory(INITIAL_STATE);
@@ -61,17 +50,17 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     setShowDialog(false);
   };
 
-  const addNewCategory = useCallback(() => {
+  const addNewCategory = () => {
     if (category.name) {
       const newDoc: Category = {
         ...category,
         id: uuid.v4().toString(),
         createdAt: Timestamp.now().toDate(),
       };
-      addMutation.mutate(newDoc);
+
     }
     closeDialog();
-  }, [category]);
+  };
 
   const editCategory = async (category: Category, docId: string) => {
     await setUpdateId(docId);
@@ -84,13 +73,11 @@ const Categories: React.FC<Props> = ({ navigation }) => {
   };
 
   const submitEdit = () => {
-    updateMutation.mutate(category);
     closeDialog();
   };
 
   const deleteCategory = async (id: string) => {
     await setUpdateId(id);
-    deleteMutation.mutate();
   };
 
   return (
@@ -101,9 +88,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
       />
 
 
-      {queries.isError && <Text>Error</Text>}
-      {queries.isLoading && <ActivityIndicator size='large' />}
-      {queries.isSuccess && (
+      {/* {queries.isSuccess && (
         <FlatList
           numColumns={2}
           data={queries.data.docs}
@@ -127,7 +112,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
             />
           )}
         />
-      )}
+      )} */}
 
       {/* ADD NEW CATEGORY DIALOG */}
       <CardActionDialog
