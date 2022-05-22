@@ -1,4 +1,4 @@
-import { View, TextInput, StyleSheet, Keyboard, Animated } from 'react-native';
+import { View, TextInput, StyleSheet, Keyboard, Animated, ScrollView } from 'react-native';
 import {
   Portal,
   Dialog,
@@ -7,7 +7,6 @@ import {
   useTheme,
 } from 'react-native-paper';
 import React, { useEffect, useRef } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 
 interface Props {
   children: React.ReactNode;

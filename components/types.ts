@@ -8,27 +8,30 @@ export interface StackNavigationTypes {
 }
 
 export interface Category {
-  id: string;
+  _id: string;
   name: string;
   color: string;
-  createdAt: Date;
+  createdAt: Date | number;
+  type: 'category'
 }
 
 export interface Set {
   categoryRef: string;
-  id: string;
+  _id: string;
   name: string;
   color: string;
   createdAt: Date;
+  type: 'set'
 }
 
 export interface Flashcard {
   setRef: string;
   categoryRef: string;
-  id: string;
+  _id: string;
   prompt: string;
   solution: string;
   createdAt: Date;
+  type: 'flashcard'
 }
 export interface PaletteProviderType {
   selection: string | undefined;

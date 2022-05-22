@@ -1,10 +1,8 @@
 import { View, StyleSheet, Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
-import React, { useRef, useState } from 'react';
-
+import { Text, useTheme } from 'react-native-paper';
+import React, { useRef, useState, useMemo } from 'react';
 import Tooltip from 'react-native-walkthrough-tooltip';
 import Palette from './Palette';
-
 const COLORS = [
   '#C0392B',
   '#E74C3C',
@@ -27,38 +25,63 @@ const COLORS = [
   '#34495E',
   '#2C3E50',
 ];
-
 interface Props {
   color: string;
+  isVisible: boolean;
+  onClose: () => void;
+  onOpen: () => void;
   setColor: (color: string) => void;
 }
 
-const CardSwatchDialog: React.FC<Props> = ({ color, setColor }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
+const SwatchDialog: React.FC<Props> = ({
+  color,
+  setColor,
+  isVisible,
+  onClose,
+  onOpen,
+}) => {
 
+  const paletteColors = useMemo(() => {
+    return COLORS
+  }, []);
+
+  // const { colors } = useTheme();
+
+  // console.log('render swatch dialog');
   return (
     <Tooltip
       placement='top'
-      isVisible={showTooltip}
-      onClose={() => setShowTooltip(false)}
+      isVisible={isVisible}
+      onClose={onClose}
       content={
         <Palette
           selection={color}
           setColor={(color: string) => setColor(color)}
-          palette={COLORS}
+          palette={paletteColors}
         />
       }
       showChildInTooltip={false}
       childContentSpacing={-10}
       closeOnContentInteraction={false}
       disableShadow={true}
-      tooltipStyle={{ width: 250 }}
-      arrowStyle={{ left: 200 }}
+      tooltipStyle={{
+        width: 250,
+      }}
+      contentStyle={{
+        borderRadius: 12,
+      }}
+      arrowStyle={{
+        left: 200,
+      }}
     >
       <Pressable
-        style={[styles.dialogSwatch, { backgroundColor: color || 'tomato' }]}
-        onPress={() => setShowTooltip(true)}
-        
+        style={[
+          styles.dialogSwatch,
+          {
+            backgroundColor: color || 'tomato',
+          },
+        ]}
+        onPress={onOpen}
       />
     </Tooltip>
   );
@@ -79,5 +102,4 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
 });
-
-export default CardSwatchDialog;
+export default SwatchDialog;

@@ -7,7 +7,7 @@ import uuid from 'react-native-uuid';
 
 import TitleCard from './TitleCard';
 import CardActionDialog from './CardActionDialog';
-import CardSwatchDialog from './CardSwatchDialog';
+import SwatchDialog from './SwatchDialog';
 
 import { Set, StackNavigationTypes } from './types';
 
@@ -40,12 +40,12 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewSet = async () => {
-    const newSet: Set = {
-      id: uuid.v4().toString(),
-      createdAt: new Date(),
-      categoryRef: categoryRef,
-      ...cardSet,
-    };
+    // const newSet: Set = {
+    //   _id: uuid.v4().toString(),
+    //   createdAt: new Date(),
+    //   categoryRef: categoryRef,
+    //   ...cardSet,
+    // };
     await closeDialog();
   };
 
@@ -106,7 +106,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       )} */}
 
       {/* ADD NEW CATEGORY DIALOG */}
-      <CardActionDialog
+      {/* <CardActionDialog
         visible={showDialog}
         title={editMode ? 'EDIT SET' : 'NEW SET'}
         dismiss={closeDialog}
@@ -132,12 +132,12 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             style={{ width: '80%', height: 40, margin: 0 }}
           />
 
-          <CardSwatchDialog
+          <SwatchDialog
             color={cardSet.color}
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
         </View>
-      </CardActionDialog>
+      </CardActionDialog> */}
     </View>
   );
 };
