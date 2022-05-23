@@ -9,7 +9,6 @@ import Animated, {
   FadeIn,
   withTiming,
 } from 'react-native-reanimated';
-import PaletteContext from '../contexts/PaletteProvider';
 
 const AnimatedSwatch = Animated.createAnimatedComponent(Pressable);
 

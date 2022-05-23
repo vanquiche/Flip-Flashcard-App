@@ -8,9 +8,9 @@ import Sets from '../components/Sets';
 import FlashCards from '../components/FlashCards';
 
 const screens = [
-  { id: '1', name: 'Categories', component: Categories },
-  { id: '2', name: 'Sets', component: Sets },
-  { id: '3', name: 'Cards', component: FlashCards },
+  { name: 'Categories', component: Categories },
+  { name: 'Sets', component: Sets },
+  { name: 'Cards', component: FlashCards },
 ];
 
 const CategoryScreen = () => {

@@ -5,33 +5,40 @@ import {
   FlatList,
   Pressable,
   ActivityIndicator,
+  ScrollView,
   Alert,
 } from 'react-native';
 import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useContext,
+  Suspense,
+} from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
 import db from '../db-services';
 
 // COMPONENTS
-import CardActionDialog from './CardActionDialog';
+import ActionDialog from './ActionDialog';
 import TitleCard from './TitleCard';
 import SwatchDialog from './SwatchDialog';
 
 // TYPES
 import { Category, Set } from './types';
 import { StackNavigationTypes } from './types';
-import { ScrollView } from 'react-native-gesture-handler';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',
   color: 'tomato',
+  id: '',
 };
 
 interface Props extends StackNavigationTypes {}
 
-const Categories: React.FC<Props> = ({ navigation }) => {
+const Categories: React.FC<Props> = ({ navigation, route }) => {
   // data state
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState(INITIAL_STATE);
@@ -40,9 +47,6 @@ const Categories: React.FC<Props> = ({ navigation }) => {
   const [showSwatch, setShowSwatch] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
-  const [updateId, setUpdateId] = useState('');
-  // loading state
-  const [loading, setLoading] = useState(true);
 
   const { colors } = useTheme();
 
@@ -54,21 +58,22 @@ const Categories: React.FC<Props> = ({ navigation }) => {
 
   const addNewCategory = () => {
     const newDoc = {
-      ...category,
+      name: category.name,
+      color: category.color,
       type: 'category',
       createdAt: new Date(),
     };
 
-    db.insert(newDoc, async (err: Error, doc: any) => {
+    db.insert(newDoc, (err: Error, doc: any) => {
       if (err) console.log(err);
       setCategories((prev) => [doc, ...prev]);
     });
     closeDialog();
   };
 
-  const editCategory = async (category: Category | Set, id: string) => {
-    await setUpdateId(id);
+  const editCategory = async (category: Category | Set) => {
     await setCategory({
+      id: category._id,
       name: category.name,
       color: category.color,
     });
@@ -78,13 +83,13 @@ const Categories: React.FC<Props> = ({ navigation }) => {
 
   const submitEdit = () => {
     db.update(
-      { _id: updateId },
+      { _id: category.id },
       { $set: { name: category.name, color: category.color } },
       (err: Error, numRemoved: number) => {
         if (err) console.log(err);
         setCategories((prev) =>
           prev.map((item) => {
-            if (item._id === updateId) {
+            if (item._id === category.id) {
               return { ...item, name: category.name, color: category.color };
             }
             return item;
@@ -103,7 +108,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // fetch data from db 
+    // fetch data from db
     const getData = () => {
       db.find({ type: 'category' }, async (err: any, docs: any) => {
         const data = await docs.map((doc: Category) => {
@@ -116,10 +121,15 @@ const Categories: React.FC<Props> = ({ navigation }) => {
           return b.createdAt - a.createdAt;
         });
         setCategories(sorted);
-        setLoading(false);
       });
     };
     getData();
+  }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'CATEGORIES',
+    });
   }, []);
 
   return (
@@ -129,7 +139,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
         onPress={() => setShowDialog(true)}
       />
 
-      {!loading && (
+      <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
           <View
             style={{
@@ -139,11 +149,11 @@ const Categories: React.FC<Props> = ({ navigation }) => {
               justifyContent: 'center',
             }}
           >
-            {categories.map((category) => {
+            {categories.map((category: Category) => {
               return (
                 <TitleCard
                   key={category._id}
-                  card={category as Category}
+                  card={category}
                   handleEdit={editCategory}
                   handleDelete={deleteCategory}
                   onPress={() =>
@@ -157,10 +167,10 @@ const Categories: React.FC<Props> = ({ navigation }) => {
             })}
           </View>
         </ScrollView>
-      )}
+      </Suspense>
 
       {/* ADD NEW CATEGORY DIALOG */}
-      <CardActionDialog
+      <ActionDialog
         visible={showDialog}
         dismiss={() => setShowDialog(false)}
         title={editMode ? 'Edit Category' : 'NEW CATEGORY'}
@@ -194,7 +204,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
             setColor={(color) => setCategory((prev) => ({ ...prev, color }))}
           />
         </View>
-      </CardActionDialog>
+      </ActionDialog>
     </View>
   );
 };

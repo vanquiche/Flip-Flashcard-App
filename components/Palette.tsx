@@ -3,7 +3,6 @@ import React from 'react';
 import uuid from 'react-native-uuid';
 
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
-import PaletteContext from '../contexts/PaletteProvider';
 
 import Swatch from './Swatch';
 

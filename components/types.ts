@@ -20,7 +20,7 @@ export interface Set {
   _id: string;
   name: string;
   color: string;
-  createdAt: Date;
+  createdAt: Date | number;
   type: 'set'
 }
 
@@ -30,10 +30,6 @@ export interface Flashcard {
   _id: string;
   prompt: string;
   solution: string;
-  createdAt: Date;
+  createdAt: Date | number;
   type: 'flashcard'
-}
-export interface PaletteProviderType {
-  selection: string | undefined;
-  setColor: React.Dispatch<string>;
 }

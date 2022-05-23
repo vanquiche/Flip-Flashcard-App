@@ -21,7 +21,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface Props {
   card: Category | Set;
   color?: string;
-  handleEdit: (card: Category | Set, id: string) => void;
+  handleEdit: (card: any) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
@@ -60,7 +60,7 @@ const TitleCard: React.FC<Props> = React.memo(
             color='white'
             onPress={() => {
               setShowTooltip(false);
-              handleEdit(card, card._id);
+              handleEdit(card);
             }}
           />
           {/* <IconButton icon='palette' onPress={handleColor} /> */}
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
     width: '45%',
-    height: 115,
+    height: 125,
     // aspectRatio: 1.45,
     padding: 15,
     margin: 5,
