@@ -4,6 +4,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import AppBar from './AppBar';
 import uuid from 'react-native-uuid'
+import { useTheme } from 'react-native-paper';
 
 
 const Stack = createStackNavigator();
@@ -16,13 +17,26 @@ interface Screen {
 
 interface Props {
   screens: Screen[];
+  title?: string;
 }
 
-const StackNavigator: React.FC<Props> = ({ screens }) => {
+const StackNavigator: React.FC<Props> = ({ screens, title }) => {
+  const {colors, fonts} = useTheme();
   return (
     <Stack.Navigator
+      // screenOptions={{
+      //   header: (props) => <AppBar {...props} title={title}/>,
+      // }}
       screenOptions={{
-        header: (props) => <AppBar {...props} />,
+        headerStyle: {
+          backgroundColor: colors.primary
+        },
+        headerTintColor: colors.secondary,
+        headerTitleStyle: {
+          fontFamily: 'BalooBhaiExtraBold',
+          fontSize: 22
+        },
+        headerBackTitleVisible: false
       }}
     >
       {screens.map((screen) => (

@@ -1,36 +1,39 @@
-import { View, ActivityIndicator, FlatList } from 'react-native';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { Text, IconButton, TextInput, useTheme } from 'react-native-paper';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, Suspense } from 'react';
 
+// UTILITIES
 import uuid from 'react-native-uuid';
+import db from '../db-services';
 
-
+// COMPONENTS
 import TitleCard from './TitleCard';
-import CardActionDialog from './CardActionDialog';
+import ActionDialog from './ActionDialog';
 import SwatchDialog from './SwatchDialog';
 
 import { Set, StackNavigationTypes } from './types';
 
-interface Props extends StackNavigationTypes {}
 
-const INITIAL_STATE = {
+const INITIAL_STATE: { id?: string; name: string; color: string } = {
+  id: '',
   name: '',
   color: 'tomato',
 };
 
+interface Props extends StackNavigationTypes {}
+
 const Sets: React.FC<Props> = ({ navigation, route }) => {
-  const [showDialog, setShowDialog] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  // data state
+  const [cardSets, setCardSets] = useState<Set[]>([]);
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
-  const [docId, setDocId] = useState('1');
+  // view state
+  const [showDialog, setShowDialog] = useState(false);
+  const [showSwatch, setShowSwatch] = useState(false);
+  // edit state
+  const [editMode, setEditMode] = useState(false);
 
   const { colors } = useTheme();
-  const { categoryRef, categoryTitle, color } = route.params;
-
-  // CRUD hooks
-  const path = 'users/clover/sets';
-  const queryKey = ['sets', categoryRef];
-
+  const { categoryRef, categoryTitle } = route.params;
 
   // CRUD functions
   const closeDialog = async () => {
@@ -39,36 +42,84 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     setEditMode(false);
   };
 
-  const addNewSet = async () => {
-    // const newSet: Set = {
-    //   _id: uuid.v4().toString(),
-    //   createdAt: new Date(),
-    //   categoryRef: categoryRef,
-    //   ...cardSet,
-    // };
-    await closeDialog();
+  const addNewSet = () => {
+    const newSet = {
+      type: 'set',
+      name: cardSet.name,
+      color: cardSet.color,
+      createdAt: new Date(),
+      categoryRef: categoryRef,
+    };
+    db.insert(newSet, (err: Error, doc: any) => {
+      if (err) console.log(err);
+      setCardSets((prev) => [doc, ...prev]);
+    });
+    closeDialog();
   };
 
-  const deleteSet = async (id: string) => {
-    await setDocId(id);
+  const deleteSet = (id: string) => {
+    db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
+      if (err) console.log(err);
+      setCardSets((prev) => prev.filter((set) => set._id !== id));
+    });
   };
 
-  const editSet = async (set: any, id: string) => {
-    await setDocId(id);
-    setCardSet(set);
+  const editSet = async (set: Set) => {
+    await setCardSet({
+      id: set._id,
+      name: set.name,
+      color: set.color,
+    });
     setEditMode(true);
     setShowDialog(true);
   };
 
   const submitEdit = () => {
+    db.update(
+      { _id: cardSet.id },
+      { $set: { name: cardSet.name, color: cardSet.color } },
+      (err: Error, numRemoved: number) => {
+        if (err) console.log(err);
+        setCardSets((prev) =>
+          prev.map((item) => {
+            if (item._id === cardSet.id) {
+              return { ...item, name: cardSet.name, color: cardSet.color };
+            }
+            return item;
+          })
+        );
+      }
+    );
     closeDialog();
   };
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle: categoryTitle,
-  //   });
-  // }, [categoryTitle]);
+  useEffect(() => {
+    // fetch data from db
+    const getData = () => {
+      db.find(
+        { type: 'set', categoryRef: categoryRef },
+        async (err: any, docs: any) => {
+          const data = await docs.map((doc: Set) => {
+            // convert date to number
+            doc.createdAt = new Date(doc.createdAt).valueOf();
+            return doc;
+          });
+          // sort by date
+          const sorted = data.sort((a: any, b: any) => {
+            return b.createdAt - a.createdAt;
+          });
+          setCardSets(sorted);
+        }
+      );
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: categoryTitle.toUpperCase(),
+    });
+  }, []);
 
   return (
     <View>
@@ -76,40 +127,43 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         icon='card-plus-outline'
         onPress={() => setShowDialog(true)}
       />
-
-      {/* {queries.isSuccess && (
-        <FlatList
-          numColumns={2}
-          data={queries.data.docs}
-          columnWrapperStyle={{ justifyContent: 'center' }}
-          contentContainerStyle={{ paddingBottom: 75 }}
-          keyExtractor={(item) => item.data().id}
-          ListEmptyComponent={<Text>No Sets</Text>}
-          renderItem={({ item }) => (
-            <TitleCard
-              docId={item.id}
-              card={item.data() as Set}
-              color={color}
-              handleEdit={editSet}
-              handleDelete={deleteSet}
-              onPress={() =>
-                navigation.navigate('Cards', {
-                  setRef: item.data().id,
-                  setTitle: item.data().name,
-                  setColor: item.data().color,
-                  categoryRef
-                })
-              }
-            />
-          )}
-        />
-      )} */}
+      <Suspense fallback={<ActivityIndicator size='large' />}>
+        <ScrollView>
+          <View
+            style={{
+              paddingBottom: 150,
+              flexWrap: 'wrap',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}
+          >
+            {cardSets.map((set: Set) => {
+              return (
+                <TitleCard
+                  key={set._id}
+                  card={set}
+                  handleEdit={editSet}
+                  handleDelete={deleteSet}
+                  onPress={() =>
+                    navigation.navigate('Cards', {
+                      color: set.color,
+                      setRef: set._id,
+                      setTitle: set.name,
+                      categoryRef: categoryRef,
+                    })
+                  }
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
+      </Suspense>
 
       {/* ADD NEW CATEGORY DIALOG */}
-      {/* <CardActionDialog
+      <ActionDialog
         visible={showDialog}
+        dismiss={() => setShowDialog(false)}
         title={editMode ? 'EDIT SET' : 'NEW SET'}
-        dismiss={closeDialog}
         onCancel={closeDialog}
         onSubmit={editMode ? submitEdit : addNewSet}
         disableSubmit={cardSet.name ? false : true}
@@ -123,7 +177,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         >
           <TextInput
             mode='outlined'
-            label='SET NAME'
+            label='CATEGORY NAME'
             outlineColor='lightgrey'
             activeOutlineColor={colors.secondary}
             maxLength={32}
@@ -133,11 +187,14 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
           />
 
           <SwatchDialog
+            isVisible={showSwatch}
+            onClose={() => setShowSwatch(false)}
+            onOpen={() => setShowSwatch(true)}
             color={cardSet.color}
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
         </View>
-      </CardActionDialog> */}
+      </ActionDialog>
     </View>
   );
 };

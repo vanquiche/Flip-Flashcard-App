@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Animated } from 'react-native';
 import {
   Dialog,
   Portal,
@@ -7,9 +7,7 @@ import {
   IconButton,
   useTheme,
 } from 'react-native-paper';
-import React from 'react';
-
-// const AnimatedDialog = Animated.createAnimatedComponent(Dialog)
+import React, { useRef, useEffect, useCallback } from 'react';
 
 interface Props {
   visible: boolean;
@@ -25,36 +23,60 @@ const AlertDialog: React.FC<Props> = ({
   onConfirm,
 }) => {
   const { colors } = useTheme();
+  const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
+
+  const expand = () => {
+    Animated.spring(scaleAnimation, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const close = () => {
+    Animated.spring(scaleAnimation, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    if (visible) {
+      expand();
+    } else close();
+  }, [visible]);
 
   return (
     <Portal>
-        <Dialog
-          style={[styles.dialog, { backgroundColor: colors.primary }]}
-          visible={visible}
-          onDismiss={onDismiss}
-          dismissable={false}
-        >
-          <Title style={[styles.title, { color: colors.secondary }]}>
-            {message}
-          </Title>
-          <View style={styles.buttonContainer}>
-            <IconButton
-              style={styles.button}
-              icon='close-circle-outline'
-              size={50}
-              color='white'
-              onPress={onDismiss}
-            />
+      <Dialog
+        style={[
+          styles.dialog,
+          { backgroundColor: colors.primary },
+          { transform: [{ scale: scaleAnimation }] },
+        ]}
+        visible={visible}
+        dismissable={false}
+      >
+        <Title style={[styles.title, { color: colors.secondary }]}>
+          {message}
+        </Title>
+        <View style={styles.buttonContainer}>
+          <IconButton
+            style={styles.button}
+            icon='close-circle-outline'
+            size={50}
+            color='white'
+            onPress={onDismiss}
+          />
 
-            <IconButton
-              style={styles.button}
-              icon='check-circle-outline'
-              size={50}
-              color='white'
-              onPress={onConfirm}
-            />
-          </View>
-        </Dialog>
+          <IconButton
+            style={styles.button}
+            icon='check-circle-outline'
+            size={50}
+            color='white'
+            onPress={onConfirm}
+          />
+        </View>
+      </Dialog>
     </Portal>
   );
 };
