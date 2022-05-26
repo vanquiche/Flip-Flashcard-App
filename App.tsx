@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, StatusBar } from 'react-native';
 import { configureFonts, IconButton } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { NavigationContainer } from '@react-navigation/native';
@@ -15,6 +15,7 @@ import HomeScreen from './screens/HomeScreen';
 import CategoryScreen from './screens/CategoryScreen';
 import ShopScreen from './screens/ShopScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 declare global {
   namespace ReactNativePaper {
@@ -24,7 +25,9 @@ declare global {
   }
 }
 
-const Tab = createMaterialBottomTabNavigator();
+// const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
+
 const queryClient = new QueryClient();
 
 const customFonts = {
@@ -69,7 +72,7 @@ export default function App() {
         icon={props.icon}
         size={26}
         color={theme.colors.secondary}
-        style={{ marginTop: -5 }}
+        style={{ marginTop: 5 }}
       />
     );
   };
@@ -90,13 +93,15 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <PaperProvider theme={theme}>
+          <StatusBar hidden />
           <Tab.Navigator
-            labeled={true}
-            shifting={true}
-            barStyle={{
-              backgroundColor: theme.colors.primary,
-              elevation: 0,
-            }}
+           screenOptions={{
+             tabBarStyle: {
+              backgroundColor: theme.colors.primary
+             },
+             tabBarShowLabel: false,
+             headerShown: false,
+           }}
           >
             <Tab.Screen
               name='Home-page'
@@ -132,6 +137,7 @@ export default function App() {
                 tabBarIcon: ({ focused }) => (
                   <TabIcon icon='heart'/>
                 ),
+
               }}
             />
           </Tab.Navigator>

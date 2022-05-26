@@ -18,18 +18,21 @@ interface Screen {
 interface Props {
   screens: Screen[];
   title?: string;
+  id?: string;
 }
 
-const StackNavigator: React.FC<Props> = ({ screens, title }) => {
+const StackNavigator: React.FC<Props> = ({ screens, title, id }) => {
   const {colors, fonts} = useTheme();
   return (
     <Stack.Navigator
+      id={id}
       // screenOptions={{
       //   header: (props) => <AppBar {...props} title={title}/>,
       // }}
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.primary
+          backgroundColor: colors.primary,
+          height: 60
         },
         headerTintColor: colors.secondary,
         headerTitleStyle: {
