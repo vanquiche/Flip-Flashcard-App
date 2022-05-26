@@ -6,6 +6,7 @@ import db from '../db-services';
 
 import ActionDialog from './ActionDialog';
 import Card from './Card';
+import Quiz from './Quiz';
 
 import { Flashcard } from './types';
 import { StackNavigationTypes } from './types';
@@ -22,6 +23,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
+  const [startQuiz, setStartQuiz] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -29,9 +31,11 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const { setRef, categoryRef, setTitle, color } = route.params;
 
   const closeDialog = () => {
-    setFlashcard(INITIAL_STATE);
-    setEditMode(false);
     setShowDialog(false);
+    setTimeout(() => {
+      setEditMode(false);
+      setFlashcard(INITIAL_STATE);
+    }, 300);
   };
 
   const addNewCard = () => {
@@ -120,10 +124,36 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
-      <IconButton
-        icon='card-plus-outline'
-        onPress={() => setShowDialog(true)}
-      />
+      {startQuiz && (
+        <Quiz
+          color={color}
+          cards={flashcards}
+          navigation={navigation}
+          onDismiss={() => setStartQuiz(false)}
+          set={setTitle}
+        />
+      )}
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 30,
+        }}
+      >
+        {/* ADD NEW FLASHCARD */}
+        <IconButton
+          icon='cards-playing-heart-multiple'
+          onPress={() => setShowDialog(true)}
+        />
+
+        {/* BUTTON TO START QUIZ */}
+        <IconButton
+          icon='play-box-multiple'
+          onPress={() => setStartQuiz(true)}
+          disabled={flashcards.length === 0}
+        />
+      </View>
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
