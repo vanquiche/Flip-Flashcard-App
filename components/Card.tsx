@@ -1,5 +1,5 @@
-import { View, Pressable, StyleSheet, Alert } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { View, Pressable, StyleSheet, Alert, Dimensions } from 'react-native';
+import { Text, useTheme, Title } from 'react-native-paper';
 import React, { useState, useMemo } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
@@ -10,6 +10,7 @@ import Animated, {
   SlideInLeft,
   ZoomOut,
   SlideInRight,
+  withSpring,
 } from 'react-native-reanimated';
 import { IconButton } from 'react-native-paper';
 import Tooltip from 'react-native-walkthrough-tooltip';
@@ -18,6 +19,10 @@ import { Flashcard } from './types';
 import AlertDialog from './AlertDialog';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const FRONT_CARD_POSITION_DEFAULT = 0;
+const BACK_CARD_POSITION_DEFAULT = 180;
 
 interface Props {
   initial?: boolean;
@@ -30,21 +35,62 @@ interface Props {
 }
 
 const Card: React.FC<Props> = React.memo(
-  ({ card, color, initial, handleEdit, handleDelete, onPress }) => {
+  ({ card, color, initial, handleEdit, handleDelete }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [cardFacingFront, setCardFacingFront] = useState(true);
+
+    const { colors } = useTheme();
+    const cardFlip = useSharedValue(0);
+    const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
+    const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
+
     const tooltipScale = useSharedValue(0);
     const tooltipAnimateStyle = useAnimatedStyle(() => {
       return {
+        transform: [{ scale: withTiming(tooltipScale.value) }],
+      };
+    });
+
+    const rStyles_card_container = useAnimatedStyle(() => {
+      return {
         transform: [
-          {
-            scale: withTiming(tooltipScale.value),
-          },
+          { perspective: SCREEN_HEIGHT },
+          { rotateX: cardFlip.value + 'deg' },
         ],
       };
     });
 
-    const { colors } = useTheme();
+    const rStyles_card_back = useAnimatedStyle(() => {
+      return {
+        transform: [{ rotateX: backCardPosition.value + 'deg' }],
+      };
+    });
+
+    const rStyles_card_front = useAnimatedStyle(() => {
+      return {
+        transform: [{ rotateX: frontCardPosition.value + 'deg' }],
+      };
+    });
+
+    const flipCard = () => {
+      if (cardFacingFront === true) {
+        cardFlip.value = withSpring(180, { damping: 20 });
+        frontCardPosition.value = withTiming(180);
+        backCardPosition.value = withTiming(0);
+      } else {
+        cardFlip.value = withSpring(0, { damping: 20 });
+        frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
+        backCardPosition.value = withTiming(BACK_CARD_POSITION_DEFAULT);
+      }
+      setCardFacingFront((prev) => !prev);
+    };
+
+    const handleLongPress = () => {
+      tooltipScale.value = 1;
+      setShowTooltip(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    };
 
     const PopupIcons = () => {
       return (
@@ -70,12 +116,6 @@ const Card: React.FC<Props> = React.memo(
       );
     };
 
-    const handleLongPress = () => {
-      tooltipScale.value = 1;
-      setShowTooltip(true);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    };
-
     return (
       <>
         <AlertDialog
@@ -84,14 +124,16 @@ const Card: React.FC<Props> = React.memo(
           onDismiss={() => setShowAlert(false)}
           onConfirm={() => handleDelete(card._id)}
         />
+
+        {/* Card */}
         <AnimatedPressable
           style={[
             styles.card,
-            {
-              backgroundColor: color,
-            },
+            { backgroundColor: color },
+            rStyles_card_container,
           ]}
-          onPress={onPress}
+          // onPress={onPress}
+          onPress={flipCard}
           onLongPress={handleLongPress}
           exiting={ZoomOut}
           entering={SlideInLeft.delay(300)}
@@ -106,16 +148,30 @@ const Card: React.FC<Props> = React.memo(
             }}
             content={<PopupIcons />}
             showChildInTooltip={false}
-            childContentSpacing={10}
+            childContentSpacing={30}
             disableShadow={true}
             contentStyle={{
               borderRadius: 10,
               backgroundColor: colors.secondary,
             }}
           >
-            <Text style={styles.textContent}>{card.prompt}</Text>
-            <Text style={styles.textContent}>{card.solution}</Text>
+            <Text />
           </Tooltip>
+          {/* FRONT OF CARD */}
+          <Animated.View style={[styles.textContainer, rStyles_card_front]}>
+            <Title style={styles.cardTitle}>PROMPT</Title>
+            <Text style={styles.textContent}>{card.prompt}</Text>
+          </Animated.View>
+
+          {/* BACK OF CARD */}
+          <Animated.View style={[styles.textContainer, rStyles_card_back]}>
+            <Text style={[styles.textContent, styles.cardBackText]}>
+              {card.solution}
+            </Text>
+            <Title style={[styles.cardBackText, styles.cardTitle]}>
+              SOLUTION
+            </Title>
+          </Animated.View>
         </AnimatedPressable>
       </>
     );
@@ -133,19 +189,37 @@ const Card: React.FC<Props> = React.memo(
 const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
-    width: '75%',
-    height: 185,
+    width: '70%',
+    aspectRatio: 1 / 0.7,
+    // height: 185,
     padding: 10,
     marginVertical: 12,
-    borderRadius: 12,
+    borderRadius: 15,
     backgroundColor: 'white',
+    // position: 'relative'
   },
   textContent: {
     textAlign: 'center',
     color: 'white',
     fontSize: 18,
-    marginVertical: 10,
+    // marginVertical: 10,
+    backfaceVisibility: 'hidden',
   },
+  textContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backfaceVisibility: 'hidden',
+  },
+  cardBackText: {
+    transform: [{ scaleY: -1 }],
+  },
+  cardTitle: {
+    color: 'white',
+  },
+
   popup: {
     display: 'flex',
     flexDirection: 'row',

@@ -13,7 +13,6 @@ import SwatchDialog from './SwatchDialog';
 
 import { Set, StackNavigationTypes } from './types';
 
-
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
   name: '',
@@ -37,9 +36,11 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   // CRUD functions
   const closeDialog = async () => {
-    await setCardSet(INITIAL_STATE);
     setShowDialog(false);
-    setEditMode(false);
+    setTimeout(() => {
+      setEditMode(false);
+      setCardSet(INITIAL_STATE);
+    }, 300);
   };
 
   const addNewSet = () => {

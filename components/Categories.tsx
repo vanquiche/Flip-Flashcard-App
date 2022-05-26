@@ -51,9 +51,11 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
 
   const closeDialog = async () => {
-    await setCategory(INITIAL_STATE);
-    setEditMode(false);
     setShowDialog(false);
+    setTimeout(() => {
+      setCategory(INITIAL_STATE);
+      setEditMode(false);
+    }, 300);
   };
 
   const addNewCategory = () => {
