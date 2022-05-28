@@ -57,7 +57,7 @@ const AlertDialog: React.FC<Props> = ({
         dismissable={false}
       >
         <Title style={[styles.title, { color: colors.secondary }]}>
-          {message}
+          {message.toUpperCase()}
         </Title>
         <View style={styles.buttonContainer}>
           <IconButton

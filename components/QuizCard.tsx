@@ -7,7 +7,13 @@ import {
   Keyboard,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { IconButton, Text, TextInput, Title, useTheme } from 'react-native-paper';
+import {
+  IconButton,
+  Text,
+  TextInput,
+  Title,
+  useTheme,
+} from 'react-native-paper';
 
 import Animated, {
   useSharedValue,
@@ -23,6 +29,7 @@ import Animated, {
   SlideInLeft,
   SlideOutLeft,
   SlideInRight,
+  ZoomIn,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
@@ -40,12 +47,14 @@ interface PropTypes {
   slideRemaining?: boolean;
   showSolution?: boolean;
   nextCard?: () => void;
+  result: string;
 }
 
 const Card: React.FC<PropTypes> = ({
   card,
   next,
   color,
+  result,
   canFlip,
   nextCard,
   showSolution,
@@ -53,7 +62,7 @@ const Card: React.FC<PropTypes> = ({
 }) => {
   const [cardFacingFront, setCardFacingFront] = useState(true);
 
-  const {colors} = useTheme()
+  const { colors } = useTheme();
 
   const cardFlip = useSharedValue(0);
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
@@ -129,6 +138,16 @@ const Card: React.FC<PropTypes> = ({
           <Title style={[styles.cardBackText, styles.cardTitle]}>
             SOLUTION
           </Title>
+          <Text
+            style={[
+              styles.text,
+              styles.cardBackText,
+              { position: 'absolute', bottom: -10 },
+            ]}
+            // entering={ZoomIn.delay(300)}
+          >
+            {result.toUpperCase()}
+          </Text>
         </Animated.View>
       </Animated.View>
 

@@ -7,9 +7,10 @@ import Animated, { SlideInRight } from 'react-native-reanimated';
 interface Props {
   total: number;
   score: number;
+  dismiss?: () => void;
 }
 
-const Results: React.FC<Props> = ({ total, score }) => {
+const Results: React.FC<Props> = ({ total, score, dismiss }) => {
   const { colors } = useTheme();
   const percentage = Math.floor((score / total) * 100);
 
@@ -43,19 +44,24 @@ const Results: React.FC<Props> = ({ total, score }) => {
         <Title style={{ color: colors.secondary }}>GRADE</Title>
         <Title style={{ color: colors.secondary }}>{percentage}%</Title>
       </View>
-      <Button
+
+      {/* will add logic to restart quiz later */}
+      
+      {/* <Button
         mode='contained'
         color={colors.secondary}
         style={styles.button}
         labelStyle={{ color: 'white', fontSize: 16 }}
       >
         Review Again
-      </Button>
+      </Button> */}
+
       <Button
         mode='contained'
         color={colors.secondary}
         style={styles.button}
         labelStyle={{ color: 'white', fontSize: 16 }}
+        onPress={dismiss}
       >
         return home
       </Button>

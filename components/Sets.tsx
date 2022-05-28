@@ -178,7 +178,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         >
           <TextInput
             mode='outlined'
-            label='CATEGORY NAME'
+            label='SET NAME'
             outlineColor='lightgrey'
             activeOutlineColor={colors.secondary}
             maxLength={32}

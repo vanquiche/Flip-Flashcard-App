@@ -14,6 +14,7 @@ import QuizContainer from './QuizContainer';
 import QuizCard from './QuizCard';
 import Results from './Results';
 import QuizStartPage from './QuizStartPage';
+import AlertDialog from './AlertDialog';
 
 import { Flashcard } from './types';
 
@@ -37,9 +38,10 @@ const Quiz: React.FC<Props> = ({
   const [startQuiz, setStartQuiz] = useState(false);
   const [completeQuiz, setCompleteQuiz] = useState(false);
   const [cardCount, setCardCount] = useState(0);
-
   const [answer, setAnswer] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [result, setResult] = useState('')
 
   const score = useRef(0);
 
@@ -47,18 +49,19 @@ const Quiz: React.FC<Props> = ({
 
   const checkAnswer = () => {
     if (submitted) return;
-    else if (
-      answer.toLowerCase() === flashcards[cardCount].solution.toLowerCase()
-    ) {
+
+    // check and remove trailing space and set to lowercase
+    const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
+    const solution = flashcards[cardCount].solution.toLowerCase();
+    if (userInput === solution) {
+      setResult('Correct!')
       score.current++;
+    } else {
+      setResult('Incorrect!')
     }
+    // console.log(userInput)
+    // console.log(solution)
     setSubmitted(true);
-    // if (answer.toLowerCase() === flashcards[cardCount].solution.toLowerCase()) {
-
-    // } else {
-
-    // }
-    // Keyboard.dismiss();
   };
 
   // ANIMATION VALUES
@@ -181,10 +184,16 @@ const Quiz: React.FC<Props> = ({
     <Portal>
       <QuizContainer>
         <View style={styles.container}>
+          <AlertDialog
+            message='Are you sure you want to quit?'
+            visible={showAlert}
+            onConfirm={onDismiss}
+            onDismiss={() => setShowAlert(false)}
+          />
           {/* CLOSE QUIZ */}
           <IconButton
             icon='close-box'
-            onPress={onDismiss}
+            onPress={() => setShowAlert(true)}
             style={{ position: 'absolute', top: 0, left: 0 }}
           />
 
@@ -210,12 +219,17 @@ const Quiz: React.FC<Props> = ({
             >
               {/* SHOW QUIZ RESULTS */}
               {completeQuiz && (
-                <Results total={flashcards.length} score={score.current} />
+                <Results
+                  total={flashcards.length}
+                  score={score.current}
+                  dismiss={onDismiss}
+                />
               )}
 
               {/* FLASHCARDS AND INPUT */}
               {!completeQuiz && (
                 <View style={{ alignItems: 'center' }}>
+
                   <ProgressBar
                     color={color}
                     progress={(cardCount + 1) / flashcards.length}
@@ -227,6 +241,7 @@ const Quiz: React.FC<Props> = ({
                     key={flashcards[cardCount]._id}
                     canFlip={submitted}
                     next={submitted}
+                    result={result}
                     slideRemaining={lastSlide}
                     showSolution={submitted}
                     nextCard={() => {
