@@ -29,6 +29,7 @@ import SwatchDialog from './SwatchDialog';
 // TYPES
 import { Category, Set } from './types';
 import { StackNavigationTypes } from './types';
+import checkDuplicate from '../utility/checkDuplicate';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',
@@ -59,17 +60,23 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewCategory = () => {
-    const newDoc = {
-      name: category.name,
-      color: category.color,
-      type: 'category',
-      createdAt: new Date(),
-    };
+    const exist = checkDuplicate(category.name, 'name', categories);
 
-    db.insert(newDoc, (err: Error, doc: any) => {
-      if (err) console.log(err);
-      setCategories((prev) => [doc, ...prev]);
-    });
+    if (!exist) {
+      const newDoc = {
+        name: category.name,
+        color: category.color,
+        type: 'category',
+        createdAt: new Date(),
+      };
+
+      db.insert(newDoc, (err: Error, doc: any) => {
+        if (err) console.log(err);
+        setCategories((prev) => [doc, ...prev]);
+      });
+    } else {
+      console.log('doc already exist ');
+    }
     closeDialog();
   };
 
@@ -103,10 +110,17 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const deleteCategory = (id: string) => {
+    let count = 0
     db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
       if (err) console.log(err);
+      count += numRemoved;
       setCategories((prev) => prev.filter((category) => category._id !== id));
     });
+
+    db.remove({categoryRef: id}, {multi: true}, (err: Error, numRemoved: number) => {
+      if (err) console.log(err);
+      console.log(count + numRemoved)
+    })
   };
 
   useEffect(() => {
