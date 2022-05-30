@@ -63,6 +63,16 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       if (err) console.log(err);
       setCardSets((prev) => prev.filter((set) => set._id !== id));
     });
+
+    // delete flashcard connected to set
+    db.remove(
+      { setRef: id },
+      { multi: true },
+      (err: Error, numRemoved: number) => {
+        if (err) console.log(err);
+        console.log(numRemoved);
+      }
+    );
   };
 
   const editSet = async (set: Set) => {
