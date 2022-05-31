@@ -1,6 +1,6 @@
 import { View, Pressable, StyleSheet, Alert } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
-import React, { useState, useMemo } from 'react';
+import { Text, useTheme, IconButton } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -9,9 +9,10 @@ import Animated, {
   Layout,
   SlideInLeft,
   ZoomOut,
+  withSpring,
 } from 'react-native-reanimated';
-import { IconButton } from 'react-native-paper';
 import Tooltip from 'react-native-walkthrough-tooltip';
+
 import { Category, Set } from './types';
 
 import AlertDialog from './AlertDialog';
@@ -21,16 +22,37 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface Props {
   card: Category | Set;
   color?: string;
+  multiSelect?: boolean;
   handleEdit: (card: any) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
+  markForDelete: (id: any, state: boolean) => void;
 }
 
 const TitleCard: React.FC<Props> = React.memo(
-  ({ card, handleEdit, handleDelete, onPress }) => {
+  ({ card, multiSelect, handleEdit, handleDelete, onPress, markForDelete }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [checked, setChecked] = useState(false);
+
+    // ANIMATION VALUES
+    const cardScale = useSharedValue(1);
+    const cardOpacity = useSharedValue(1)
+    const cardScaleAnimatedStyle = useAnimatedStyle(() => {
+      return {
+        // transform: [{ scale: withSpring(cardScale.value) }],
+        opacity: withSpring(cardOpacity.value)
+        // shadowColor: '#000',
+        // shadowOffset: {
+        //   width: 0,
+        //   height: cardShadow.value,
+        // },
+        // shadowOpacity: 0.25,
+        // shadowRadius: cardShadow.value,
+        // elevation: cardShadow.value,
+      };
+    });
     const tooltipScale = useSharedValue(0);
     const tooltipAnimateStyle = useAnimatedStyle(() => {
       return {
@@ -63,7 +85,6 @@ const TitleCard: React.FC<Props> = React.memo(
               handleEdit(card);
             }}
           />
-          {/* <IconButton icon='palette' onPress={handleColor} /> */}
         </Animated.View>
       );
     };
@@ -72,6 +93,16 @@ const TitleCard: React.FC<Props> = React.memo(
       tooltipScale.value = 1;
       setShowTooltip(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    };
+
+    const toggleCheck = () => {
+      if (!checked) {
+        cardOpacity.value = .5;
+      } else {
+        cardOpacity.value = 1;
+      }
+      setChecked((check) => !check);
+      markForDelete(card._id, !checked);
     };
 
     return (
@@ -88,13 +119,24 @@ const TitleCard: React.FC<Props> = React.memo(
             {
               backgroundColor: card.color,
             },
+            cardScaleAnimatedStyle,
           ]}
-          onPress={onPress}
+          // disable navigation when canMark is true
+          onPress={multiSelect ? toggleCheck : onPress}
           onLongPress={handleLongPress}
           exiting={ZoomOut}
           entering={SlideInLeft.delay(200)}
           layout={Layout.springify().damping(15).delay(200)}
         >
+          {/* indicator of card selection */}
+          {multiSelect && (
+            <IconButton
+              icon='close-thick'
+              color={checked ? 'white' : 'transparent'}
+              style={{ position: 'absolute', left: 0, top: 0 }}
+            />
+          )}
+
           <Tooltip
             placement='top'
             isVisible={showTooltip}
@@ -104,7 +146,7 @@ const TitleCard: React.FC<Props> = React.memo(
             }}
             content={<PopupIcons />}
             showChildInTooltip={false}
-            childContentSpacing={10} // closeOnContentInteraction={true}
+            childContentSpacing={10}
             disableShadow={true}
             contentStyle={{
               borderRadius: 10,
@@ -120,7 +162,8 @@ const TitleCard: React.FC<Props> = React.memo(
   (prevProps, nextProps) => {
     if (
       prevProps.card.name === nextProps.card.name &&
-      prevProps.card.color === nextProps.card.color
+      prevProps.card.color === nextProps.card.color &&
+      prevProps.multiSelect === nextProps.multiSelect
     )
       return true;
     return false;

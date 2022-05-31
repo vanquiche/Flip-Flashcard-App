@@ -1,35 +1,30 @@
 import {
   View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Pressable,
   ActivityIndicator,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
 import React, {
   useState,
   useCallback,
   useEffect,
-  useContext,
   Suspense,
 } from 'react';
 
 // UTILITIES
-import uuid from 'react-native-uuid';
 import db from '../db-services';
+import checkDuplicate from '../utility/checkDuplicate';
+import useMarkSelection from '../hooks/useMarkSelection';
 
 // COMPONENTS
 import ActionDialog from './ActionDialog';
 import TitleCard from './TitleCard';
 import SwatchDialog from './SwatchDialog';
+import AlertDialog from './AlertDialog';
 
 // TYPES
 import { Category, Set } from './types';
 import { StackNavigationTypes } from './types';
-import checkDuplicate from '../utility/checkDuplicate';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',
@@ -46,12 +41,15 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   // view state
   const [showDialog, setShowDialog] = useState(false);
   const [showSwatch, setShowSwatch] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const { colors } = useTheme();
+  const { selection, selectItem, clearSelection } = useMarkSelection();
 
-  const closeDialog = async () => {
+  const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {
       setCategory(INITIAL_STATE);
@@ -110,18 +108,44 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const deleteCategory = (id: string) => {
-    let count = 0
+    // let count = 0;
     db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
       if (err) console.log(err);
-      count += numRemoved;
+      // count += numRemoved;
       setCategories((prev) => prev.filter((category) => category._id !== id));
     });
-
-    db.remove({categoryRef: id}, {multi: true}, (err: Error, numRemoved: number) => {
-      if (err) console.log(err);
-      console.log(count + numRemoved)
-    })
+    //  delete sets and cards connected to category
+    db.remove(
+      { categoryRef: id },
+      { multi: true },
+      (err: Error, numRemoved: number) => {
+        if (err) console.log(err);
+        // console.log(count + numRemoved);
+      }
+    );
   };
+  const cancelMultiDeletion = () => {
+    setMultiSelectMode(false);
+    setShowAlert(false);
+  };
+
+  const confirmAlert = () => {
+    if (selection.current.length > 0) {
+      setShowAlert(true)
+    } else {
+      cancelMultiDeletion()
+    }
+  };
+
+  const deleteSelection = () => {
+    // cycle through selection and delete each ID
+    for (let i = 0; i < selection.current.length; i++) {
+      deleteCategory(selection.current[i]);
+    }
+    cancelMultiDeletion()
+  };
+
+
 
   useEffect(() => {
     // fetch data from db
@@ -150,9 +174,44 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
-      <IconButton
-        icon='card-plus-outline'
-        onPress={() => setShowDialog(true)}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 50 }}>
+        {!multiSelectMode && <IconButton
+          icon='card-plus-outline'
+          onPress={() => setShowDialog(true)}
+        />}
+        {/* start mode to mark for deletion */}
+        {!multiSelectMode && (
+          <Button
+            mode='text'
+            color={colors.secondary}
+            onPress={() => {
+              clearSelection();
+              setMultiSelectMode(true);
+            }}
+            disabled={categories.length === 0}
+          >
+            EDIT
+          </Button>
+        )}
+
+        {/* confirm selection for deletion */}
+        {multiSelectMode && (
+          <Button
+            mode='text'
+            color='red'
+            onPress={confirmAlert}
+            style={{position: 'absolute', right: 0}}
+          >
+            DELETE
+          </Button>
+        )}
+      </View>
+
+      <AlertDialog
+        visible={showAlert}
+        onDismiss={cancelMultiDeletion}
+        onConfirm={deleteSelection}
+        message='DELETE SELECTED CATEGORIES?'
       />
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
@@ -170,14 +229,16 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
                 <TitleCard
                   key={category._id}
                   card={category}
+                  multiSelect={multiSelectMode}
                   handleEdit={editCategory}
+                  markForDelete={selectItem}
                   handleDelete={deleteCategory}
-                  onPress={() =>
+                  onPress={() => {
                     navigation.navigate('Sets', {
                       categoryRef: category._id,
                       categoryTitle: category.name,
-                    })
-                  }
+                    });
+                  }}
                 />
               );
             })}
