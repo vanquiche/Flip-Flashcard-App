@@ -38,29 +38,16 @@ const TitleCard: React.FC<Props> = React.memo(
 
     // ANIMATION VALUES
     const cardScale = useSharedValue(1);
-    const cardOpacity = useSharedValue(1)
+    const cardOpacity = useSharedValue(1);
     const cardScaleAnimatedStyle = useAnimatedStyle(() => {
       return {
-        // transform: [{ scale: withSpring(cardScale.value) }],
-        opacity: withSpring(cardOpacity.value)
-        // shadowColor: '#000',
-        // shadowOffset: {
-        //   width: 0,
-        //   height: cardShadow.value,
-        // },
-        // shadowOpacity: 0.25,
-        // shadowRadius: cardShadow.value,
-        // elevation: cardShadow.value,
+        opacity: withSpring(cardOpacity.value),
       };
     });
     const tooltipScale = useSharedValue(0);
     const tooltipAnimateStyle = useAnimatedStyle(() => {
       return {
-        transform: [
-          {
-            scale: withTiming(tooltipScale.value),
-          },
-        ],
+        transform: [{ scale: withTiming(tooltipScale.value) }],
       };
     });
 
@@ -97,7 +84,7 @@ const TitleCard: React.FC<Props> = React.memo(
 
     const toggleCheck = () => {
       if (!checked) {
-        cardOpacity.value = .5;
+        cardOpacity.value = 0.5;
       } else {
         cardOpacity.value = 1;
       }

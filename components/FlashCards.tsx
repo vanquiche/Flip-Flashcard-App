@@ -1,12 +1,20 @@
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect, Suspense } from 'react';
-import { IconButton, useTheme, Text, TextInput } from 'react-native-paper';
+import {
+  IconButton,
+  useTheme,
+  Text,
+  TextInput,
+  Button,
+} from 'react-native-paper';
 
 import db from '../db-services';
+import useMarkSelection from '../hooks/useMarkSelection';
 
 import ActionDialog from './ActionDialog';
 import Card from './Card';
 import Quiz from './Quiz';
+import AlertDialog from './AlertDialog';
 
 import { Flashcard } from './types';
 import { StackNavigationTypes } from './types';
@@ -26,9 +34,13 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [startQuiz, setStartQuiz] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
 
   const { colors } = useTheme();
   const { setRef, categoryRef, setTitle, color } = route.params;
+  const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -94,6 +106,27 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
     closeDialog();
   };
 
+  const cancelMultiDeletion = () => {
+    setMultiSelectMode(false);
+    setShowAlert(false);
+  };
+
+  const confirmAlert = () => {
+    if (selection.current.length > 0) {
+      setShowAlert(true);
+    } else {
+      cancelMultiDeletion();
+    }
+  };
+
+  const deleteSelection = () => {
+    // cycle through selection and delete each ID
+    for (let i = 0; i < selection.current.length; i++) {
+      deleteCard(selection.current[i]);
+    }
+    cancelMultiDeletion();
+  };
+
   useEffect(() => {
     // fetch data from db
     const getData = () => {
@@ -124,6 +157,60 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
+      {/* CONTROL BUTTONS  */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          height: 50,
+        }}
+      >
+        {/* ADD NEW FLASHCARD */}
+        {!multiSelectMode && (
+          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
+            NEW CARD
+          </Button>
+        )}
+
+        {/* BUTTON TO START QUIZ */}
+        {!multiSelectMode && (
+          <Button
+            color={colors.secondary}
+            onPress={() => setStartQuiz(true)}
+            disabled={flashcards.length === 0}
+          >
+            QUIZ
+          </Button>
+        )}
+
+        {/* START MULTI-SELECT */}
+        {!multiSelectMode && (
+          <Button
+            mode='text'
+            color={colors.secondary}
+            onPress={() => {
+              clearSelection();
+              setMultiSelectMode(true);
+            }}
+            disabled={flashcards.length === 0}
+          >
+            EDIT
+          </Button>
+        )}
+
+        {/* confirm selection for deletion */}
+        {multiSelectMode && (
+          <Button
+            mode='text'
+            color='red'
+            onPress={confirmAlert}
+            style={{ position: 'absolute', right: 0 }}
+          >
+            DELETE
+          </Button>
+        )}
+      </View>
+
       {startQuiz && (
         <Quiz
           color={color}
@@ -134,26 +221,12 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         />
       )}
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginHorizontal: 30,
-        }}
-      >
-        {/* ADD NEW FLASHCARD */}
-        <IconButton
-          icon='cards-playing-heart-multiple'
-          onPress={() => setShowDialog(true)}
-        />
-
-        {/* BUTTON TO START QUIZ */}
-        <IconButton
-          icon='play-box-multiple'
-          onPress={() => setStartQuiz(true)}
-          disabled={flashcards.length === 0}
-        />
-      </View>
+      <AlertDialog
+        visible={showAlert}
+        onDismiss={() => setShowAlert(false)}
+        onConfirm={deleteSelection}
+        message='DELETE SELECTED SETS?'
+      />
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
@@ -166,12 +239,13 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
             {flashcards.map((card: Flashcard) => {
               return (
                 <Card
-                  // initial={}
                   key={card._id}
                   card={card}
                   color={color}
                   handleDelete={deleteCard}
                   handleEdit={editCard}
+                  multiSelect={multiSelectMode}
+                  markForDelete={selectItem}
                 />
               );
             })}

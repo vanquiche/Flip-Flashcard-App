@@ -25,25 +25,34 @@ const FRONT_CARD_POSITION_DEFAULT = 0;
 const BACK_CARD_POSITION_DEFAULT = 180;
 
 interface Props {
-  initial?: boolean;
   card: Flashcard;
   color?: string;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
+  multiSelect: boolean;
+  markForDelete: (id: any, state: boolean) => void;
 }
 
 const Card: React.FC<Props> = React.memo(
-  ({ card, color, initial, handleEdit, handleDelete }) => {
+  ({ card, color, handleEdit, handleDelete, multiSelect, markForDelete }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [cardFacingFront, setCardFacingFront] = useState(true);
+    const [checked, setChecked] = useState(false);
 
     const { colors } = useTheme();
     const cardFlip = useSharedValue(0);
     const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
     const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
+
+    const cardOpacity = useSharedValue(1);
+    const cardOpacityAnimatedStyle = useAnimatedStyle(() => {
+      return {
+        opacity: withSpring(cardOpacity.value),
+      };
+    });
 
     const tooltipScale = useSharedValue(0);
     const tooltipAnimateStyle = useAnimatedStyle(() => {
@@ -92,6 +101,16 @@ const Card: React.FC<Props> = React.memo(
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     };
 
+    const toggleCheck = () => {
+      if (!checked) {
+        cardOpacity.value = 0.5;
+      } else {
+        cardOpacity.value = 1;
+      }
+      setChecked((check) => !check);
+      markForDelete(card._id, !checked);
+    };
+
     const PopupIcons = () => {
       return (
         <Animated.View style={[styles.popup, tooltipAnimateStyle]}>
@@ -131,14 +150,24 @@ const Card: React.FC<Props> = React.memo(
             styles.card,
             { backgroundColor: color },
             rStyles_card_container,
+            cardOpacityAnimatedStyle
           ]}
           // onPress={onPress}
-          onPress={flipCard}
+          onPress={multiSelect ? toggleCheck : flipCard}
           onLongPress={handleLongPress}
           exiting={ZoomOut}
           entering={SlideInLeft.delay(300)}
           layout={Layout.springify().damping(15).delay(200)}
         >
+          {/* indicator of card selection */}
+          {multiSelect && (
+            <IconButton
+              icon='close-thick'
+              color={checked ? 'white' : 'transparent'}
+              style={{ position: 'absolute', left: 0, top: 0 }}
+            />
+          )}
+
           <Tooltip
             placement='top'
             isVisible={showTooltip}
@@ -179,7 +208,8 @@ const Card: React.FC<Props> = React.memo(
   (prevProps, nextProps) => {
     if (
       prevProps.card.prompt === nextProps.card.prompt &&
-      prevProps.card.solution === nextProps.card.solution
+      prevProps.card.solution === nextProps.card.solution &&
+      prevProps.multiSelect === nextProps.multiSelect
     )
       return true;
     return false;
@@ -192,7 +222,7 @@ const styles = StyleSheet.create({
     width: '70%',
     aspectRatio: 1 / 0.7,
     // height: 185,
-    padding: 10,
+    // padding: 10,
     marginVertical: 12,
     borderRadius: 15,
     backgroundColor: 'white',
@@ -212,6 +242,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backfaceVisibility: 'hidden',
+    padding: 20
   },
   cardBackText: {
     transform: [{ scaleY: -1 }],

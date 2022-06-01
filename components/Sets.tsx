@@ -1,15 +1,22 @@
 import { View, ActivityIndicator, ScrollView } from 'react-native';
-import { Text, IconButton, TextInput, useTheme } from 'react-native-paper';
-import React, { useState, useEffect, useContext, Suspense } from 'react';
+import {
+  Text,
+  IconButton,
+  TextInput,
+  useTheme,
+  Button,
+} from 'react-native-paper';
+import React, { useState, useEffect, Suspense } from 'react';
 
 // UTILITIES
-import uuid from 'react-native-uuid';
 import db from '../db-services';
+import useMarkSelection from '../hooks/useMarkSelection';
 
 // COMPONENTS
 import TitleCard from './TitleCard';
 import ActionDialog from './ActionDialog';
 import SwatchDialog from './SwatchDialog';
+import AlertDialog from './AlertDialog';
 
 import { Set, StackNavigationTypes } from './types';
 
@@ -28,9 +35,12 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   // view state
   const [showDialog, setShowDialog] = useState(false);
   const [showSwatch, setShowSwatch] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
+  const { selection, selectItem, clearSelection } = useMarkSelection();
   const { colors } = useTheme();
   const { categoryRef, categoryTitle } = route.params;
 
@@ -63,7 +73,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       if (err) console.log(err);
       setCardSets((prev) => prev.filter((set) => set._id !== id));
     });
-
     // delete flashcard connected to set
     db.remove(
       { setRef: id },
@@ -104,6 +113,27 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     closeDialog();
   };
 
+  const cancelMultiDeletion = () => {
+    setMultiSelectMode(false);
+    setShowAlert(false);
+  };
+
+  const confirmAlert = () => {
+    if (selection.current.length > 0) {
+      setShowAlert(true);
+    } else {
+      cancelMultiDeletion();
+    }
+  };
+
+  const deleteSelection = () => {
+    // cycle through selection and delete each ID
+    for (let i = 0; i < selection.current.length; i++) {
+      deleteSet(selection.current[i]);
+    }
+    cancelMultiDeletion();
+  };
+
   useEffect(() => {
     // fetch data from db
     const getData = () => {
@@ -134,10 +164,54 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
-      <IconButton
-        icon='card-plus-outline'
-        onPress={() => setShowDialog(true)}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          height: 50,
+        }}
+      >
+        {!multiSelectMode && (
+          <Button
+            color={colors.secondary}
+            onPress={() => setShowDialog(true)}
+          >NEW SET</Button>
+        )}
+        {/* start mode to mark for deletion */}
+        {!multiSelectMode && (
+          <Button
+            mode='text'
+            color={colors.secondary}
+            onPress={() => {
+              clearSelection();
+              setMultiSelectMode(true);
+            }}
+            disabled={cardSets.length === 0}
+          >
+            EDIT
+          </Button>
+        )}
+
+        {/* confirm selection for deletion */}
+        {multiSelectMode && (
+          <Button
+            mode='text'
+            color='red'
+            onPress={confirmAlert}
+            style={{ position: 'absolute', right: 0 }}
+          >
+            DELETE
+          </Button>
+        )}
+      </View>
+
+      <AlertDialog
+        visible={showAlert}
+        onDismiss={() => setShowAlert(false)}
+        onConfirm={deleteSelection}
+        message='DELETE SELECTED SETS?'
       />
+
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
           <View
@@ -153,7 +227,9 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
                 <TitleCard
                   key={set._id}
                   card={set}
+                  multiSelect={multiSelectMode}
                   handleEdit={editSet}
+                  markForDelete={selectItem}
                   handleDelete={deleteSet}
                   onPress={() =>
                     navigation.navigate('Cards', {

@@ -175,10 +175,10 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   return (
     <View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 50 }}>
-        {!multiSelectMode && <IconButton
-          icon='card-plus-outline'
+        {!multiSelectMode && <Button
+          color={colors.secondary}
           onPress={() => setShowDialog(true)}
-        />}
+        >NEW CATEGORY</Button>}
         {/* start mode to mark for deletion */}
         {!multiSelectMode && (
           <Button
@@ -209,7 +209,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
       <AlertDialog
         visible={showAlert}
-        onDismiss={cancelMultiDeletion}
+        onDismiss={() => setShowAlert(false)}
         onConfirm={deleteSelection}
         message='DELETE SELECTED CATEGORIES?'
       />
