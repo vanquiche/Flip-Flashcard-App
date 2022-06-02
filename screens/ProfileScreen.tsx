@@ -3,7 +3,7 @@ import React from 'react';
 
 import StackNavigator from '../components/StackNavigator';
 
-import Profile from '../components/Profile';
+import Profile from '../components/Pages/Profile';
 
 const screens = [{ name: 'Profile', component: Profile }];
 

@@ -12,19 +12,19 @@ import React, {
 } from 'react';
 
 // UTILITIES
-import db from '../db-services';
-import checkDuplicate from '../utility/checkDuplicate';
-import useMarkSelection from '../hooks/useMarkSelection';
+import db from '../../db-services';
+import checkDuplicate from '../../utility/checkDuplicate';
+import useMarkSelection from '../../hooks/useMarkSelection';
 
 // COMPONENTS
-import ActionDialog from './ActionDialog';
-import TitleCard from './TitleCard';
-import SwatchDialog from './SwatchDialog';
-import AlertDialog from './AlertDialog';
+import ActionDialog from '../ActionDialog';
+import TitleCard from '../TitleCard';
+import SwatchDialog from '../SwatchDialog';
+import AlertDialog from '../AlertDialog';
 
 // TYPES
-import { Category, Set } from './types';
-import { StackNavigationTypes } from './types';
+import { Category, Set } from '../types';
+import { StackNavigationTypes } from '../types';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',

@@ -3,9 +3,9 @@ import React from 'react';
 
 import StackNavigator from '../components/StackNavigator';
 
-import Categories from '../components/Categories';
-import Sets from '../components/Sets';
-import FlashCards from '../components/FlashCards';
+import Categories from '../components/Pages/Categories';
+import Sets from '../components/Pages/Sets';
+import FlashCards from '../components/Pages/FlashCards';
 
 const screens = [
   { name: 'Categories', component: Categories },

@@ -3,7 +3,7 @@ import React from 'react'
 
 import StackNavigator from '../components/StackNavigator'
 
-import Shop from '../components/Shop'
+import Shop from '../components/Pages/Shop'
 
 const screens = [
   {name: 'Shop', component: Shop}

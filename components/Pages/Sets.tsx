@@ -9,16 +9,16 @@ import {
 import React, { useState, useEffect, Suspense } from 'react';
 
 // UTILITIES
-import db from '../db-services';
-import useMarkSelection from '../hooks/useMarkSelection';
+import db from '../../db-services';
+import useMarkSelection from '../../hooks/useMarkSelection';
 
 // COMPONENTS
-import TitleCard from './TitleCard';
-import ActionDialog from './ActionDialog';
-import SwatchDialog from './SwatchDialog';
-import AlertDialog from './AlertDialog';
+import TitleCard from '../TitleCard';
+import ActionDialog from '../ActionDialog';
+import SwatchDialog from '../SwatchDialog';
+import AlertDialog from '../AlertDialog';
 
-import { Set, StackNavigationTypes } from './types';
+import { Set, StackNavigationTypes } from '../types';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',

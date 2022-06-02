@@ -8,16 +8,16 @@ import {
   Button,
 } from 'react-native-paper';
 
-import db from '../db-services';
-import useMarkSelection from '../hooks/useMarkSelection';
+import db from '../../db-services';
+import useMarkSelection from '../../hooks/useMarkSelection';
 
-import ActionDialog from './ActionDialog';
-import Card from './Card';
-import Quiz from './Quiz';
-import AlertDialog from './AlertDialog';
+import ActionDialog from '../ActionDialog';
+import Card from '../Card';
+import Quiz from '../Quiz';
+import AlertDialog from '../AlertDialog';
 
-import { Flashcard } from './types';
-import { StackNavigationTypes } from './types';
+import { Flashcard } from '../types';
+import { StackNavigationTypes } from '../types';
 
 const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
   id: '',

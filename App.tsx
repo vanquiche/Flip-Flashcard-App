@@ -17,6 +17,10 @@ import ShopScreen from './screens/ShopScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { UserContext, UserContextType } from './context/userContext';
+import db from './db-services';
+import { User } from './components/types';
+
 declare global {
   namespace ReactNativePaper {
     interface ThemeColors {
@@ -25,7 +29,6 @@ declare global {
   }
 }
 
-// const Tab = createMaterialBottomTabNavigator();
 const Tab = createBottomTabNavigator();
 
 const queryClient = new QueryClient();
@@ -40,6 +43,8 @@ const customFonts = {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>([]);
+
 
   const theme = {
     ...DefaultTheme,
@@ -66,7 +71,7 @@ export default function App() {
     },
   };
 
-  const TabIcon = (props: {icon: string}) => {
+  const TabIcon = (props: { icon: string }) => {
     return (
       <IconButton
         icon={props.icon}
@@ -85,6 +90,24 @@ export default function App() {
     loadFonts();
   }, []);
 
+  // CHECK FOR USER OBJECT
+  useEffect(() => {
+    const getUser = () => {
+      db.find({ type: 'user' }, (err: Error, docs: any) => {
+        if (err) console.log(err);
+
+        if (docs.length > 0) {
+          console.log(docs);
+          setUser(docs[0]);
+        } else {
+          console.log('no users');
+        }
+      });
+    };
+
+    getUser();
+  }, []);
+
   if (loading) {
     return <ActivityIndicator size='large' />;
   }
@@ -92,56 +115,51 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
-        <PaperProvider theme={theme}>
-          <StatusBar hidden />
-          <Tab.Navigator
-           screenOptions={{
-             tabBarStyle: {
-              backgroundColor: theme.colors.primary
-             },
-             tabBarShowLabel: false,
-             headerShown: false,
-           }}
-          >
-            <Tab.Screen
-              name='Home-page'
-              component={HomeScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                <TabIcon icon='home'/>
-                ),
+        <UserContext.Provider value={{user, setUser}}>
+          <PaperProvider theme={theme}>
+            <StatusBar hidden />
+            <Tab.Navigator
+              screenOptions={{
+                tabBarStyle: {
+                  backgroundColor: theme.colors.primary,
+                  // disable tabbar if no user exist
+                  display: user.length === 0 ? 'none' : 'flex',
+                },
+                tabBarShowLabel: false,
+                headerShown: false,
               }}
-            />
-            <Tab.Screen
-              name='flashcards'
-              component={CategoryScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <TabIcon icon='cards'/>
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='store'
-              component={ShopScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <TabIcon icon='store' />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name='Profile-page'
-              component={ProfileScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <TabIcon icon='heart'/>
-                ),
-
-              }}
-            />
-          </Tab.Navigator>
-        </PaperProvider>
+            >
+              <Tab.Screen
+                name='Home-page'
+                component={HomeScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => <TabIcon icon='home' />,
+                }}
+              />
+              <Tab.Screen
+                name='flashcards'
+                component={CategoryScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => <TabIcon icon='cards' />,
+                }}
+              />
+              <Tab.Screen
+                name='store'
+                component={ShopScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => <TabIcon icon='store' />,
+                }}
+              />
+              <Tab.Screen
+                name='Profile-page'
+                component={ProfileScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => <TabIcon icon='heart' />,
+                }}
+              />
+            </Tab.Navigator>
+          </PaperProvider>
+        </UserContext.Provider>
       </NavigationContainer>
     </QueryClientProvider>
   );

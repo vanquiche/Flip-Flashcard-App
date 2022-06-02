@@ -4,7 +4,18 @@ import { RouteProp } from '@react-navigation/native';
 
 export interface StackNavigationTypes {
   navigation: StackNavigationProp<ParamListBase>;
-  route: RouteProp<{ params: { categoryTitle: string; categoryRef: string, color?: string, setRef: string, setTitle: string } }, 'params'>;
+  route: RouteProp<
+    {
+      params: {
+        categoryTitle: string;
+        categoryRef: string;
+        color?: string;
+        setRef: string;
+        setTitle: string;
+      };
+    },
+    'params'
+  >;
 }
 
 export interface Category {
@@ -12,24 +23,67 @@ export interface Category {
   name: string;
   color: string;
   createdAt: Date | number;
-  type: 'category'
+  type: 'category';
 }
 
 export interface Set {
-  categoryRef: string;
   _id: string;
+  type: 'set';
   name: string;
   color: string;
   createdAt: Date | number;
-  type: 'set'
+  categoryRef: string;
 }
 
 export interface Flashcard {
-  setRef: string;
-  categoryRef: string;
   _id: string;
+  type: 'flashcard';
   prompt: string;
   solution: string;
   createdAt: Date | number;
-  type: 'flashcard'
+  setRef: string;
+  categoryRef: string;
+}
+
+interface CategoryTracker {
+  name: string;
+  points: number;
+  level: number;
+}
+
+interface Theme {
+  tabColor: string;
+  cardColor: string;
+  headerColor: string;
+}
+
+interface CardDesign {
+  name: string;
+  design: string;
+}
+
+interface CardColor {
+  name: string;
+  color: string;
+}
+
+interface Achievement {
+  name: string;
+  description: string;
+  points: number;
+}
+
+export interface User {
+  _id?: string;
+  type: 'user';
+  username: string;
+  level: number;
+  heartcoin: number;
+  categoryTrack: CategoryTracker[];
+  achievements: Achievement[];
+  collections: {
+    cardDesigns: CardDesign[];
+    cardColors: CardColor[];
+    themes: Theme[];
+  };
 }
