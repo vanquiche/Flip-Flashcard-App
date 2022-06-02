@@ -22,7 +22,7 @@ const HomeScreen = () => {
   const headerStyle = {
     headerStyle: {
       backgroundColor: colors.primary,
-      height: 60,
+      height: 70,
     },
     headerTintColor: colors.secondary,
     headerTitleStyle: {

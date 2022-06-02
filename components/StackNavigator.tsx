@@ -32,7 +32,7 @@ const StackNavigator: React.FC<Props> = ({ screens, title, id }) => {
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.primary,
-          height: 60
+          height: 70
         },
         headerTintColor: colors.secondary,
         headerTitleStyle: {

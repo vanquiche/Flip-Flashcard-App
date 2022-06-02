@@ -59,8 +59,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const addNewCategory = () => {
     const exist = checkDuplicate(category.name, 'name', categories);
     if (!exist) {
-      const newDoc = {
-        _id: uuid.v4(),
+      const newDoc: Category = {
+        _id: uuid.v4().toString(),
         name: category.name,
         color: category.color,
         type: 'category',
@@ -68,7 +68,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
       };
 
       dispatch({ type: 'insert', payload: newDoc });
-    } else return;
+    }
     closeDialog();
   };
 
@@ -83,7 +83,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    dispatch({ type: 'update', payload: category });
+    const docQuery = { name: category.name, color: category.color }
+    dispatch({ type: 'update', payload: category, query: docQuery});
     closeDialog();
   };
 

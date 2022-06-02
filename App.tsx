@@ -124,6 +124,7 @@ export default function App() {
                   backgroundColor: theme.colors.primary,
                   // disable tabbar if no user exist
                   display: user.length === 0 ? 'none' : 'flex',
+                  height: 70
                 },
                 tabBarShowLabel: false,
                 headerShown: false,

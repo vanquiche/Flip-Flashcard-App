@@ -1,5 +1,5 @@
 import { View, ScrollView, ActivityIndicator } from 'react-native';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useReducer } from 'react';
 import {
   IconButton,
   useTheme,
@@ -8,6 +8,7 @@ import {
   Button,
 } from 'react-native-paper';
 
+import uuid from 'react-native-uuid';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 
@@ -18,6 +19,9 @@ import AlertDialog from '../AlertDialog';
 
 import { Flashcard } from '../types';
 import { StackNavigationTypes } from '../types';
+import getData from '../../utility/getData';
+import { cardReducer } from '../../reducers/CardReducer';
+import checkDuplicate from '../../utility/checkDuplicate';
 
 const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
   id: '',
@@ -28,7 +32,7 @@ const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
 interface Props extends StackNavigationTypes {}
 
 const FlashCards: React.FC<Props> = ({ navigation, route }) => {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [flashcards, dispatch] = useReducer(cardReducer, []);
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
   const [startQuiz, setStartQuiz] = useState(false);
@@ -51,30 +55,29 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewCard = () => {
-    const newCard = {
-      type: 'flashcard',
-      prompt: flashcard.prompt,
-      solution: flashcard.solution,
-      createdAt: new Date(),
-      categoryRef: categoryRef,
-      setRef: setRef,
-    };
-    db.insert(newCard, (err: Error, doc: any) => {
-      if (err) console.log(err);
-      setFlashcards((prev) => [doc, ...prev]);
-    });
+    const exist = checkDuplicate(flashcard.prompt, 'prompt', flashcards);
+
+    if (!exist) {
+      const newCard: Flashcard = {
+        _id: uuid.v4().toString(),
+        type: 'flashcard',
+        prompt: flashcard.prompt,
+        solution: flashcard.solution,
+        createdAt: new Date(),
+        categoryRef: categoryRef,
+        setRef: setRef,
+      };
+      dispatch({ type: 'insert', payload: newCard });
+    }
     closeDialog();
   };
 
   const deleteCard = (id: string) => {
-    db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
-      if (err) console.log(err);
-      setFlashcards((prev) => prev.filter((card) => card._id !== id));
-    });
+    dispatch({ type: 'remove-single', payload: id });
   };
 
-  const editCard = async (card: Flashcard) => {
-    await setFlashcard({
+  const editCard = (card: Flashcard) => {
+    setFlashcard({
       id: card._id,
       prompt: card.prompt,
       solution: card.solution,
@@ -84,25 +87,8 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    db.update(
-      { _id: flashcard.id },
-      { $set: { prompt: flashcard.prompt, solution: flashcard.solution } },
-      (err: Error, numRemoved: number) => {
-        if (err) console.log(err);
-        setFlashcards((prev) =>
-          prev.map((item: Flashcard) => {
-            if (item._id === flashcard.id) {
-              return {
-                ...item,
-                prompt: flashcard.prompt,
-                solution: flashcard.solution,
-              };
-            }
-            return item;
-          })
-        );
-      }
-    );
+    const docQuery = { prompt: flashcard.prompt, solution: flashcard.solution };
+    dispatch({ type: 'update', payload: flashcard, query: docQuery });
     closeDialog();
   };
 
@@ -122,31 +108,14 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      deleteCard(selection.current[i]);
+      dispatch({ type: 'remove-single', payload: selection.current[i] });
     }
     cancelMultiDeletion();
   };
 
   useEffect(() => {
     // fetch data from db
-    const getData = () => {
-      db.find(
-        { type: 'flashcard', setRef: setRef },
-        async (err: any, docs: any) => {
-          const data = await docs.map((doc: Flashcard) => {
-            // convert date to number
-            doc.createdAt = new Date(doc.createdAt).valueOf();
-            return doc;
-          });
-          // sort by date
-          const sorted = data.sort((a: any, b: any) => {
-            return b.createdAt - a.createdAt;
-          });
-          setFlashcards(sorted);
-        }
-      );
-    };
-    getData();
+    getData({ type: 'flashcard', setRef: setRef }, dispatch);
   }, []);
 
   useEffect(() => {

@@ -6,9 +6,10 @@ import {
   useTheme,
   Button,
 } from 'react-native-paper';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useReducer } from 'react';
 
 // UTILITIES
+import uuid from 'react-native-uuid'
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 
@@ -19,6 +20,9 @@ import SwatchDialog from '../SwatchDialog';
 import AlertDialog from '../AlertDialog';
 
 import { Set, StackNavigationTypes } from '../types';
+import getData from '../../utility/getData';
+import { cardReducer } from '../../reducers/CardReducer';
+import checkDuplicate from '../../utility/checkDuplicate';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
@@ -30,7 +34,7 @@ interface Props extends StackNavigationTypes {}
 
 const Sets: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [cardSets, setCardSets] = useState<Set[]>([]);
+  const [cardSets, dispatch] = useReducer(cardReducer, []);
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -54,38 +58,28 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewSet = () => {
-    const newSet = {
-      type: 'set',
-      name: cardSet.name,
-      color: cardSet.color,
-      createdAt: new Date(),
-      categoryRef: categoryRef,
-    };
-    db.insert(newSet, (err: Error, doc: any) => {
-      if (err) console.log(err);
-      setCardSets((prev) => [doc, ...prev]);
-    });
+    const exist = checkDuplicate(cardSet.name, 'name', cardSets);
+
+    if (!exist) {
+      const newSet: Set = {
+        _id: uuid.v4().toString(),
+        type: 'set',
+        name: cardSet.name,
+        color: cardSet.color,
+        createdAt: new Date(),
+        categoryRef: categoryRef,
+      };
+      dispatch({type: 'insert', payload: newSet})
+    }
     closeDialog();
   };
 
   const deleteSet = (id: string) => {
-    db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
-      if (err) console.log(err);
-      setCardSets((prev) => prev.filter((set) => set._id !== id));
-    });
-    // delete flashcard connected to set
-    db.remove(
-      { setRef: id },
-      { multi: true },
-      (err: Error, numRemoved: number) => {
-        if (err) console.log(err);
-        console.log(numRemoved);
-      }
-    );
+    dispatch({type: 'remove', payload: id})
   };
 
-  const editSet = async (set: Set) => {
-    await setCardSet({
+  const editSet = (set: Set) => {
+    setCardSet({
       id: set._id,
       name: set.name,
       color: set.color,
@@ -95,21 +89,8 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    db.update(
-      { _id: cardSet.id },
-      { $set: { name: cardSet.name, color: cardSet.color } },
-      (err: Error, numRemoved: number) => {
-        if (err) console.log(err);
-        setCardSets((prev) =>
-          prev.map((item) => {
-            if (item._id === cardSet.id) {
-              return { ...item, name: cardSet.name, color: cardSet.color };
-            }
-            return item;
-          })
-        );
-      }
-    );
+    const docQuery = { name: cardSet.name, color: cardSet.color }
+    dispatch({type: 'update', payload: cardSet, query: docQuery})
     closeDialog();
   };
 
@@ -129,31 +110,13 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      deleteSet(selection.current[i]);
+      dispatch({type: 'remove', payload: selection.current[i]})
     }
     cancelMultiDeletion();
   };
 
   useEffect(() => {
-    // fetch data from db
-    const getData = () => {
-      db.find(
-        { type: 'set', categoryRef: categoryRef },
-        async (err: any, docs: any) => {
-          const data = await docs.map((doc: Set) => {
-            // convert date to number
-            doc.createdAt = new Date(doc.createdAt).valueOf();
-            return doc;
-          });
-          // sort by date
-          const sorted = data.sort((a: any, b: any) => {
-            return b.createdAt - a.createdAt;
-          });
-          setCardSets(sorted);
-        }
-      );
-    };
-    getData();
+    getData({type: 'set', categoryRef: categoryRef }, dispatch)
   }, []);
 
   useEffect(() => {
