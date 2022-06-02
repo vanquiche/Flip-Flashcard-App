@@ -31,6 +31,7 @@ export interface Set {
   type: 'set';
   name: string;
   color: string;
+  favorite?: boolean;
   createdAt: Date | number;
   categoryRef: string;
 }

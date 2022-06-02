@@ -1,28 +1,45 @@
 import { View, Text } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button } from 'react-native-paper';
 
 import { UserContext } from '../../context/userContext';
 import db from '../../db-services';
 
-const Home = () => {
+import { StackNavigationTypes } from '../types';
+
+interface Props extends StackNavigationTypes {}
+
+const Home: React.FC<Props> = ({ navigation, route }) => {
   const { user, setUser } = useContext(UserContext);
   // console.log(user)
 
-  const deleteUser = () => {
-    db.remove({ type: 'user' }, {}, (err: Error, numRemoved: number) => {
-      if (err) console.log(err);
-      console.log(numRemoved);
-      setUser([]);
-    });
-  };
+  useEffect(() => {
+
+  }, [])
 
   return (
     <View>
       <Text>Home Page</Text>
-      <Text>{user[0]?.username}</Text>
-      <Button mode='text' color='black' onPress={deleteUser}>
-        Delete {user[0]?._id}
+      <Text>Hello {user[0]?.username}</Text>
+      <Button
+        mode='text'
+        onPress={() =>
+          navigation.navigate('flashcards', {
+            screen: 'Sets',
+            params: {
+              categoryRef: 'T9phKEf26c8tQZ3g',
+              categoryTitle: 'Jejsid',
+            },
+            // establish routes to allow navigation within tab
+            route: [
+              {screen: 'Categories'},
+              {screen: 'Sets'},
+              {screen: 'Cards'}
+            ]
+          })
+        }
+      >
+        Go to Set
       </Button>
     </View>
   );
