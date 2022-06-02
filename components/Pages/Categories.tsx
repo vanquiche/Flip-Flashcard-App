@@ -1,15 +1,12 @@
-import {
-  View,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
 import React, {
   useState,
-  useCallback,
+  useReducer,
   useEffect,
   Suspense,
 } from 'react';
+import uuid from 'react-native-uuid';
 
 // UTILITIES
 import db from '../../db-services';
@@ -26,6 +23,7 @@ import AlertDialog from '../AlertDialog';
 // TYPES
 import { Category, Set } from '../types';
 import { StackNavigationTypes } from '../types';
+import { cardReducer } from '../../reducers/CardReducer';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',
@@ -37,7 +35,7 @@ interface Props extends StackNavigationTypes {}
 
 const Categories: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, dispatch] = useReducer(cardReducer, []);
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -60,27 +58,22 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const addNewCategory = () => {
     const exist = checkDuplicate(category.name, 'name', categories);
-
     if (!exist) {
       const newDoc = {
+        _id: uuid.v4(),
         name: category.name,
         color: category.color,
         type: 'category',
         createdAt: new Date(),
       };
 
-      db.insert(newDoc, (err: Error, doc: any) => {
-        if (err) console.log(err);
-        setCategories((prev) => [doc, ...prev]);
-      });
-    } else {
-      console.log('doc already exist ');
-    }
+      dispatch({ type: 'insert', payload: newDoc });
+    } else return;
     closeDialog();
   };
 
-  const editCategory = async (category: Category | Set) => {
-    await setCategory({
+  const editCategory = (category: Category | Set) => {
+    setCategory({
       id: category._id,
       name: category.name,
       color: category.color,
@@ -90,41 +83,14 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    db.update(
-      { _id: category.id },
-      { $set: { name: category.name, color: category.color } },
-      (err: Error, numRemoved: number) => {
-        if (err) console.log(err);
-        setCategories((prev) =>
-          prev.map((item) => {
-            if (item._id === category.id) {
-              return { ...item, name: category.name, color: category.color };
-            }
-            return item;
-          })
-        );
-      }
-    );
+    dispatch({ type: 'update', payload: category });
     closeDialog();
   };
 
   const deleteCategory = (id: string) => {
-    // let count = 0;
-    db.remove({ _id: id }, {}, (err: Error, numRemoved: any) => {
-      if (err) console.log(err);
-      // count += numRemoved;
-      setCategories((prev) => prev.filter((category) => category._id !== id));
-    });
-    //  delete sets and cards connected to category
-    db.remove(
-      { categoryRef: id },
-      { multi: true },
-      (err: Error, numRemoved: number) => {
-        if (err) console.log(err);
-        // console.log(count + numRemoved);
-      }
-    );
+    dispatch({ type: 'remove', payload: id });
   };
+
   const cancelMultiDeletion = () => {
     setMultiSelectMode(false);
     setShowAlert(false);
@@ -132,24 +98,22 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const confirmAlert = () => {
     if (selection.current.length > 0) {
-      setShowAlert(true)
+      setShowAlert(true);
     } else {
-      cancelMultiDeletion()
+      cancelMultiDeletion();
     }
   };
 
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      deleteCategory(selection.current[i]);
+      dispatch({ type: 'remove', payload: selection.current[i] });
     }
-    cancelMultiDeletion()
+    cancelMultiDeletion();
   };
 
-
-
   useEffect(() => {
-    getData({type: 'category'}, setCategories)
+    getData({type: 'category'}, dispatch)
   }, []);
 
   useEffect(() => {
@@ -160,11 +124,19 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 50 }}>
-        {!multiSelectMode && <Button
-          color={colors.secondary}
-          onPress={() => setShowDialog(true)}
-        >NEW CATEGORY</Button>}
+      {/* button wrapper */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          height: 50,
+        }}
+      >
+        {!multiSelectMode && (
+          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
+            NEW CATEGORY
+          </Button>
+        )}
         {/* start mode to mark for deletion */}
         {!multiSelectMode && (
           <Button
@@ -186,7 +158,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
             mode='text'
             color='red'
             onPress={confirmAlert}
-            style={{position: 'absolute', right: 0}}
+            style={{ position: 'absolute', right: 0 }}
           >
             DELETE
           </Button>
@@ -210,7 +182,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
               justifyContent: 'center',
             }}
           >
-            {categories.map((category: Category) => {
+            {categories?.map((category: Category) => {
               return (
                 <TitleCard
                   key={category._id}

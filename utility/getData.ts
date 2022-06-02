@@ -1,6 +1,7 @@
 import db from '../db-services';
+import { Action } from '../reducers/CardReducer';
 
-const getData = (query: any, cb: (data: any) => void) => {
+const getData = (query: any, cb: (data: Action) => void) => {
   db.find(query, async (err: Error, docs: any[]) => {
     const data = await docs.map((doc: any) => {
       // convert date to number
@@ -11,7 +12,7 @@ const getData = (query: any, cb: (data: any) => void) => {
     const sorted = data.sort((a: any, b: any) => {
       return b.createdAt - a.createdAt;
     });
-    cb(sorted);
+    cb({ type: 'restore', payload: sorted });
   });
 };
 

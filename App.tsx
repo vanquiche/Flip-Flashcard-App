@@ -97,7 +97,7 @@ export default function App() {
         if (err) console.log(err);
 
         if (docs.length > 0) {
-          console.log(docs);
+          // console.log(docs);
           setUser(docs[0]);
         } else {
           console.log('no users');
