@@ -63,6 +63,7 @@ const SwatchDialog: React.FC<Props> = ({
       showChildInTooltip={false}
       childContentSpacing={-10}
       closeOnContentInteraction={false}
+      useInteractionManager={true}
       disableShadow={true}
       tooltipStyle={{
         width: 250,

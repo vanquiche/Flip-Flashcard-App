@@ -119,7 +119,7 @@ const Quiz: React.FC<Props> = ({
       headerStyle: {
         transform: [{ translateY: headerAnimate }],
         backgroundColor: colors.primary,
-        height: 60,
+        height: 70,
       },
     });
     // slide tab down
@@ -127,6 +127,7 @@ const Quiz: React.FC<Props> = ({
       tabBarStyle: {
         transform: [{ translateY: tabAnimate }],
         backgroundColor: colors.primary,
+        height: 70
       },
     });
 
@@ -139,7 +140,7 @@ const Quiz: React.FC<Props> = ({
         headerStyle: {
           transform: [{ translateY: headerAnimate }],
           backgroundColor: colors.primary,
-          height: 60,
+          height: 70,
         },
       });
       // slide tab up
@@ -147,6 +148,7 @@ const Quiz: React.FC<Props> = ({
         tabBarStyle: {
           transform: [{ translateY: tabAnimate }],
           backgroundColor: colors.primary,
+          height: 70
         },
       });
     };
