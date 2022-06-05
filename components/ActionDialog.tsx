@@ -64,11 +64,7 @@ const ActionDialog: React.FC<Props> = ({
         style={[
           styles.dialog,
           {
-            transform: [
-              {
-                translateY: slideAnimation,
-              },
-            ],
+            transform: [{ translateY: slideAnimation }],
             backgroundColor: colors.primary,
           },
         ]}
@@ -114,7 +110,7 @@ const ActionDialog: React.FC<Props> = ({
 const styles = StyleSheet.create({
   dialog: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 15,
   },
   title: {
     textAlign: 'center',
@@ -126,11 +122,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     paddingHorizontal: 20,
-    marginTop: 15,
+    marginTop: 10,
   },
   button: {
     width: '48%',
     elevation: 0,
+    margin: 0,
   },
 });
 export default ActionDialog;

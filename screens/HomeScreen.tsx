@@ -30,12 +30,12 @@ const HomeScreen = () => {
       fontSize: 22,
     },
     // disable header if no user is found
-    headerShown: user.length === 0 ? false : true,
+    headerShown: !user._id ? false : true,
   };
 
   return (
     <Stack.Navigator screenOptions={headerStyle}>
-      <Stack.Screen name='Home' component={user.length === 0 ? SignUp : Home} />
+      <Stack.Screen name='Home' component={!user._id ? SignUp : Home} />
     </Stack.Navigator>
   );
 };

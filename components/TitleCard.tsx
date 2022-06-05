@@ -19,8 +19,17 @@ import AlertDialog from './AlertDialog';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+interface Collection {
+  _id: string;
+  name: string;
+  color: string;
+  favorite?: boolean;
+  createdAt: Date | number;
+  categoryRef?: string;
+}
+
 interface Props {
-  card: Category | Set;
+  card: Collection;
   color?: string;
   multiSelect?: boolean;
   handleEdit: (card: any) => void;
@@ -150,6 +159,7 @@ const TitleCard: React.FC<Props> = React.memo(
     if (
       prevProps.card.name === nextProps.card.name &&
       prevProps.card.color === nextProps.card.color &&
+      prevProps.card?.favorite === nextProps.card?.favorite &&
       prevProps.multiSelect === nextProps.multiSelect
     )
       return true;

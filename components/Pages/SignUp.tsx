@@ -19,10 +19,11 @@ const SignUp: React.FC<Props> = ({navigation}) => {
   const { colors } = useTheme();
 
   const createUser = () => {
-    const user = {
+    const user: User = {
       type: 'user',
       username: newUser.username,
       level: 1,
+      experiencePoints: 0,
       heartcoin: 100,
       categoryTrack: [],
       achievements: [],
@@ -31,14 +32,18 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         cardColors: [],
         themes: [],
       },
+      login: {
+        lastLogin: new Date(),
+        streak: 0
+      }
     };
 
     db.insert(user, (err: Error, newDoc: User) => {
       if (err) console.log(err);
       // console.log(newDoc);
-      let user = []
-      user.push(newDoc)
-      setUser(user)
+      // let user = []
+      // user.push(newDoc)
+      setUser(newDoc)
       // navigation.replace('Home')
     });
   };

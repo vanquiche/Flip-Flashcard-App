@@ -5,11 +5,13 @@ import {
   TextInput,
   useTheme,
   Button,
+  Checkbox,
+  Title,
 } from 'react-native-paper';
 import React, { useState, useEffect, Suspense, useReducer } from 'react';
 
 // UTILITIES
-import uuid from 'react-native-uuid'
+import uuid from 'react-native-uuid';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 
@@ -24,10 +26,16 @@ import getData from '../../utility/getData';
 import { cardReducer } from '../../reducers/CardReducer';
 import checkDuplicate from '../../utility/checkDuplicate';
 
-const INITIAL_STATE: { id?: string; name: string; color: string } = {
+const INITIAL_STATE: {
+  id?: string;
+  name: string;
+  color: string;
+  favorite: boolean;
+} = {
   id: '',
   name: '',
   color: 'tomato',
+  favorite: false,
 };
 
 interface Props extends StackNavigationTypes {}
@@ -46,7 +54,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { colors } = useTheme();
-  const { categoryRef, categoryTitle } = route.params;
+  const { categoryRef } = route.params;
 
   // CRUD functions
   const closeDialog = async () => {
@@ -66,16 +74,17 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         type: 'set',
         name: cardSet.name,
         color: cardSet.color,
+        favorite: cardSet.favorite,
         createdAt: new Date(),
         categoryRef: categoryRef,
       };
-      dispatch({type: 'insert', payload: newSet})
+      dispatch({ type: 'insert', payload: newSet });
     }
     closeDialog();
   };
 
   const deleteSet = (id: string) => {
-    dispatch({type: 'remove', payload: id})
+    dispatch({ type: 'remove', payload: id });
   };
 
   const editSet = (set: Set) => {
@@ -83,14 +92,19 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       id: set._id,
       name: set.name,
       color: set.color,
+      favorite: set.favorite,
     });
     setEditMode(true);
     setShowDialog(true);
   };
 
   const submitEdit = () => {
-    const docQuery = { name: cardSet.name, color: cardSet.color }
-    dispatch({type: 'update', payload: cardSet, query: docQuery})
+    const docQuery = {
+      name: cardSet.name,
+      color: cardSet.color,
+      favorite: cardSet.favorite,
+    };
+    dispatch({ type: 'update', payload: cardSet, query: docQuery });
     closeDialog();
   };
 
@@ -110,19 +124,26 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      dispatch({type: 'remove', payload: selection.current[i]})
+      dispatch({ type: 'remove', payload: selection.current[i] });
     }
     cancelMultiDeletion();
   };
 
   useEffect(() => {
-    getData({type: 'set', categoryRef: categoryRef }, dispatch)
+    getData({ type: 'set', categoryRef: categoryRef }, dispatch);
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({
-      title: categoryTitle.toUpperCase(),
-    });
+    // navigation.setOptions({
+    //   title: categoryTitle.toUpperCase(),
+    // });
+    db.find({_id: categoryRef}, (err: Error, docs: any) => {
+      if (err) console.log(err);
+      navigation.setOptions({
+        title: docs[0].name.toUpperCase()
+      })
+
+    })
   }, []);
 
   return (
@@ -135,10 +156,9 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         }}
       >
         {!multiSelectMode && (
-          <Button
-            color={colors.secondary}
-            onPress={() => setShowDialog(true)}
-          >NEW SET</Button>
+          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
+            NEW SET
+          </Button>
         )}
         {/* start mode to mark for deletion */}
         {!multiSelectMode && (
@@ -198,7 +218,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
                     navigation.navigate('Cards', {
                       color: set.color,
                       setRef: set._id,
-                      setTitle: set.name,
                       categoryRef: categoryRef,
                     })
                   }
@@ -244,6 +263,31 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
         </View>
+        {/* <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 10,
+          }}
+        > */}
+
+        <IconButton
+          size={30}
+          color={colors.secondary}
+          style={{
+            margin: 0,
+            position: 'absolute',
+            top: -10,
+            right: -10,
+            zIndex: 10,
+          }}
+          icon={cardSet.favorite ? 'star' : 'star-outline'}
+          onPress={() =>
+            setCardSet((prev) => ({ ...prev, favorite: !prev.favorite }))
+          }
+        />
+        {/* </View> */}
       </ActionDialog>
     </View>
   );

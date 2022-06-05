@@ -17,7 +17,7 @@ import ShopScreen from './screens/ShopScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { UserContext, UserContextType } from './context/userContext';
+import { UserContext, UserContextType, initUser } from './context/userContext';
 import db from './db-services';
 import { User } from './components/types';
 
@@ -43,8 +43,7 @@ const customFonts = {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>([]);
-
+  const [user, setUser] = useState<User>(initUser);
 
   const theme = {
     ...DefaultTheme,
@@ -93,12 +92,15 @@ export default function App() {
   // CHECK FOR USER OBJECT
   useEffect(() => {
     const getUser = () => {
-      db.find({ type: 'user' }, (err: Error, docs: any) => {
+      db.find({ type: 'user' }, (err: Error, docs: User[]) => {
         if (err) console.log(err);
 
         if (docs.length > 0) {
           // console.log(docs);
-          setUser(docs);
+
+          // compare last login to todays date
+
+          setUser(docs[0]);
         } else {
           console.log('no users');
         }
@@ -115,7 +117,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
-        <UserContext.Provider value={{user, setUser}}>
+        <UserContext.Provider value={{ user, setUser }}>
           <PaperProvider theme={theme}>
             <StatusBar hidden />
             <Tab.Navigator
@@ -123,8 +125,8 @@ export default function App() {
                 tabBarStyle: {
                   backgroundColor: theme.colors.primary,
                   // disable tabbar if no user exist
-                  display: user.length === 0 ? 'none' : 'flex',
-                  height: 70
+                  display: !user._id ? 'none' : 'flex',
+                  height: 70,
                 },
                 tabBarShowLabel: false,
                 headerShown: false,

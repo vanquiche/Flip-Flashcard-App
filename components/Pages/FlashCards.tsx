@@ -35,6 +35,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [flashcards, dispatch] = useReducer(cardReducer, []);
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
+  const [setName, setSetName] = useState('');
   const [startQuiz, setStartQuiz] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
@@ -43,7 +44,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const { colors } = useTheme();
-  const { setRef, categoryRef, setTitle, color } = route.params;
+  const { setRef, categoryRef, color } = route.params;
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const closeDialog = () => {
@@ -116,13 +117,20 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     // fetch data from db
     getData({ type: 'flashcard', setRef: setRef }, dispatch);
-  }, []);
+  }, [setRef]);
 
   useEffect(() => {
-    navigation.setOptions({
-      title: setTitle.toUpperCase(),
+    // navigation.setOptions({
+    //   title: setTitle.toUpperCase(),
+    // });
+    db.find({ _id: setRef }, (err: Error, docs: any) => {
+      if (err) console.log(err);
+      navigation.setOptions({
+        title: docs[0].name.toUpperCase(),
+      });
+      setSetName(docs[0].name);
     });
-  }, []);
+  }, [setRef]);
 
   return (
     <View>
@@ -186,7 +194,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
           cards={flashcards}
           navigation={navigation}
           onDismiss={() => setStartQuiz(false)}
-          set={setTitle}
+          set={setName}
         />
       )}
 

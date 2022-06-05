@@ -194,8 +194,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
                   handleDelete={deleteCategory}
                   onPress={() => {
                     navigation.navigate('Sets', {
-                      categoryRef: category._id,
-                      categoryTitle: category.name,
+                      categoryRef: category._id
                     });
                   }}
                 />

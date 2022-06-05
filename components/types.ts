@@ -31,7 +31,7 @@ export interface Set {
   type: 'set';
   name: string;
   color: string;
-  favorite?: boolean;
+  favorite: boolean;
   createdAt: Date | number;
   categoryRef: string;
 }
@@ -74,9 +74,12 @@ interface Achievement {
   points: number;
 }
 
-export interface User {
+interface undefined {}
+
+export interface User extends undefined {
   _id?: string;
   type: 'user';
+  experiencePoints: number;
   username: string;
   level: number;
   heartcoin: number;
@@ -87,4 +90,9 @@ export interface User {
     cardColors: CardColor[];
     themes: Theme[];
   };
+  login: {
+    lastLogin: Date | number
+    streak: number;
+  }
+
 }
