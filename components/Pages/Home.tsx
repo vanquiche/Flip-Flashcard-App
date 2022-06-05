@@ -63,7 +63,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
 
     if (user) {
-      console.log(user);
+      // console.log(user);
       const lastLogin = user.login.lastLogin.valueOf();
       // one day in ms
       const oneday = 60 * 60 * 24 * 1000;
