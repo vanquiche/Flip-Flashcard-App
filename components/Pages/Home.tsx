@@ -25,6 +25,11 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   const { colors } = useTheme();
 
+  const closeAlert = () => {
+    userDispatch({ type: 'set login', payload: { login: { notify: false } } });
+    // console.log(user.login.notify)
+  };
+
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
       ...CommonActions.reset({
@@ -68,6 +73,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
       const lastLogin = user.login.week;
       // get date of last login from week
       const streak = loginStreak(lastLogin[lastLogin.length - 1]);
+      console.log(streak);
 
       if (streak === null) {
         // login is less than 24hrs old then do nothing
@@ -78,21 +84,22 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         const updateLogin = {
           login: {
             week: sortWeek(user.login.week),
-            streak: 0
-          }
-        }
-        userDispatch({type: 'set login', payload: updateLogin})
-
-      } else if (streak) {
+            streak: 0,
+            notify: false,
+          },
+        };
+        userDispatch({ type: 'set login', payload: updateLogin });
+      } else if (streak && lastLogin.length >= 2) {
         // login is greater than one day but less than 2days
         // increment streak
         const updateLogin = {
           login: {
             week: sortWeek(user.login.week),
             streak: (user.login.streak += 1),
-          }
-        }
-        userDispatch({type: 'set login', payload: updateLogin})
+            notify: true,
+          },
+        };
+        userDispatch({ type: 'set login', payload: updateLogin });
       }
     } else return;
   }, []);
@@ -113,23 +120,12 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <View
-        style={{
-          backgroundColor: colors.primary,
-          marginHorizontal: 15,
-          marginVertical: 15,
-          height: 185,
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          borderRadius: 15,
-        }}
-      >
-        <Title style={{ color: colors.secondary }}>LOGIN GOAL</Title>
-        <LoginGoal dates={user.login.week} />
-        <Title style={{ color: colors.secondary }}>
-          LOGIN STREAK: {user.login.streak}
-        </Title>
-      </View>
+      <LoginGoal
+        dates={user.login.week}
+        streak={user.login.streak}
+        notify={user.login.notify}
+        onDismiss={closeAlert}
+      />
 
       <Title style={{ textAlign: 'center', color: colors.secondary }}>
         FAVORITE SETS
@@ -160,8 +156,6 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   favoritesContainer: {
-    // width: 600,
-    // paddingHorizontal: 20
     marginHorizontal: 15,
     marginVertical: 10,
   },
@@ -170,7 +164,6 @@ const styles = StyleSheet.create({
     height: 75,
     borderRadius: 10,
     margin: 10,
-    // marginVertical: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },

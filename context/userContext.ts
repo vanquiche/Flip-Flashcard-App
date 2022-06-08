@@ -2,7 +2,6 @@ import React, { createContext } from 'react';
 import { User } from '../components/types';
 import { UserAction } from '../reducers/UserReducer';
 
-
 export interface UserContextType {
   user: User;
   userDispatch: React.Dispatch<UserAction>;
@@ -26,6 +25,7 @@ export const initUser = {
   login: {
     week: [new Date()],
     streak: 0,
+    notify: false
   },
 };
 

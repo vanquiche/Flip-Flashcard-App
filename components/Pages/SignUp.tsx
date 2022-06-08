@@ -33,7 +33,8 @@ const SignUp: React.FC<Props> = ({navigation}) => {
       },
       login: {
         week: [new Date()],
-        streak: 0
+        streak: 0,
+        notify: false
       }
     };
 

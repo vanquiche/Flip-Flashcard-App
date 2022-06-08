@@ -7,11 +7,11 @@ export interface StackNavigationTypes {
   route: RouteProp<
     {
       params: {
-        categoryTitle: string;
         categoryRef: string;
         color?: string;
         setRef: string;
-        setTitle: string;
+        // categoryTitle: string;
+        // setTitle: string;
       };
     },
     'params'
@@ -20,10 +20,10 @@ export interface StackNavigationTypes {
 
 export interface Category {
   _id: string;
+  type: 'category';
   name: string;
   color: string;
   createdAt: Date | number;
-  type: 'category';
   points: number;
   level: number;
 }
@@ -76,9 +76,8 @@ interface Achievement {
   points: number;
 }
 
-interface undefined {}
 
-export interface User extends undefined {
+export interface User {
   _id?: string;
   type: 'user';
   experiencePoints: number;
@@ -94,6 +93,7 @@ export interface User extends undefined {
   login: {
     week: Date[];
     streak: number;
+    notify: boolean;
   }
 
 }
