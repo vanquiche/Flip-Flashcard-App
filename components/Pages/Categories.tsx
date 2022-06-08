@@ -65,6 +65,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         color: category.color,
         type: 'category',
         createdAt: new Date(),
+        points: 0,
+        level: 0
       };
 
       dispatch({ type: 'insert', payload: newDoc });

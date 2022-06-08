@@ -24,6 +24,8 @@ export interface Category {
   color: string;
   createdAt: Date | number;
   type: 'category';
+  points: number;
+  level: number;
 }
 
 export interface Set {
@@ -83,7 +85,6 @@ export interface User extends undefined {
   username: string;
   level: number;
   heartcoin: number;
-  categoryTrack: CategoryTracker[];
   achievements: Achievement[];
   collections: {
     cardDesigns: CardDesign[];
@@ -91,7 +92,7 @@ export interface User extends undefined {
     themes: Theme[];
   };
   login: {
-    lastLogin: Date | number
+    week: Date[];
     streak: number;
   }
 

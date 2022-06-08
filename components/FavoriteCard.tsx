@@ -41,17 +41,17 @@ const TitleCard: React.FC<Props> = React.memo(
     }, []);
 
     return (
-      <AnimatedPressable
+      <Pressable
         style={[styles.card, { backgroundColor: card.color }]}
         // disable navigation when canMark is true
         onPress={onPress}
-        exiting={ZoomOut}
-        entering={SlideInLeft.delay(200)}
-        layout={Layout.springify().damping(15).delay(200)}
+        // exiting={ZoomOut}
+        // entering={SlideInLeft.delay(200)}
+        // layout={Layout.springify().damping(15).delay(200)}
       >
         <Title style={styles.cardCount}>{count}</Title>
         <Title style={styles.textContent}>{card.name}</Title>
-      </AnimatedPressable>
+      </Pressable>
     );
   },
   (prevProps, nextProps) => {

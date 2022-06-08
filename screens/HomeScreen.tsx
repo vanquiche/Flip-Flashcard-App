@@ -6,8 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 // NAVIGATION
 
 // COMPONENTS
-import Home from '../components/Pages/Home';
 import StackNavigator from '../components/StackNavigator';
+import Home from '../components/Pages/Home';
 import SignUp from '../components/Pages/SignUp';
 
 import { useTheme } from 'react-native-paper';
@@ -35,7 +35,11 @@ const HomeScreen = () => {
 
   return (
     <Stack.Navigator screenOptions={headerStyle}>
-      <Stack.Screen name='Home' component={!user._id ? SignUp : Home} />
+      {!user._id ? (
+        <Stack.Screen name='Home' component={SignUp} />
+      ) : (
+        <Stack.Screen name='Home' component={Home} />
+      )}
     </Stack.Navigator>
   );
 };
