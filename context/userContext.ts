@@ -1,9 +1,11 @@
 import React, { createContext } from 'react';
 import { User } from '../components/types';
+import { UserAction } from '../reducers/UserReducer';
+
 
 export interface UserContextType {
   user: User;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
+  userDispatch: React.Dispatch<UserAction>;
 }
 
 type Datatype = 'user';
@@ -15,7 +17,6 @@ export const initUser = {
   username: '',
   level: 1,
   heartcoin: 100,
-  categoryTrack: [],
   achievements: [],
   collections: {
     cardDesigns: [],
@@ -23,14 +24,14 @@ export const initUser = {
     themes: [],
   },
   login: {
-    lastLogin: new Date(),
+    week: [new Date()],
     streak: 0,
   },
 };
 
 const initialValue = {
   user: initUser,
-  setUser: (): void => {},
+  userDispatch: () => {},
 };
 
 export const UserContext = createContext<UserContextType>(initialValue);

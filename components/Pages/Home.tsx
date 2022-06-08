@@ -12,12 +12,15 @@ import getData from '../../utility/getData';
 import FavoriteCard from '../FavoriteCard';
 
 import { Set, StackNavigationTypes, User } from '../types';
+import loginStreak from '../../utility/loginStreak';
+import sortWeek from '../../utility/sortWeek';
+import LoginGoal from '../LoginGoal';
 
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
   const [favorites, dispatch] = useReducer(cardReducer, []);
-  const { user, setUser } = useContext(UserContext);
+  const { user, userDispatch } = useContext(UserContext);
   // console.log(user)
 
   const { colors } = useTheme();
@@ -61,37 +64,41 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-
     if (user) {
-      // console.log(user);
-      const lastLogin = user.login.lastLogin.valueOf();
-      // one day in ms
-      const oneday = 60 * 60 * 24 * 1000;
-      const twodays = oneday * 2;
-      const today = new Date().valueOf();
+      const lastLogin = user.login.week;
+      // get date of last login from week
+      const streak = loginStreak(lastLogin[lastLogin.length - 1]);
 
-      const timeDiff = today - lastLogin;
-
-      if (timeDiff <= oneday) {
+      if (streak === null) {
+        // login is less than 24hrs old then do nothing
         return;
-      } else if (timeDiff > oneday && timeDiff <= twodays) {
-        // const updateUser = user.map
-        setUser((prev) => ({
-          ...prev,
+      } else if (streak === false) {
+        // login is older than 2days
+        // set streak to 0
+        const updateLogin = {
           login: {
-            lastLogin: new Date(),
-            streak: prev.login.streak++,
-          },
-        }));
-      }
-    }
+            week: sortWeek(user.login.week),
+            streak: 0
+          }
+        }
+        userDispatch({type: 'set login', payload: updateLogin})
 
+      } else if (streak) {
+        // login is greater than one day but less than 2days
+        // increment streak
+        const updateLogin = {
+          login: {
+            week: sortWeek(user.login.week),
+            streak: (user.login.streak += 1),
+          }
+        }
+        userDispatch({type: 'set login', payload: updateLogin})
+      }
+    } else return;
   }, []);
 
   return (
     <View style={{ flex: 1 }}>
-      {/* <Text>Home Page</Text>
-      <Text>Hello {user[0]?.username}</Text> */}
       <View style={{ flexDirection: 'row', marginTop: 15 }}>
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>
@@ -112,12 +119,16 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           marginHorizontal: 15,
           marginVertical: 15,
           height: 185,
-          justifyContent: 'center',
+          justifyContent: 'space-evenly',
           alignItems: 'center',
           borderRadius: 15,
         }}
       >
-        <Title style={{ color: colors.secondary }}>Login Bonus</Title>
+        <Title style={{ color: colors.secondary }}>LOGIN GOAL</Title>
+        <LoginGoal dates={user.login.week} />
+        <Title style={{ color: colors.secondary }}>
+          LOGIN STREAK: {user.login.streak}
+        </Title>
       </View>
 
       <Title style={{ textAlign: 'center', color: colors.secondary }}>

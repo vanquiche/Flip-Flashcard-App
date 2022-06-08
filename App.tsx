@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { ActivityIndicator, StatusBar } from 'react-native';
 import { configureFonts, IconButton } from 'react-native-paper';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 import * as Font from 'expo-font';
 
@@ -20,6 +18,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { UserContext, UserContextType, initUser } from './context/userContext';
 import db from './db-services';
 import { User } from './components/types';
+import { cardReducer } from './reducers/CardReducer';
+import { userReducer } from './reducers/UserReducer';
 
 declare global {
   namespace ReactNativePaper {
@@ -31,8 +31,6 @@ declare global {
 
 const Tab = createBottomTabNavigator();
 
-const queryClient = new QueryClient();
-
 const customFonts = {
   BalooBhaiRegular: require('./assets/fonts/BalooBhai2-Regular.ttf'),
   BalooBhaiMedium: require('./assets/fonts/BalooBhai2-Medium.ttf'),
@@ -43,7 +41,7 @@ const customFonts = {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User>(initUser);
+  const [user, userDispatch] = useReducer(userReducer, initUser);
 
   const theme = {
     ...DefaultTheme,
@@ -100,7 +98,8 @@ export default function App() {
 
           // compare last login to todays date
 
-          setUser(docs[0]);
+          // setUser(docs[0]);
+          userDispatch({type: 'set user', payload: docs[0]})
         } else {
           console.log('no users');
         }
@@ -115,9 +114,9 @@ export default function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+
       <NavigationContainer>
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, userDispatch }}>
           <PaperProvider theme={theme}>
             <StatusBar hidden />
             <Tab.Navigator
@@ -164,6 +163,5 @@ export default function App() {
           </PaperProvider>
         </UserContext.Provider>
       </NavigationContainer>
-    </QueryClientProvider>
   );
 }

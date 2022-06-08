@@ -14,7 +14,7 @@ const SignUp: React.FC<Props> = ({navigation}) => {
     icon: '',
   });
 
-  const { user, setUser } = useContext(UserContext);
+  const { user, userDispatch } = useContext(UserContext);
 
   const { colors } = useTheme();
 
@@ -25,7 +25,6 @@ const SignUp: React.FC<Props> = ({navigation}) => {
       level: 1,
       experiencePoints: 0,
       heartcoin: 100,
-      categoryTrack: [],
       achievements: [],
       collections: {
         cardDesigns: [],
@@ -33,18 +32,14 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         themes: [],
       },
       login: {
-        lastLogin: new Date(),
+        week: [new Date()],
         streak: 0
       }
     };
 
     db.insert(user, (err: Error, newDoc: User) => {
       if (err) console.log(err);
-      // console.log(newDoc);
-      // let user = []
-      // user.push(newDoc)
-      setUser(newDoc)
-      // navigation.replace('Home')
+      userDispatch({type: 'create user', payload: newDoc})
     });
   };
 
