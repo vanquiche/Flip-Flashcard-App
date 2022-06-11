@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet } from 'react-native';
-import React, { useEffect, useContext } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import React, { useEffect, useContext, useCallback, useState } from 'react';
 import { IconButton } from 'react-native-paper';
 
 import Animated, {
@@ -14,52 +14,52 @@ const AnimatedSwatch = Animated.createAnimatedComponent(Pressable);
 
 interface Props {
   color: string;
-  selection: string;
-  setColor: (color: string) => void;
+  onChange: (color: string) => void;
+  selected: boolean;
+  // onPress: () => void;
 }
 
-const Swatch: React.FC<Props> = React.memo(
-  ({ color, selection, setColor }) => {
-    // const { selection, setColor } = useContext(PaletteContext);
+const Swatch: React.FC<Props> = ({ color, onChange, selected }) => {
+  const [checked, setChecked] = useState<boolean>(false);
 
-    // console.log('swatch rendered');
-    const isSelected = selection === color;
+  // const colorSelection = useCallback(() => {
+  //   setColor(color);
+  //   // console.log(color)
+  // }, [setColor]);
 
-    const swatchSize = useSharedValue(1);
-    const swatchOpacity = useSharedValue(0);
-    const swatchAnimateStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: withSpring(swatchSize.value) }],
-      };
-    });
+  const handleChange = () => {
+    onChange(color);
+    // setChecked(true);
+  };
 
-    useEffect(() => {
-      isSelected ? (swatchSize.value = 1.2) : (swatchSize.value = 1);
-    }, []);
+  useEffect(() => {
+    if (selected) {
+      setChecked(true);
+    }
+    return () => {
+      setChecked(false);
+    };
+  }, []);
 
-    return (
-      <AnimatedSwatch
-        style={[styles.swatch, { backgroundColor: color }, swatchAnimateStyle]}
-        onPress={() => setColor(color)}
-        onLongPress={(e) => e.preventDefault()}
-        // entering={FadeIn.delay(Math.random() * 100)}
-      >
-        {selection === color && (
-          <IconButton
-            icon='check'
-            style={{ marginLeft: 5, marginTop: 3 }}
-            color='white'
-          />
-        )}
-      </AnimatedSwatch>
-    );
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.color === nextProps.color)
-    return true;
-    return false;
-  }
-);
+  return (
+    <AnimatedSwatch
+      style={[styles.swatch, { backgroundColor: color }]}
+      onPress={handleChange}
+      // onBlur={() => setChecked(false)}
+      onLongPress={(e) => e.preventDefault()}
+      entering={FadeIn.delay(Math.random() * 300)}
+    >
+      {checked && (
+        <IconButton
+          icon='check'
+          style={{ marginLeft: 5, marginTop: 3 }}
+          color='white'
+          onBlur={() => console.log('hello')}
+        />
+      )}
+    </AnimatedSwatch>
+  );
+};
 
 const styles = StyleSheet.create({
   swatch: {
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
     margin: 5,
   },
 });
-export default Swatch;
+export default React.memo(Swatch);

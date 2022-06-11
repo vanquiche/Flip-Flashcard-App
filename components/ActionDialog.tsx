@@ -71,7 +71,7 @@ const ActionDialog: React.FC<Props> = ({
         dismissable={false}
       >
         {/* scrollview to prevent taps outside of keyboard to register when open */}
-        <ScrollView>
+        {/* <ScrollView> */}
           <Dialog.Title
             style={[
               styles.title,
@@ -101,7 +101,7 @@ const ActionDialog: React.FC<Props> = ({
               disabled={disableSubmit}
             />
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
       </Dialog>
     </Portal>
   );

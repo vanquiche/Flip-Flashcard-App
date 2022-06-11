@@ -25,6 +25,7 @@ import { Set, StackNavigationTypes } from '../types';
 import getData from '../../utility/getData';
 import { cardReducer } from '../../reducers/CardReducer';
 import checkDuplicate from '../../utility/checkDuplicate';
+import SwatchSelector from '../SwatchSelector';
 
 const INITIAL_STATE: {
   id?: string;
@@ -131,7 +132,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     getData({ type: 'set', categoryRef: categoryRef }, dispatch);
-  }, []);
+  }, [categoryRef]);
 
   useEffect(() => {
     // navigation.setOptions({
@@ -144,7 +145,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       })
 
     })
-  }, []);
+  }, [categoryRef]);
 
   return (
     <View>
@@ -252,25 +253,14 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             maxLength={32}
             value={cardSet.name}
             onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
-            style={{ width: '80%', height: 40, margin: 0 }}
+            style={{ width: '80%', height: 40, margin: 0,  marginBottom: 6 }}
           />
 
-          <SwatchDialog
-            isVisible={showSwatch}
-            onClose={() => setShowSwatch(false)}
-            onOpen={() => setShowSwatch(true)}
+          <SwatchSelector
             color={cardSet.color}
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
         </View>
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 10,
-          }}
-        > */}
 
         <IconButton
           size={30}
@@ -278,8 +268,8 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
           style={{
             margin: 0,
             position: 'absolute',
-            top: -10,
-            right: -10,
+            top: 0,
+            right: 0,
             zIndex: 10,
           }}
           icon={cardSet.favorite ? 'star' : 'star-outline'}
@@ -287,7 +277,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             setCardSet((prev) => ({ ...prev, favorite: !prev.favorite }))
           }
         />
-        {/* </View> */}
       </ActionDialog>
     </View>
   );

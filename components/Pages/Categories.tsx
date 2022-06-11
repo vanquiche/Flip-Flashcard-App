@@ -1,10 +1,11 @@
-import { View, ActivityIndicator, ScrollView } from 'react-native';
+import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
 import React, {
   useState,
   useReducer,
   useEffect,
   Suspense,
+  useCallback,
 } from 'react';
 import uuid from 'react-native-uuid';
 
@@ -24,6 +25,8 @@ import AlertDialog from '../AlertDialog';
 import { Category, Set } from '../types';
 import { StackNavigationTypes } from '../types';
 import { cardReducer } from '../../reducers/CardReducer';
+import SwatchSelector from '../SwatchSelector';
+import useSelectColor from '../../hooks/useSelectColor';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   name: '',
@@ -45,8 +48,10 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
+  const {swatchColor, changeSwatchColor} = useSelectColor()
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
+
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -66,7 +71,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         type: 'category',
         createdAt: new Date(),
         points: 0,
-        level: 0
+        level: 0,
       };
 
       dispatch({ type: 'insert', payload: newDoc });
@@ -85,8 +90,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const submitEdit = () => {
-    const docQuery = { name: category.name, color: category.color }
-    dispatch({ type: 'update', payload: category, query: docQuery});
+    const docQuery = { name: category.name, color: category.color };
+    dispatch({ type: 'update', payload: category, query: docQuery });
     closeDialog();
   };
 
@@ -115,8 +120,14 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
     cancelMultiDeletion();
   };
 
+  const selectColor = useCallback((color: string) => {
+    setCategory((prev) => ({ ...prev, color }));
+    console.log(color);
+
+  }, []);
+
   useEffect(() => {
-    getData({type: 'category'}, dispatch)
+    getData({ type: 'category' }, dispatch);
   }, []);
 
   useEffect(() => {
@@ -132,19 +143,28 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          height: 50,
+          height: 75,
+          paddingHorizontal: 15,
         }}
       >
         {!multiSelectMode && (
-          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
-            NEW CATEGORY
+          <Button
+            mode='contained'
+            style={styles.button}
+            labelStyle={[styles.buttonLabel, {color: colors.secondary}]}
+            color={colors.primary}
+            onPress={() => setShowDialog(true)}
+          >
+            NEW
           </Button>
         )}
         {/* start mode to mark for deletion */}
         {!multiSelectMode && (
           <Button
-            mode='text'
-            color={colors.secondary}
+            mode='contained'
+            style={styles.button}
+            labelStyle={[styles.buttonLabel, {color: colors.secondary}]}
+            color={colors.primary}
             onPress={() => {
               clearSelection();
               setMultiSelectMode(true);
@@ -159,9 +179,10 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         {multiSelectMode && (
           <Button
             mode='text'
+            style={[styles.button, { position: 'absolute', right: 0 }]}
+            labelStyle={styles.buttonLabel}
             color='red'
             onPress={confirmAlert}
-            style={{ position: 'absolute', right: 0 }}
           >
             DELETE
           </Button>
@@ -196,7 +217,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
                   handleDelete={deleteCategory}
                   onPress={() => {
                     navigation.navigate('Sets', {
-                      categoryRef: category._id
+                      categoryRef: category._id,
                     });
                   }}
                 />
@@ -230,20 +251,32 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
             maxLength={32}
             value={category.name}
             onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}
-            style={{ width: '80%', height: 40, margin: 0 }}
+            style={{ width: '80%', height: 40, margin: 0, marginBottom: 6 }}
           />
 
-          <SwatchDialog
-            isVisible={showSwatch}
-            onClose={() => setShowSwatch(false)}
-            onOpen={() => setShowSwatch(true)}
+          <SwatchSelector
             color={category.color}
-            setColor={(color) => setCategory((prev) => ({ ...prev, color }))}
+            setColor={(color) => {
+              changeSwatchColor(color)
+              setCategory(prev => ({...prev, color: swatchColor.current}))
+            }}
           />
         </View>
       </ActionDialog>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    marginVertical: 10,
+    height: 50,
+    elevation: 0,
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    // color: 'white',
+  },
+});
 
 export default Categories;

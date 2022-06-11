@@ -8,6 +8,7 @@ const Profile = () => {
   const { user, userDispatch } = useContext(UserContext);
 
   const lastLoginDate = user.login.week[user.login.week.length - 1]
+  console.log(user.login.week);
 
   const deleteUser = () => {
     db.remove({ type: 'user' }, {}, (err: Error, numRemoved: number) => {

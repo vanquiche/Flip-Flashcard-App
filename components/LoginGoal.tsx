@@ -27,6 +27,8 @@ const LoginGoal: React.FC<Props> = ({ dates, streak, notify, onDismiss }) => {
     { name: 'S', date: 6 },
   ];
 
+  // console.log(user.login.notify)
+
   // const closeAlert = () => {
   //   userDispatch({ type: 'set login', payload: { login: { notify: false } } });
   //   console.log(user.login.notify)
@@ -72,7 +74,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak, notify, onDismiss }) => {
   return (
     <>
       <AlertNotification
-        visible={notify}
+        visible={user.login.notify}
         dismiss={onDismiss}
         message='YOU EARNED 50 POINTS FOR LOGGING IN CONSECUTIVELY'
       />

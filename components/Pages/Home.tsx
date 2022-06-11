@@ -2,7 +2,7 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import React, { useContext, useEffect, useState, useReducer } from 'react';
 import { Button, Text, Title, useTheme } from 'react-native-paper';
 
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useIsFocused } from '@react-navigation/native';
 
 import { UserContext } from '../../context/userContext';
 import { cardReducer } from '../../reducers/CardReducer';
@@ -23,11 +23,19 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
   const { user, userDispatch } = useContext(UserContext);
   // console.log(user)
 
+  const isFocused = useIsFocused();
+
   const { colors } = useTheme();
 
   const closeAlert = () => {
-    userDispatch({ type: 'set login', payload: { login: { notify: false } } });
+    const updateNotify = {
+      login: {
+        notify: false,
+      },
+    };
+    userDispatch({ type: 'set login', payload: updateNotify });
     // console.log(user.login.notify)
+    // console.log('close alert')
   };
 
   const navigateToFavorite = (set: Set) => {
@@ -64,16 +72,23 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+  // useEffect(() => {
+  //   console.log('focused: ' + isFocused)
+  // }, [isFocused])
+
   useEffect(() => {
-    getData({ type: 'set', favorite: true }, dispatch);
-  }, []);
+    if (isFocused) {
+      console.log('useEffect: getting favorites');
+      getData({ type: 'set', favorite: true }, dispatch);
+    } else return;
+  }, [isFocused]);
 
   useEffect(() => {
     if (user) {
       const lastLogin = user.login.week;
       // get date of last login from week
       const streak = loginStreak(lastLogin[lastLogin.length - 1]);
-      console.log(streak);
+      console.log('streak: ' + streak);
 
       if (streak === null) {
         // login is less than 24hrs old then do nothing
@@ -82,6 +97,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         // login is older than 2days
         // set streak to 0
         const updateLogin = {
+          experiencePoints: user.experiencePoints + 50,
           login: {
             week: sortWeek(user.login.week),
             streak: 0,
@@ -89,13 +105,13 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           },
         };
         userDispatch({ type: 'set login', payload: updateLogin });
-      } else if (streak && lastLogin.length >= 2) {
+      } else if (streak) {
         // login is greater than one day but less than 2days
         // increment streak
         const updateLogin = {
           login: {
             week: sortWeek(user.login.week),
-            streak: (user.login.streak += 1),
+            streak: user.login.streak + 1,
             notify: true,
           },
         };
@@ -115,7 +131,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>
-            {user?.heartcoin} COINS
+            XP: {user?.experiencePoints}
           </Title>
         </View>
       </View>

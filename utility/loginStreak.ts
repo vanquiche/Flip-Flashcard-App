@@ -11,14 +11,14 @@ const loginStreak = (login: Date | number) => {
     const twodays = oneday * 2;
 
     //  make sure larger number is on left side to produce positive difference
-    const diff = today > lastLogin ? today - lastLogin : lastLogin - today;
+    // const diff = today > lastLogin ? today - lastLogin : lastLogin - today;
 
     // last login date is less than one day or past two days
-    if (diff <= oneday) return null;
+    if (oneday < lastLogin) return null;
     // last login in is at least 2 days old and past streak
-    if (diff >= twodays) return false;
+    if (lastLogin > twodays) return false;
     // last login date is greater than one day but less than two days
-    if (diff >= oneday && diff <= twodays) return true;
+    if (oneday > lastLogin && lastLogin < twodays) return true;
   }
 };
 
