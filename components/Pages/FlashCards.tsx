@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
 } from 'react-native-paper';
+import { DateTime } from 'luxon';
 
 import uuid from 'react-native-uuid';
 import db from '../../db-services';
@@ -64,7 +65,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         type: 'flashcard',
         prompt: flashcard.prompt,
         solution: flashcard.solution,
-        createdAt: new Date(),
+        createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
         setRef: setRef,
       };

@@ -97,7 +97,6 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         // login is older than 2days
         // set streak to 0
         const updateLogin = {
-          experiencePoints: user.experiencePoints + 50,
           login: {
             week: sortWeek(user.login.week),
             streak: 0,
@@ -109,6 +108,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         // login is greater than one day but less than 2days
         // increment streak
         const updateLogin = {
+          experiencePoints: user.experiencePoints + 50,
           login: {
             week: sortWeek(user.login.week),
             streak: user.login.streak + 1,

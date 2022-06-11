@@ -1,24 +1,25 @@
-const loginStreak = (login: Date | number) => {
+import { DateTime } from 'luxon';
+
+const loginStreak = (login: string) => {
   // return false if login is null or undefined
   if (!login) {
     return null;
   } else {
     // convert date to miliseconds
-    const lastLogin = login.valueOf();
-    const today = new Date().valueOf();
+    const dt = DateTime;
+    const lastLogin = dt.fromISO(login);
+    const today = dt.now();
 
-    const oneday = 24 * 60 * 60 * 1000;
-    const twodays = oneday * 2;
-
-    //  make sure larger number is on left side to produce positive difference
-    // const diff = today > lastLogin ? today - lastLogin : lastLogin - today;
+    const diff = lastLogin.diff(today, 'hours').toObject();
 
     // last login date is less than one day or past two days
-    if (oneday < lastLogin) return null;
-    // last login in is at least 2 days old and past streak
-    if (lastLogin > twodays) return false;
-    // last login date is greater than one day but less than two days
-    if (oneday > lastLogin && lastLogin < twodays) return true;
+    if (diff.hours) {
+      if (diff.hours < 24) return null;
+      // last login in is at least 2 days old and past streak
+      if (diff.hours > 48) return false;
+      // last login date is greater than one day but less than two days
+      if (diff.hours > 24 && diff.hours < 48) return true;
+    }
   }
 };
 

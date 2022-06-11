@@ -23,7 +23,7 @@ export interface Category {
   type: 'category';
   name: string;
   color: string;
-  createdAt: Date | number;
+  createdAt: Date | string;
   points: number;
   level: number;
 }
@@ -35,7 +35,7 @@ export interface Set {
   color: string;
   design?: string;
   favorite: boolean;
-  createdAt: Date | number;
+  createdAt: Date | string;
   categoryRef: string;
 }
 
@@ -44,7 +44,7 @@ export interface Flashcard {
   type: 'flashcard';
   prompt: string;
   solution: string;
-  createdAt: Date | number;
+  createdAt: Date | string;
   setRef: string;
   categoryRef: string;
 }
@@ -86,7 +86,7 @@ export interface User {
     themes: Theme[];
   };
   login: {
-    week: Date[];
+    week: string[];
     streak: number;
     notify: boolean;
   }

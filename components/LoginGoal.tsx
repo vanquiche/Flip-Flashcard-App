@@ -5,7 +5,7 @@ import { UserContext } from '../context/userContext';
 import AlertNotification from './AlertNotification';
 
 interface Props {
-  dates: Date[];
+  dates: string[];
   streak: number;
   notify: boolean;
   onDismiss: () => void;

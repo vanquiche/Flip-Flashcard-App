@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import React, { createContext } from 'react';
 import { User } from '../components/types';
 import { UserAction } from '../reducers/UserReducer';
@@ -23,7 +24,7 @@ export const initUser = {
     themes: [],
   },
   login: {
-    week: [new Date()],
+    week: [DateTime.now().toISO()],
     streak: 0,
     notify: false
   },

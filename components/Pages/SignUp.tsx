@@ -5,6 +5,7 @@ import { Title, Text, TextInput, useTheme, Button } from 'react-native-paper';
 import db from '../../db-services';
 import { UserContext } from '../../context/userContext';
 import { User, StackNavigationTypes } from '../types';
+import { DateTime } from 'luxon';
 
 interface Props extends StackNavigationTypes {}
 
@@ -32,7 +33,7 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         themes: [],
       },
       login: {
-        week: [new Date()],
+        week: [DateTime.now().toISO()],
         streak: 0,
         notify: false
       }

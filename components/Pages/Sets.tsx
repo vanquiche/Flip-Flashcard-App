@@ -26,6 +26,7 @@ import getData from '../../utility/getData';
 import { cardReducer } from '../../reducers/CardReducer';
 import checkDuplicate from '../../utility/checkDuplicate';
 import SwatchSelector from '../SwatchSelector';
+import { DateTime } from 'luxon';
 
 const INITIAL_STATE: {
   id?: string;
@@ -76,7 +77,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         name: cardSet.name,
         color: cardSet.color,
         favorite: cardSet.favorite,
-        createdAt: new Date(),
+        createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
       };
       dispatch({ type: 'insert', payload: newSet });

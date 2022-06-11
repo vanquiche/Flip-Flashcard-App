@@ -24,7 +24,7 @@ interface Collection {
   name: string;
   color: string;
   favorite?: boolean;
-  createdAt: Date | number;
+  createdAt: Date | string;
   categoryRef?: string;
 }
 

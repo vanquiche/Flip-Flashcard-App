@@ -9,6 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import uuid from 'react-native-uuid';
+import { DateTime } from 'luxon';
 
 // UTILITIES
 import db from '../../db-services';
@@ -64,13 +65,14 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const addNewCategory = () => {
     const exist = checkDuplicate(category.name, 'name', categories);
+    // const dt = DateTime.now().toString()
     if (!exist) {
       const newDoc: Category = {
         _id: uuid.v4().toString(),
         name: category.name,
         color: category.color,
         type: 'category',
-        createdAt: new Date(),
+        createdAt: DateTime.now().toISO(),
         points: 0,
         level: 0,
       };
