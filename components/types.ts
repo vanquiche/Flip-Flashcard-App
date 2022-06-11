@@ -33,6 +33,7 @@ export interface Set {
   type: 'set';
   name: string;
   color: string;
+  design?: string;
   favorite: boolean;
   createdAt: Date | number;
   categoryRef: string;
@@ -46,12 +47,6 @@ export interface Flashcard {
   createdAt: Date | number;
   setRef: string;
   categoryRef: string;
-}
-
-interface CategoryTracker {
-  name: string;
-  points: number;
-  level: number;
 }
 
 interface Theme {

@@ -1,4 +1,11 @@
-import { View, Pressable, StyleSheet, Alert, Dimensions } from 'react-native';
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  Alert,
+  Dimensions,
+  ImageBackground,
+} from 'react-native';
 import { Text, useTheme, Title } from 'react-native-paper';
 import React, { useState, useMemo } from 'react';
 import * as Haptics from 'expo-haptics';
@@ -13,6 +20,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { IconButton } from 'react-native-paper';
+
 import Tooltip from 'react-native-walkthrough-tooltip';
 import { Flashcard } from './types';
 
@@ -96,6 +104,7 @@ const Card: React.FC<Props> = React.memo(
     };
 
     const handleLongPress = () => {
+      // console.log('long press')
       tooltipScale.value = 1;
       setShowTooltip(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -116,7 +125,7 @@ const Card: React.FC<Props> = React.memo(
         <Animated.View style={[styles.popup, tooltipAnimateStyle]}>
           <IconButton
             icon='delete'
-            color='white'
+            color={colors.secondary}
             onPress={() => {
               setShowTooltip(false);
               setShowAlert(true);
@@ -124,7 +133,7 @@ const Card: React.FC<Props> = React.memo(
           />
           <IconButton
             icon='pencil'
-            color='white'
+            color={colors.secondary}
             onPress={() => {
               setShowTooltip(false);
               handleEdit(card, card._id);
@@ -150,7 +159,7 @@ const Card: React.FC<Props> = React.memo(
             styles.card,
             { backgroundColor: color },
             rStyles_card_container,
-            cardOpacityAnimatedStyle
+            cardOpacityAnimatedStyle,
           ]}
           // onPress={onPress}
           onPress={multiSelect ? toggleCheck : flipCard}
@@ -181,25 +190,37 @@ const Card: React.FC<Props> = React.memo(
             disableShadow={true}
             contentStyle={{
               borderRadius: 10,
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary,
             }}
           >
-            <Text />
+            <Text style={{ color: 'transparent' }}>tooltip</Text>
           </Tooltip>
           {/* FRONT OF CARD */}
           <Animated.View style={[styles.textContainer, rStyles_card_front]}>
-            <Title style={styles.cardTitle}>PROMPT</Title>
+            {/* CARD DESIGN */}
+            <ImageBackground
+              resizeMode='repeat'
+              imageStyle={[styles.image]}
+              style={styles.cardPattern}
+              source={require('../assets/patterns/pattern.png')}
+            />
+
+            <Title style={[styles.cardTitle, {top: 25}]}>Q .</Title>
             <Text style={styles.textContent}>{card.prompt}</Text>
           </Animated.View>
 
           {/* BACK OF CARD */}
-          <Animated.View style={[styles.textContainer, rStyles_card_back]}>
+          <Animated.View
+            style={[
+              styles.textContainer,
+              rStyles_card_back,
+              // { backgroundColor: '#8ecae6' },
+            ]}
+          >
             <Text style={[styles.textContent, styles.cardBackText]}>
               {card.solution}
             </Text>
-            <Title style={[styles.cardBackText, styles.cardTitle]}>
-              SOLUTION
-            </Title>
+            <Title style={[styles.cardBackText, styles.cardTitle, {bottom: 25}]}>A .</Title>
           </Animated.View>
         </AnimatedPressable>
       </>
@@ -219,19 +240,22 @@ const Card: React.FC<Props> = React.memo(
 const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
-    width: '70%',
-    aspectRatio: 1 / 0.7,
-    // height: 185,
-    // padding: 10,
+    alignItems: 'center',
+    width: 256,
+    height: 190,
+    // aspectRatio: 1.35,
+    padding: 10,
     marginVertical: 12,
     borderRadius: 15,
     backgroundColor: 'white',
+    flex: 1,
     // position: 'relative'
+    overflow: 'hidden',
   },
   textContent: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
     // marginVertical: 10,
     backfaceVisibility: 'hidden',
   },
@@ -242,18 +266,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backfaceVisibility: 'hidden',
-    padding: 20
+    // padding: 20,
   },
   cardBackText: {
     transform: [{ scaleY: -1 }],
   },
   cardTitle: {
     color: 'white',
+    position: 'absolute',
   },
 
   popup: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  cardPattern: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    // transform: [{ scaleY: -1 }],
+    // backgroundColor: 'blue',
+    // alignSelf: 'center'
+  },
+  image: {
+    tintColor: 'white',
+    opacity: 0.3,
+    borderRadius: 10,
   },
 });
 export default Card;
