@@ -44,18 +44,13 @@ const defaultColor = [
 ];
 
 interface Props {
-  color?: string;
+  color: string;
   setColor: (color: string) => void;
 }
 
 const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
   const [showPalette, setShowPalette] = useState(false);
 
-  // const COLORS = useMemo(() => {
-  //   return defaultColor;
-  // }, []);
-
-  const selectedSwatch = useRef<string>('tomato')
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 
   const expand = () => {
@@ -72,22 +67,13 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
     }).start();
   };
 
-  const handlePress = () => {
+  const openSwatchDialog = () => {
     if (Keyboard) {
       Keyboard.dismiss();
       // console.log('keyboard is up')
     }
     setShowPalette(true);
   };
-
-  const changeColor = (c: string) => {
-    selectedSwatch.current = c;
-  }
-
-  const dismissModal = () => {
-    setShowPalette(false);
-    setColor(selectedSwatch.current)
-  }
 
   useEffect(() => {
     if (showPalette) {
@@ -100,7 +86,7 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
       <Portal>
         <Dialog
           visible={showPalette}
-          onDismiss={dismissModal}
+          onDismiss={() => setShowPalette(false)}
           style={[styles.dialog, { transform: [{ scale: scaleAnimation }] }]}
         >
           <View
@@ -116,8 +102,8 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
                   <Swatch
                     key={uuid.v4().toString()}
                     color={swatch}
-                    onChange={changeColor}
-                    selected={selectedSwatch.current === swatch}
+                    onChange={setColor}
+                    selected={color === swatch}
                   />
                 ))}
               </View>
@@ -126,8 +112,8 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
         </Dialog>
       </Portal>
       <Pressable
-        style={[styles.swatch, {backgroundColor: color}]}
-        onPress={handlePress}
+        style={[styles.swatch, { backgroundColor: color }]}
+        onPress={openSwatchDialog}
       />
     </>
   );
@@ -137,8 +123,7 @@ const styles = StyleSheet.create({
   swatch: {
     height: 40,
     aspectRatio: 1,
-    // backgroundColor: 'tomato',
-    borderRadius: 8,
+    borderRadius: 10,
     margin: 0,
   },
   dialog: {

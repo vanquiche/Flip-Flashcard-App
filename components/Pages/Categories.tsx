@@ -6,6 +6,7 @@ import React, {
   useEffect,
   Suspense,
   useCallback,
+  useMemo,
 } from 'react';
 import uuid from 'react-native-uuid';
 
@@ -29,9 +30,9 @@ import SwatchSelector from '../SwatchSelector';
 import useSelectColor from '../../hooks/useSelectColor';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
-  name: '',
-  color: 'tomato',
   id: '',
+  name: '',
+  color: 'lightblue',
 };
 
 interface Props extends StackNavigationTypes {}
@@ -42,7 +43,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
-  const [showSwatch, setShowSwatch] = useState(false);
+  // const [showSwatch, setShowSwatch] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
@@ -122,9 +123,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const selectColor = useCallback((color: string) => {
     setCategory((prev) => ({ ...prev, color }));
-    console.log(color);
-
-  }, []);
+    // console.log(color);
+  }, [category.color]);
 
   useEffect(() => {
     getData({ type: 'category' }, dispatch);
@@ -256,10 +256,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
           <SwatchSelector
             color={category.color}
-            setColor={(color) => {
-              changeSwatchColor(color)
-              setCategory(prev => ({...prev, color: swatchColor.current}))
-            }}
+            setColor={selectColor}
           />
         </View>
       </ActionDialog>

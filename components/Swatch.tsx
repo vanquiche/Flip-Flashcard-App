@@ -16,45 +16,22 @@ interface Props {
   color: string;
   onChange: (color: string) => void;
   selected: boolean;
-  // onPress: () => void;
 }
 
 const Swatch: React.FC<Props> = ({ color, onChange, selected }) => {
-  const [checked, setChecked] = useState<boolean>(false);
-
-  // const colorSelection = useCallback(() => {
-  //   setColor(color);
-  //   // console.log(color)
-  // }, [setColor]);
-
-  const handleChange = () => {
-    onChange(color);
-    // setChecked(true);
-  };
-
-  useEffect(() => {
-    if (selected) {
-      setChecked(true);
-    }
-    return () => {
-      setChecked(false);
-    };
-  }, []);
 
   return (
     <AnimatedSwatch
       style={[styles.swatch, { backgroundColor: color }]}
-      onPress={handleChange}
-      // onBlur={() => setChecked(false)}
+      onPress={() => onChange(color)}
       onLongPress={(e) => e.preventDefault()}
-      entering={FadeIn.delay(Math.random() * 300)}
+      // entering={FadeIn.delay(Math.random() * 300)}
     >
-      {checked && (
+      {selected && (
         <IconButton
           icon='check'
           style={{ marginLeft: 5, marginTop: 3 }}
           color='white'
-          onBlur={() => console.log('hello')}
         />
       )}
     </AnimatedSwatch>
@@ -65,8 +42,8 @@ const styles = StyleSheet.create({
   swatch: {
     height: 45,
     width: 45,
-    borderRadius: 6,
+    borderRadius: 10,
     margin: 5,
   },
 });
-export default React.memo(Swatch);
+export default React.memo(Swatch, (prev, next) => prev.selected === next.selected);

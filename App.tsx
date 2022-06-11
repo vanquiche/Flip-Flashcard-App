@@ -72,7 +72,7 @@ export default function App() {
     return (
       <IconButton
         icon={props.icon}
-        size={26}
+        size={35}
         color={theme.colors.secondary}
         style={{ marginTop: 5 }}
       />
