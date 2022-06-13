@@ -33,7 +33,7 @@ import useSelectColor from '../../hooks/useSelectColor';
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
   name: '',
-  color: 'lightblue',
+  color: 'tomato',
 };
 
 interface Props extends StackNavigationTypes {}
@@ -50,7 +50,6 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
-  const {swatchColor, changeSwatchColor} = useSelectColor()
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
@@ -65,7 +64,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const addNewCategory = () => {
     const exist = checkDuplicate(category.name, 'name', categories);
-    // const dt = DateTime.now().toString()
+
     if (!exist) {
       const newDoc: Category = {
         _id: uuid.v4().toString(),

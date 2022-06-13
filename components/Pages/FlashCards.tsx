@@ -37,9 +37,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
   const [setName, setSetName] = useState('');
-  const [startQuiz, setStartQuiz] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
+  const [startQuiz, setStartQuiz] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
@@ -121,9 +121,6 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   }, [setRef]);
 
   useEffect(() => {
-    // navigation.setOptions({
-    //   title: setTitle.toUpperCase(),
-    // });
     db.find({ _id: setRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({

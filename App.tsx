@@ -15,11 +15,14 @@ import ShopScreen from './screens/ShopScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { UserContext, UserContextType, initUser } from './context/userContext';
+import { initUser } from './context/userContext';
 import db from './db-services';
 import { User } from './components/types';
 import { cardReducer } from './reducers/CardReducer';
-import { userReducer } from './reducers/UserReducer';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState, store } from './redux/store';
+import { getUserData } from './redux/userSlice';
+import IndexScreen from './screens/IndexScreen';
 
 declare global {
   namespace ReactNativePaper {
@@ -28,8 +31,6 @@ declare global {
     }
   }
 }
-
-const Tab = createBottomTabNavigator();
 
 const customFonts = {
   BalooBhaiRegular: require('./assets/fonts/BalooBhai2-Regular.ttf'),
@@ -40,8 +41,7 @@ const customFonts = {
 };
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-  const [user, userDispatch] = useReducer(userReducer, initUser);
+  const [fontLoading, setFontLoading] = useState(true);
 
   const theme = {
     ...DefaultTheme,
@@ -68,100 +68,25 @@ export default function App() {
     },
   };
 
-  const TabIcon = (props: { icon: string }) => {
-    return (
-      <IconButton
-        icon={props.icon}
-        size={30}
-        color={theme.colors.secondary}
-        style={{ marginTop: 5 }}
-      />
-    );
-  };
-
   useEffect(() => {
     const loadFonts = async () => {
       await Font.loadAsync(customFonts);
-      setLoading(false);
+      setFontLoading(false);
     };
     loadFonts();
   }, []);
 
-  // CHECK FOR USER OBJECT
-  useEffect(() => {
-    const getUser = () => {
-      db.find({ type: 'user' }, (err: Error, docs: User[]) => {
-        if (err) console.log(err);
-
-        if (docs.length > 0) {
-          // console.log(docs);
-
-          // compare last login to todays date
-
-          // setUser(docs[0]);
-          userDispatch({type: 'set user', payload: docs[0]})
-        } else {
-          console.log('no users');
-        }
-      });
-    };
-
-    getUser();
-  }, []);
-
-  if (loading) {
+  if (fontLoading) {
     return <ActivityIndicator size='large' />;
   }
 
   return (
-
+    <Provider store={store}>
       <NavigationContainer>
-        <UserContext.Provider value={{ user, userDispatch }}>
-          <PaperProvider theme={theme}>
-            <StatusBar hidden />
-            <Tab.Navigator
-              screenOptions={{
-                tabBarStyle: {
-                  backgroundColor: theme.colors.primary,
-                  // disable tabbar if no user exist
-                  display: !user._id ? 'none' : 'flex',
-                  height: 70,
-                },
-                tabBarShowLabel: false,
-                headerShown: false,
-              }}
-            >
-              <Tab.Screen
-                name='Home-page'
-                component={HomeScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => <TabIcon icon='home' />,
-                }}
-              />
-              <Tab.Screen
-                name='flashcards'
-                component={CategoryScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => <TabIcon icon='cards' />,
-                }}
-              />
-              <Tab.Screen
-                name='store'
-                component={ShopScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => <TabIcon icon='store' />,
-                }}
-              />
-              <Tab.Screen
-                name='Profile-page'
-                component={ProfileScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => <TabIcon icon='heart' />,
-                }}
-              />
-            </Tab.Navigator>
-          </PaperProvider>
-        </UserContext.Provider>
+        <PaperProvider theme={theme}>
+          <IndexScreen />
+        </PaperProvider>
       </NavigationContainer>
+    </Provider>
   );
 }

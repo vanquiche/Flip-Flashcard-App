@@ -11,13 +11,19 @@ import Home from '../components/Pages/Home';
 import SignUp from '../components/Pages/SignUp';
 
 import { useTheme } from 'react-native-paper';
-import { UserContext } from '../context/userContext';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../redux/store';
+import { getUserData } from '../redux/userSlice';
 const Stack = createStackNavigator();
 
 const HomeScreen = () => {
-  const { user } = useContext(UserContext);
   const { colors } = useTheme();
+  const { user, loading, notification } = useSelector(
+    (state: RootState) => state.user
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  // console.log(user)
 
   const headerStyle = {
     headerStyle: {
@@ -30,15 +36,19 @@ const HomeScreen = () => {
       fontSize: 22,
     },
     // disable header if no user is found
-    headerShown: !user._id ? false : true,
+    headerShown: user._id ? true : false,
   };
+
+  useEffect(() => {
+    dispatch(getUserData())
+  }, [])
 
   return (
     <Stack.Navigator screenOptions={headerStyle}>
       {!user._id ? (
         <Stack.Screen name='Home' component={SignUp} />
       ) : (
-        <Stack.Screen name='Home' component={Home} />
+      <Stack.Screen name='Home' component={Home} />
       )}
     </Stack.Navigator>
   );

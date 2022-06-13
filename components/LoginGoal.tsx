@@ -1,19 +1,15 @@
 import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
-import React, { useContext } from 'react';
-import { UserContext } from '../context/userContext';
+import React from 'react';
 import AlertNotification from './AlertNotification';
 
 interface Props {
   dates: string[];
   streak: number;
-  notify: boolean;
-  onDismiss: () => void;
 }
 
-const LoginGoal: React.FC<Props> = ({ dates, streak, notify, onDismiss }) => {
+const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   // console.log(dates)
-  const { user, userDispatch } = useContext(UserContext);
   const { colors } = useTheme();
   // console.log(user.login.notify)
 
@@ -73,11 +69,11 @@ const LoginGoal: React.FC<Props> = ({ dates, streak, notify, onDismiss }) => {
 
   return (
     <>
-      <AlertNotification
+      {/* <AlertNotification
         visible={user.login.notify}
         dismiss={onDismiss}
         message='YOU EARNED 50 POINTS FOR LOGGING IN CONSECUTIVELY'
-      />
+      /> */}
       <View
         style={{
           backgroundColor: colors.primary,

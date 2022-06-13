@@ -1,13 +1,21 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useContext, useEffect, useState, useReducer } from 'react';
-import { Button, Text, Title, useTheme } from 'react-native-paper';
+import React, {
+  useEffect,
+  useReducer,
+  Suspense,
+} from 'react';
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  Title,
+  useTheme,
+} from 'react-native-paper';
 
 import { CommonActions, useIsFocused } from '@react-navigation/native';
 
-import { UserContext } from '../../context/userContext';
 import { cardReducer } from '../../reducers/CardReducer';
 
-import db from '../../db-services';
 import getData from '../../utility/getData';
 import FavoriteCard from '../FavoriteCard';
 
@@ -15,28 +23,21 @@ import { Set, StackNavigationTypes, User } from '../types';
 import loginStreak from '../../utility/loginStreak';
 import sortWeek from '../../utility/sortWeek';
 import LoginGoal from '../LoginGoal';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { updateUser } from '../../redux/userSlice';
 
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
-  const [favorites, dispatch] = useReducer(cardReducer, []);
-  const { user, userDispatch } = useContext(UserContext);
-  // console.log(user)
+  const [favorites, cardDispatch] = useReducer(cardReducer, []);
+  const { user, loading, notification } = useSelector(
+    (state: RootState) => state.user
+  );
+  const dispatch = useDispatch<AppDispatch>();
 
   const isFocused = useIsFocused();
-
   const { colors } = useTheme();
-
-  const closeAlert = () => {
-    const updateNotify = {
-      login: {
-        notify: false,
-      },
-    };
-    userDispatch({ type: 'set login', payload: updateNotify });
-    // console.log(user.login.notify)
-    // console.log('close alert')
-  };
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -72,19 +73,15 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log('focused: ' + isFocused)
-  // }, [isFocused])
-
   useEffect(() => {
     if (isFocused) {
       // console.log('useEffect: getting favorites');
-      getData({ type: 'set', favorite: true }, dispatch);
+      getData({ type: 'set', favorite: true }, cardDispatch);
     } else return;
   }, [isFocused]);
 
   useEffect(() => {
-    if (user) {
+    if (user._id) {
       const lastLogin = user.login.week;
       // get date of last login from week
       const streak = loginStreak(lastLogin[lastLogin.length - 1]);
@@ -100,10 +97,9 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           login: {
             week: sortWeek(user.login.week),
             streak: 0,
-            notify: false,
           },
         };
-        userDispatch({ type: 'set login', payload: updateLogin });
+        dispatch(updateUser(updateLogin));
       } else if (streak) {
         // login is greater than one day but less than 2days
         // increment streak
@@ -112,10 +108,9 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           login: {
             week: sortWeek(user.login.week),
             streak: user.login.streak + 1,
-            notify: true,
           },
         };
-        userDispatch({ type: 'set login', payload: updateLogin });
+        dispatch(updateUser(updateLogin));
       }
     } else return;
   }, []);
@@ -136,36 +131,32 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <LoginGoal
-        dates={user.login.week}
-        streak={user.login.streak}
-        notify={user.login.notify}
-        onDismiss={closeAlert}
-      />
+      <LoginGoal dates={user.login.week} streak={user.login.streak} />
 
       <Title style={{ textAlign: 'center', color: colors.secondary }}>
         FAVORITE SETS
       </Title>
 
-      <ScrollView
-        horizontal={true}
-        // pagingEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.favoritesContainer,
-          { width: 180 * favorites.length },
-        ]}
-      >
-        {favorites.map((set) => {
-          return (
-            <FavoriteCard
-              key={set._id}
-              card={set}
-              onPress={() => navigateToFavorite(set)}
-            />
-          );
-        })}
-      </ScrollView>
+      <Suspense fallback={<ActivityIndicator />}>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.favoritesContainer,
+            { width: 180 * favorites.length },
+          ]}
+        >
+          {favorites.map((set) => {
+            return (
+              <FavoriteCard
+                key={set._id}
+                card={set}
+                onPress={() => navigateToFavorite(set)}
+              />
+            );
+          })}
+        </ScrollView>
+      </Suspense>
     </View>
   );
 };

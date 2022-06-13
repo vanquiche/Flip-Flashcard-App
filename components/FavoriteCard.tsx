@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   textContent: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
   },
   cardCount: {
     position: 'absolute',

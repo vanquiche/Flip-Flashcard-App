@@ -3,9 +3,12 @@ import React, { useState, useContext, useEffect } from 'react';
 
 import { Title, Text, TextInput, useTheme, Button } from 'react-native-paper';
 import db from '../../db-services';
-import { UserContext } from '../../context/userContext';
+// import { UserContext } from '../../context/userContext';
 import { User, StackNavigationTypes } from '../types';
 import { DateTime } from 'luxon';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
+import {createNewUser} from '../../redux/userSlice'
 
 interface Props extends StackNavigationTypes {}
 
@@ -15,34 +18,26 @@ const SignUp: React.FC<Props> = ({navigation}) => {
     icon: '',
   });
 
-  const { user, userDispatch } = useContext(UserContext);
+  const dispatch = useDispatch<AppDispatch>()
+  // const { user, userDispatch } = useContext(UserContext);
 
   const { colors } = useTheme();
 
   const createUser = () => {
-    const user: User = {
+    const createUser: User = {
       type: 'user',
       username: newUser.username,
+      icon: newUser.icon,
       level: 1,
       experiencePoints: 0,
       heartcoin: 100,
       achievements: [],
-      collections: {
-        cardDesigns: [],
-        cardColors: [],
-        themes: [],
-      },
       login: {
         week: [DateTime.now().toISO()],
         streak: 0,
-        notify: false
       }
     };
-
-    db.insert(user, (err: Error, newDoc: User) => {
-      if (err) console.log(err);
-      userDispatch({type: 'create user', payload: newDoc})
-    });
+    dispatch(createNewUser(createUser))
   };
 
   return (
