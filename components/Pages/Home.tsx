@@ -78,7 +78,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (isFocused) {
-      console.log('useEffect: getting favorites');
+      // console.log('useEffect: getting favorites');
       getData({ type: 'set', favorite: true }, dispatch);
     } else return;
   }, [isFocused]);

@@ -32,10 +32,12 @@ const INITIAL_STATE: {
   id?: string;
   name: string;
   color: string;
+  design: string;
   favorite: boolean;
 } = {
   id: '',
   name: '',
+  design: '',
   color: 'tomato',
   favorite: false,
 };
@@ -76,6 +78,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         type: 'set',
         name: cardSet.name,
         color: cardSet.color,
+        design: cardSet.design,
         favorite: cardSet.favorite,
         createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
@@ -94,6 +97,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       id: set._id,
       name: set.name,
       color: set.color,
+      design: set.design,
       favorite: set.favorite,
     });
     setEditMode(true);

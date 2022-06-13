@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   textContent: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 20,
+    fontSize: 24,
     // marginVertical: 10,
     backfaceVisibility: 'hidden',
   },

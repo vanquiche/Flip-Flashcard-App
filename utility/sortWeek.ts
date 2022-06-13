@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 const sortWeek = (week: string[]) => {
   const latestLogin = DateTime.fromISO(week[week.length - 1]);
   const today = DateTime.now();
-  const diff = latestLogin.diff(today, 'days').toObject();
+  const diff = today.diff(latestLogin, 'days').toObject();
 
   // if diff is greater than 0 then last login is
   // past 7 days

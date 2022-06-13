@@ -33,7 +33,7 @@ export interface Set {
   type: 'set';
   name: string;
   color: string;
-  design?: string;
+  design: string;
   favorite: boolean;
   createdAt: Date | string;
   categoryRef: string;

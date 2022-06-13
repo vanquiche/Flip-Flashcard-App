@@ -11,9 +11,9 @@ const Profile = () => {
 
   const lastLoginDate = DateTime.fromISO(
     user.login.week[user.login.week.length - 1]
-  ).toLocaleString();
+  ).toFormat('ff');
 
-  console.log(user.login.week);
+  // console.log(user.login.week);
 
   const deleteUser = () => {
     db.remove({ type: 'user' }, {}, (err: Error, numRemoved: number) => {
