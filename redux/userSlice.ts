@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { User } from '../components/types';
-import { initUser } from '../context/userContext';
+import { initUser } from '../components/types';
 import db from '../db-services';
 
 interface UserInitState {

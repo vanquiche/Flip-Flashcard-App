@@ -71,24 +71,33 @@ interface Achievement {
   points: number;
 }
 
-
 export interface User {
   _id?: string;
   type: 'user';
+  icon?: string;
   experiencePoints: number;
   username: string;
   level: number;
   heartcoin: number;
   achievements: Achievement[];
-  collections: {
-    cardDesigns: CardDesign[];
-    cardColors: CardColor[];
-    themes: Theme[];
-  };
   login: {
     week: string[];
     streak: number;
-    notify: boolean;
-  }
-
+  };
 }
+
+type Datatype = 'user';
+
+export const initUser = {
+  _id: '',
+  type: 'user' as Datatype,
+  experiencePoints: 0,
+  username: '',
+  level: 0,
+  heartcoin: 0,
+  achievements: [],
+  login: {
+    week: [],
+    streak: 0,
+  },
+};
