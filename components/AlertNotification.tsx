@@ -20,7 +20,7 @@ const AlertNotification: React.FC<Props> = ({ message, visible, dismiss }) => {
           { backgroundColor: colors.primary },
         ]}
       >
-        <Title style={{ color: colors.secondary }}>{message}</Title>
+        <Title style={{ color: colors.secondary }}>{message.toUpperCase()}</Title>
       </Modal>
     </Portal>
   );
@@ -29,7 +29,11 @@ const AlertNotification: React.FC<Props> = ({ message, visible, dismiss }) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingVertical: 10
+    paddingVertical: 10,
+    margin: 30,
+    borderRadius: 15,
+    minHeight: 150,
+    alignItems: 'center'
   },
 });
 

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import { ActivityIndicator, StatusBar } from 'react-native';
-import { configureFonts, IconButton } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 
@@ -8,20 +7,9 @@ import * as Font from 'expo-font';
 
 import 'react-native-gesture-handler';
 
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 // COMPONENTS
-import HomeScreen from './screens/HomeScreen';
-import CategoryScreen from './screens/CategoryScreen';
-import ShopScreen from './screens/ShopScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { initUser } from './context/userContext';
-import db from './db-services';
-import { User } from './components/types';
-import { cardReducer } from './reducers/CardReducer';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState, store } from './redux/store';
-import { getUserData } from './redux/userSlice';
 import IndexScreen from './screens/IndexScreen';
 
 declare global {
@@ -77,7 +65,7 @@ export default function App() {
   }, []);
 
   if (fontLoading) {
-    return <ActivityIndicator size='large' />;
+    return <ActivityIndicator size='large' style={styles.spinner} />;
   }
 
   return (
@@ -90,3 +78,15 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  spinner: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -25,7 +25,7 @@ import sortWeek from '../../utility/sortWeek';
 import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { updateUser } from '../../redux/userSlice';
+import { showMessage, updateUser } from '../../redux/userSlice';
 
 interface Props extends StackNavigationTypes {}
 
@@ -111,6 +111,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           },
         };
         dispatch(updateUser(updateLogin));
+        dispatch(showMessage('you earned 50 xp points for consecutive logins'))
       }
     } else return;
   }, []);

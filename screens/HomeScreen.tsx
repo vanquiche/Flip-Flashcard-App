@@ -1,12 +1,11 @@
 // REACT
 import { View, Text } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // NAVIGATION
 
 // COMPONENTS
-import StackNavigator from '../components/StackNavigator';
 import Home from '../components/Pages/Home';
 import SignUp from '../components/Pages/SignUp';
 
@@ -18,7 +17,7 @@ const Stack = createStackNavigator();
 
 const HomeScreen = () => {
   const { colors } = useTheme();
-  const { user, loading, notification } = useSelector(
+  const { user } = useSelector(
     (state: RootState) => state.user
   );
   const dispatch = useDispatch<AppDispatch>();

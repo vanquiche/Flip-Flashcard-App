@@ -1,13 +1,15 @@
 import { StatusBar } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { IconButton, useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
 import CategoryScreen from './CategoryScreen';
 import ShopScreen from './ShopScreen';
 import ProfileScreen from './ProfileScreen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import AlertNotification from '../components/AlertNotification';
+import { dismissMessage } from '../redux/userSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +17,7 @@ const IndexScreen = () => {
   const { user, loading, notification } = useSelector(
     (state: RootState) => state.user
   );
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const TabIcon = (props: { icon: string }) => {
     return (
@@ -27,8 +30,18 @@ const IndexScreen = () => {
     );
   };
 
+  const clearNotification = () => {
+    dispatch(dismissMessage())
+    // setShowNotification(false)
+  };
+
   return (
     <>
+      <AlertNotification
+        dismiss={clearNotification}
+        visible={notification.show}
+        message={notification.message}
+      />
       <StatusBar hidden />
       <Tab.Navigator
         screenOptions={{
