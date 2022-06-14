@@ -19,20 +19,19 @@ interface Props {
 }
 
 const Swatch: React.FC<Props> = ({ color, onChange, selected }) => {
+  const swatchColor = {
+    backgroundColor: color,
+  };
 
   return (
     <AnimatedSwatch
-      style={[styles.swatch, { backgroundColor: color }]}
+      style={[styles.swatch, swatchColor]}
       onPress={() => onChange(color)}
       onLongPress={(e) => e.preventDefault()}
       // entering={FadeIn.delay(Math.random() * 300)}
     >
       {selected && (
-        <IconButton
-          icon='check'
-          style={{ marginLeft: 5, marginTop: 3 }}
-          color='white'
-        />
+        <IconButton icon='check' color='white' style={styles.checkmark} />
       )}
     </AnimatedSwatch>
   );
@@ -45,5 +44,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 5,
   },
+  checkmark: {
+    marginLeft: 5,
+    marginTop: 3,
+  },
 });
-export default React.memo(Swatch, (prev, next) => prev.selected === next.selected);
+export default React.memo(
+  Swatch,
+  (prev, next) => prev.selected === next.selected
+);

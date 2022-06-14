@@ -51,6 +51,10 @@ interface Props {
 const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
   const [showPalette, setShowPalette] = useState(false);
 
+  const swatchColor = {
+    backgroundColor: color
+  }
+
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 
   const expand = () => {
@@ -112,7 +116,7 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
         </Dialog>
       </Portal>
       <Pressable
-        style={[styles.swatch, { backgroundColor: color }]}
+        style={[styles.swatch, swatchColor]}
         onPress={openSwatchDialog}
       />
     </>
