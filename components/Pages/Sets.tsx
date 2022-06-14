@@ -8,7 +8,13 @@ import {
   Checkbox,
   Title,
 } from 'react-native-paper';
-import React, { useState, useEffect, Suspense, useReducer } from 'react';
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  useReducer,
+  useCallback,
+} from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
@@ -27,6 +33,7 @@ import { cardReducer } from '../../reducers/CardReducer';
 import checkDuplicate from '../../utility/checkDuplicate';
 import SwatchSelector from '../SwatchSelector';
 import { DateTime } from 'luxon';
+import PatternSelector from '../PatternSelector';
 
 const INITIAL_STATE: {
   id?: string;
@@ -61,7 +68,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const { categoryRef } = route.params;
 
   // CRUD functions
-  const closeDialog = async () => {
+  const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {
       setEditMode(false);
@@ -143,13 +150,12 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     // navigation.setOptions({
     //   title: categoryTitle.toUpperCase(),
     // });
-    db.find({_id: categoryRef}, (err: Error, docs: any) => {
+    db.find({ _id: categoryRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
-        title: docs[0].name.toUpperCase()
-      })
-
-    })
+        title: docs[0].name.toUpperCase(),
+      });
+    });
   }, [categoryRef]);
 
   return (
@@ -243,28 +249,40 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         onSubmit={editMode ? submitEdit : addNewSet}
         disableSubmit={cardSet.name ? false : true}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
           <TextInput
             mode='outlined'
             label='SET NAME'
             outlineColor='lightgrey'
             activeOutlineColor={colors.secondary}
             maxLength={32}
+          style={{ height: 40, margin: 0 }}
             value={cardSet.name}
             onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
-            style={{ width: '80%', height: 40, margin: 0,  marginBottom: 6 }}
           />
-
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            marginTop: 15,
+          }}
+        >
+          <View style={{ alignItems: 'center' }}>
           <SwatchSelector
             color={cardSet.color}
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
+            <Title style={{ color: colors.secondary }}>COLOR</Title>
+          </View>
+
+          <View style={{ alignItems: 'center' }}>
+            <PatternSelector
+              // pattern={cardSet.design}
+              setPattern={selectPattern}
+              // setPattern={selectPattern}
+            />
+            <Title style={{ color: colors.secondary }}>DESIGN</Title>
+          </View>
         </View>
 
         <IconButton

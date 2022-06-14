@@ -7,17 +7,17 @@ import CategoryScreen from './CategoryScreen';
 import ShopScreen from './ShopScreen';
 import ProfileScreen from './ProfileScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../redux/store';
 import AlertNotification from '../components/AlertNotification';
-import { dismissMessage } from '../redux/userSlice';
+import { dismissMessage } from '../redux/notificationSlice';
 
 const Tab = createBottomTabNavigator();
 
 const IndexScreen = () => {
-  const { user, loading, notification } = useSelector(
-    (state: RootState) => state.user
-  );
-  const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.user);
+  const { alert } = useSelector((state: RootState) => state.notification);
+
+  const dispatch = useDispatch<AppDispatch>();
   const { colors } = useTheme();
   const TabIcon = (props: { icon: string }) => {
     return (
@@ -31,16 +31,15 @@ const IndexScreen = () => {
   };
 
   const clearNotification = () => {
-    dispatch(dismissMessage())
-    // setShowNotification(false)
+    dispatch(dismissMessage());
   };
 
   return (
     <>
       <AlertNotification
         dismiss={clearNotification}
-        visible={notification.show}
-        message={notification.message}
+        visible={alert.show}
+        message={alert.message}
       />
       <StatusBar hidden />
       <Tab.Navigator

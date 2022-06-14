@@ -6,19 +6,11 @@ import db from '../db-services';
 interface UserInitState {
   user: User;
   loading: 'idle' | 'pending' | 'suceeded' | 'failed';
-  notification: {
-    show: boolean;
-    message: string;
-  };
 }
 
 const initialState: UserInitState = {
   user: initUser,
   loading: 'idle',
-  notification: {
-    show: false,
-    message: '',
-  },
 };
 
 export const createNewUser = createAsyncThunk(
@@ -70,30 +62,15 @@ export const updateUser = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    dismissMessage: (state) => {
-      state.notification.show = false;
-      state.notification.message = '';
-    },
-    showMessage: (state, action: PayloadAction<string>) => {
-      state.notification.show = true;
-      state.notification.message = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createNewUser.fulfilled, (state, action) => {
         state.loading = 'suceeded';
-        state.notification.show = true;
-        state.notification.message = 'successfully create new user';
         state.user = action.payload;
       })
       .addCase(createNewUser.rejected, (state, action) => {
         state.loading = 'suceeded';
-        if (typeof action.payload === 'string') {
-          state.notification.show = true;
-          state.notification.message = action.payload;
-        }
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = 'suceeded';
@@ -101,10 +78,6 @@ export const userSlice = createSlice({
       })
       .addCase(getUserData.rejected, (state, action) => {
         state.loading = 'suceeded';
-        if (typeof action.payload === 'string') {
-          state.notification.show = true;
-          state.notification.message = action.payload;
-        }
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = 'suceeded';
@@ -112,10 +85,6 @@ export const userSlice = createSlice({
       })
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = 'suceeded';
-        if (typeof action.payload === 'string') {
-          state.notification.show = true;
-          state.notification.message = action.payload;
-        }
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = 'suceeded';
@@ -123,13 +92,8 @@ export const userSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = 'suceeded';
-        if (typeof action.payload === 'string') {
-          state.notification.show = true;
-          state.notification.message = action.payload;
-        }
       });
   },
 });
 
-export const { dismissMessage, showMessage } = userSlice.actions;
 export default userSlice.reducer;

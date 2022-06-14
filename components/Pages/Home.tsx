@@ -25,15 +25,17 @@ import sortWeek from '../../utility/sortWeek';
 import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { showMessage, updateUser } from '../../redux/userSlice';
+import { updateUser } from '../../redux/userSlice';
+import {showMessage} from '../../redux/notificationSlice'
 
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
   const [favorites, cardDispatch] = useReducer(cardReducer, []);
-  const { user, loading, notification } = useSelector(
+  const { user, loading } = useSelector(
     (state: RootState) => state.user
   );
+
   const dispatch = useDispatch<AppDispatch>();
 
   const isFocused = useIsFocused();

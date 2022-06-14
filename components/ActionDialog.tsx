@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     paddingHorizontal: 20,
-    marginTop: 10,
+    // marginTop: 10,
   },
   button: {
     width: '48%',
