@@ -3,13 +3,13 @@ import React, { useCallback } from 'react';
 
 interface Props {
   uri: any;
-  name: string;
+  // name: string;
   select: any;
 }
-const Pattern: React.FC<Props> = ({ uri, name, select }) => {
+const Pattern: React.FC<Props> = ({ uri, select }) => {
 
   const handlePress = () => {
-    select(name);
+    select('hello');
     // console.log(name)
   };
 

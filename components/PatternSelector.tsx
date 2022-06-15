@@ -19,6 +19,7 @@ import React, {
 
 import uuid from 'react-native-uuid';
 import Pattern from './Pattern';
+import { useAssets } from 'expo-asset';
 
 const PATTERNS =  [
     {
@@ -34,7 +35,7 @@ const PATTERNS =  [
       uri: require('../assets/patterns/square-pattern.png'),
     },
   ]
-  
+
 interface Props {
   // pattern: string;
   setPattern: (d: string) => void;
@@ -42,6 +43,12 @@ interface Props {
 
 const PatternSelector: React.FC<Props> = ({ setPattern }) => {
   const [showPalette, setShowPalette] = useState(false);
+
+  const [assets, error] = useAssets([
+    require('../assets/patterns/pattern.png'),
+    require('../assets/patterns/heart.png'),
+    require('../assets/patterns/square-pattern.png')
+  ])
 
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 
@@ -91,11 +98,11 @@ const PatternSelector: React.FC<Props> = ({ setPattern }) => {
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {/* map over list of card patterns */}
-                {PATTERNS.map((p) => (
+                {assets?.map((p, index) => (
                   <Pattern
                     key={uuid.v4().toString()}
-                    uri={p.uri}
-                    name={p.name}
+                    uri={p}
+                    // name={p.name}
                     select={setPattern}
                   />
                 ))}

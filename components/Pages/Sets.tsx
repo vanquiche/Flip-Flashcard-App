@@ -142,6 +142,10 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     cancelMultiDeletion();
   };
 
+  const selectPattern = useCallback((design) => {
+    setCardSet(prev => ({...prev, design}))
+  }, [])
+
   useEffect(() => {
     getData({ type: 'set', categoryRef: categoryRef }, dispatch);
   }, [categoryRef]);
