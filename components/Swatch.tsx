@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import React, { useEffect, useContext, useCallback, useState } from 'react';
-import { IconButton } from 'react-native-paper';
+import { IconButton, TextInput } from 'react-native-paper';
 
 import Animated, {
   useSharedValue,
@@ -8,31 +8,43 @@ import Animated, {
   withSpring,
   FadeIn,
   withTiming,
+  useAnimatedRef,
 } from 'react-native-reanimated';
+import useSelectColor from '../hooks/useSelectColor';
 
 const AnimatedSwatch = Animated.createAnimatedComponent(Pressable);
 
 interface Props {
   color: string;
   onChange: (color: string) => void;
-  selected: boolean;
+  selected?: string;
 }
 
 const Swatch: React.FC<Props> = ({ color, onChange, selected }) => {
-  const swatchColor = {
-    backgroundColor: color,
+
+  const swatchOpacity = useSharedValue(0);
+  const rStyles = useAnimatedStyle(() => {
+    return {
+      opacity: swatchOpacity.value,
+    };
+  });
+
+  const handlePress = () => {
+    onChange(color);
+    // swatchOpacity.value = 1
   };
+
 
   return (
     <AnimatedSwatch
-      style={[styles.swatch, swatchColor]}
-      onPress={() => onChange(color)}
+      style={[styles.swatch, { backgroundColor: color }]}
+      onPress={handlePress}
       onLongPress={(e) => e.preventDefault()}
-      // entering={FadeIn.delay(Math.random() * 300)}
+      entering={FadeIn.delay(Math.random() * 300)}
     >
-      {selected && (
+      <Animated.View style={[rStyles]}>
         <IconButton icon='check' color='white' style={styles.checkmark} />
-      )}
+      </Animated.View>
     </AnimatedSwatch>
   );
 };
@@ -49,7 +61,4 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
 });
-export default React.memo(
-  Swatch,
-  (prev, next) => prev.selected === next.selected
-);
+export default React.memo(Swatch);

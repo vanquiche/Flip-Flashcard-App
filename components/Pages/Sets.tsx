@@ -24,7 +24,6 @@ import useMarkSelection from '../../hooks/useMarkSelection';
 // COMPONENTS
 import TitleCard from '../TitleCard';
 import ActionDialog from '../ActionDialog';
-import SwatchDialog from '../SwatchDialog';
 import AlertDialog from '../AlertDialog';
 
 import { Set, StackNavigationTypes } from '../types';
@@ -259,33 +258,31 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             outlineColor='lightgrey'
             activeOutlineColor={colors.secondary}
             maxLength={32}
-          style={{ height: 40, margin: 0 }}
+            style={{ height: 40, margin: 0 }}
             value={cardSet.name}
             onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
           />
         <View
           style={{
             flexDirection: 'row',
-            justifyContent: 'space-around',
+            justifyContent: 'space-between',
             alignItems: 'center',
             marginTop: 15,
           }}
         >
-          <View style={{ alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <SwatchSelector
             color={cardSet.color}
             setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
           />
-            <Title style={{ color: colors.secondary }}>COLOR</Title>
+            <Title style={{ color: colors.secondary, marginLeft: 10 }}>COLOR</Title>
           </View>
 
-          <View style={{ alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Title style={{ color: colors.secondary, marginRight: 10 }}>DESIGN</Title>
             <PatternSelector
-              // pattern={cardSet.design}
               setPattern={selectPattern}
-              // setPattern={selectPattern}
             />
-            <Title style={{ color: colors.secondary }}>DESIGN</Title>
           </View>
         </View>
 

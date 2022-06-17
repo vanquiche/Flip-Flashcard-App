@@ -1,5 +1,11 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import { Button, IconButton, TextInput, useTheme } from 'react-native-paper';
+import {
+  Button,
+  IconButton,
+  Text,
+  TextInput,
+  useTheme,
+} from 'react-native-paper';
 import React, {
   useState,
   useReducer,
@@ -16,11 +22,11 @@ import db from '../../db-services';
 import checkDuplicate from '../../utility/checkDuplicate';
 import useMarkSelection from '../../hooks/useMarkSelection';
 import getData from '../../utility/getData';
+import Swatch from '../Swatch';
 
 // COMPONENTS
 import ActionDialog from '../ActionDialog';
 import TitleCard from '../TitleCard';
-import SwatchDialog from '../SwatchDialog';
 import AlertDialog from '../AlertDialog';
 
 // TYPES
@@ -29,6 +35,30 @@ import { StackNavigationTypes } from '../types';
 import { cardReducer } from '../../reducers/CardReducer';
 import SwatchSelector from '../SwatchSelector';
 import useSelectColor from '../../hooks/useSelectColor';
+import { Popable, Popover } from 'react-native-popable';
+
+const defaultColor = [
+  '#C0392B',
+  '#E74C3C',
+  '#9B59B6',
+  '#8E44AD',
+  '#2980B9',
+  '#3498DB',
+  '#1ABC9C',
+  '#16A085',
+  '#27AE60',
+  '#2ECC71',
+  '#F1C40F',
+  '#F39C12',
+  '#E67E22',
+  '#D35400',
+  '#FFFFFF',
+  '#BDC3C7',
+  '#95A5A6',
+  '#7F8C8D',
+  '#34495E',
+  '#2C3E50',
+];
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
@@ -52,7 +82,6 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
-
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -124,8 +153,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const selectColor = useCallback((color: string) => {
     setCategory((prev) => ({ ...prev, color }));
-    // console.log(color);
-  }, [category.color]);
+  }, []);
 
   useEffect(() => {
     getData({ type: 'category' }, dispatch);
@@ -152,7 +180,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
           <Button
             mode='contained'
             style={styles.button}
-            labelStyle={[styles.buttonLabel, {color: colors.secondary}]}
+            labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
             color={colors.primary}
             onPress={() => setShowDialog(true)}
           >
@@ -164,7 +192,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
           <Button
             mode='contained'
             style={styles.button}
-            labelStyle={[styles.buttonLabel, {color: colors.secondary}]}
+            labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
             color={colors.primary}
             onPress={() => {
               clearSelection();
@@ -232,7 +260,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
       <ActionDialog
         visible={showDialog}
         dismiss={() => setShowDialog(false)}
-        title={editMode ? 'Edit Category' : 'NEW CATEGORY'}
+        title={editMode ? 'EDIT CATEGORY' : 'NEW CATEGORY'}
         onCancel={closeDialog}
         onSubmit={editMode ? submitEdit : addNewCategory}
         disableSubmit={category.name ? false : true}
@@ -259,6 +287,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
             color={category.color}
             setColor={selectColor}
           />
+
         </View>
       </ActionDialog>
     </View>

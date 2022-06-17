@@ -6,8 +6,10 @@ import {
   Keyboard,
   Animated,
   ScrollView,
+  GestureResponderEvent,
+  Dimensions,
 } from 'react-native';
-import { Portal, Dialog } from 'react-native-paper';
+import { Portal, Dialog, DefaultTheme, IconButton } from 'react-native-paper';
 import React, {
   useEffect,
   useState,
@@ -19,6 +21,10 @@ import React, {
 import uuid from 'react-native-uuid';
 
 import Swatch from './Swatch';
+import useSelectColor from '../hooks/useSelectColor';
+import { useSharedValue } from 'react-native-reanimated';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
 const defaultColor = [
   '#C0392B',
@@ -51,39 +57,66 @@ interface Props {
 const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
   const [showPalette, setShowPalette] = useState(false);
 
-  const swatchColor = {
-    backgroundColor: color
-  }
+  const { swatchColor, changeSwatchColor } = useSelectColor();
 
-  const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
+  changeSwatchColor(color);
 
-  const expand = () => {
-    Animated.spring(scaleAnimation, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
+  const swatchRef = useRef<View>(null);
+  const swatchLayoutY = useRef<number>(0);
+  const swatchLayoutX = useRef<number>(0);
 
-  const close = () => {
-    Animated.spring(scaleAnimation, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start();
-  };
+  const swatchAnimation = useRef<any>(new Animated.Value(0)).current;
+  const swatchPosition = useSharedValue<any>(null);
+  const caretPosition = useSharedValue<any>(null);
 
   const openSwatchDialog = () => {
-    if (Keyboard) {
-      Keyboard.dismiss();
-      // console.log('keyboard is up')
-    }
     setShowPalette(true);
   };
 
+  const measureSwatch = () => {
+    if (swatchRef.current) {
+      swatchRef.current.measure((width, height, px, py, fx, fy) => {
+        const dialogWidth = 237;
+        const dialogHieght = 225;
+        swatchLayoutY.current = fy + py - dialogHieght;
+        swatchLayoutX.current = fx + py - dialogWidth;
+        if (SCREEN_WIDTH / 2 < fx) {
+          swatchPosition.value = { right: 0 };
+          caretPosition.value = { right: -5 };
+        } else {
+          swatchPosition.value = { left: 0 };
+          caretPosition.value = { left: -5 };
+        }
+      });
+    }
+  };
+
   useEffect(() => {
-    if (showPalette) {
-      expand();
-    } else close();
-  }, [showPalette]);
+    const keyboardDownSubscription = Keyboard.addListener(
+      'keyboardWillHide',
+      () => {
+        Animated.spring(swatchAnimation, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      }
+    );
+
+    const keyboardUpSubscription = Keyboard.addListener(
+      'keyboardWillShow',
+      () => {
+        Animated.spring(swatchAnimation, {
+          toValue: -100,
+          useNativeDriver: true,
+        }).start();
+      }
+    );
+
+    return () => {
+      keyboardUpSubscription.remove();
+      keyboardDownSubscription.remove();
+    };
+  }, []);
 
   return (
     <>
@@ -91,33 +124,48 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
-          style={[styles.dialog, { transform: [{ scale: scaleAnimation }] }]}
+          style={[
+            styles.dialog,
+            { top: swatchLayoutY.current },
+            { transform: [{ translateY: swatchAnimation }] },
+            { ...swatchPosition.value },
+          ]}
         >
-          <View
-            style={styles.container}
-            // entering={ZoomIn}
-          >
+          <View style={styles.container}>
             <ScrollView
               persistentScrollbar={true}
               showsVerticalScrollIndicator={true}
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
-                {defaultColor.map((swatch) => (
-                  <Swatch
-                    key={uuid.v4().toString()}
-                    color={swatch}
-                    onChange={setColor}
-                    selected={color === swatch}
-                  />
-                ))}
+                {useMemo(() => {
+                  return defaultColor.map((swatch) => (
+                    <Swatch
+                      key={uuid.v4().toString()}
+                      color={swatch}
+                      onChange={setColor}
+                      selected={swatchColor.current}
+                    />
+                  ));
+                }, [defaultColor])}
               </View>
             </ScrollView>
           </View>
+          <IconButton
+            icon='menu-down'
+            size={50}
+            color='white'
+            style={[
+              { position: 'absolute', bottom: -47 },
+              { ...caretPosition.value },
+            ]}
+          />
         </Dialog>
       </Portal>
       <Pressable
-        style={[styles.swatch, swatchColor]}
+        ref={swatchRef}
+        style={[styles.swatch, { backgroundColor: color }]}
         onPress={openSwatchDialog}
+        onLayout={measureSwatch}
       />
     </>
   );
@@ -131,20 +179,28 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   dialog: {
-    height: 250,
+    height: 150,
+    width: 235,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 1,
+    position: 'absolute',
   },
   container: {
     flex: 1,
     paddingVertical: 5,
+    position: 'relative',
   },
   list: {
     flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  // caret: {
+  //   position: 'absolute',
+  //   bottom: -68,
+  // }
 });
 
 export default SwatchSelector;
