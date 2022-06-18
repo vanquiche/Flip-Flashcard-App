@@ -9,19 +9,17 @@ import {
   Dimensions,
   ImageBackground,
 } from 'react-native';
-import { Portal, Dialog, DefaultTheme, IconButton } from 'react-native-paper';
+import { Portal, Dialog, IconButton } from 'react-native-paper';
 import React, {
   useEffect,
   useState,
   useRef,
   useMemo,
-  useCallback,
 } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
-
 import Pattern from './Pattern';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
@@ -65,10 +63,13 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
   const measureSwatch = () => {
     if (swatchRef.current) {
       swatchRef.current.measure((width, height, px, py, fx, fy) => {
+        // width of dialog plus padding
         const dialogWidth = 237;
+        // height of dialog plus padding
         const dialogHieght = 225;
         swatchLayoutY.current = fy + py - dialogHieght;
         swatchLayoutX.current = fx + py - dialogWidth;
+        // if swatch is on left side of screen then position left and vica versa
         if (SCREEN_WIDTH / 2 < fx) {
           swatchPosition.value = { right: 0 };
           caretPosition.value = { right: -5 };
@@ -86,6 +87,7 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
     else return null;
   }, [pattern]);
 
+  // shift swatch selector when keyboard shows/hide
   useEffect(() => {
     const keyboardDownSubscription = Keyboard.addListener(
       'keyboardWillHide',
@@ -115,7 +117,7 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
 
   return (
     <>
-      <Portal theme={{colors: {backdrop: 'transparent'}}}>
+      <Portal theme={{ colors: { backdrop: 'transparent' } }}>
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     tintColor: 'white',
-    opacity: .75
+    opacity: 0.75,
   },
 });
 

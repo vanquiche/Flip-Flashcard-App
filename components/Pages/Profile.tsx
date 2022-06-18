@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { deleteUser } from '../../redux/userSlice';
 
 const Profile = () => {
-  const { user, loading, notification } = useSelector(
+  const { user, loading } = useSelector(
     (state: RootState) => state.user
   );
   const dispatch = useDispatch<AppDispatch>()
@@ -21,6 +21,7 @@ const Profile = () => {
     dispatch(deleteUser())
   };
 
+  console.log(user.login.week)
   return (
     <View>
       <Text>Hello {user?.username}</Text>

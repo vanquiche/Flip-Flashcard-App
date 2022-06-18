@@ -314,7 +314,6 @@ const Quiz: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'lightblue',
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',

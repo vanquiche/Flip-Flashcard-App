@@ -6,22 +6,19 @@ import {
   Keyboard,
   Animated,
   ScrollView,
-  GestureResponderEvent,
   Dimensions,
 } from 'react-native';
-import { Portal, Dialog, DefaultTheme, IconButton } from 'react-native-paper';
+import { Portal, Dialog, IconButton } from 'react-native-paper';
 import React, {
   useEffect,
   useState,
   useRef,
   useMemo,
-  useCallback,
 } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import Swatch from './Swatch';
-import useSelectColor from '../hooks/useSelectColor';
 import { useSharedValue } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
@@ -57,10 +54,6 @@ interface Props {
 const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
   const [showPalette, setShowPalette] = useState(false);
 
-  const { swatchColor, changeSwatchColor } = useSelectColor();
-
-  changeSwatchColor(color);
-
   const swatchRef = useRef<View>(null);
   const swatchLayoutY = useRef<number>(0);
   const swatchLayoutX = useRef<number>(0);
@@ -76,10 +69,13 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
   const measureSwatch = () => {
     if (swatchRef.current) {
       swatchRef.current.measure((width, height, px, py, fx, fy) => {
+        // height and width of dialog plus padding
         const dialogWidth = 237;
         const dialogHieght = 225;
         swatchLayoutY.current = fy + py - dialogHieght;
         swatchLayoutX.current = fx + py - dialogWidth;
+        // check if swatch button is on left or right side of screen to position
+        // swatch selector on respective side
         if (SCREEN_WIDTH / 2 < fx) {
           swatchPosition.value = { right: 0 };
           caretPosition.value = { right: -5 };
@@ -91,6 +87,7 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
     }
   };
 
+  // shift swatch selector when keyboard show/hide
   useEffect(() => {
     const keyboardDownSubscription = Keyboard.addListener(
       'keyboardWillHide',
@@ -120,7 +117,7 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
 
   return (
     <>
-      <Portal theme={{colors: {backdrop: 'transparent'}}}>
+      <Portal theme={{ colors: { backdrop: 'transparent' } }}>
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
@@ -195,7 +192,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'center',
-  }
+  },
 });
 
 export default SwatchSelector;
