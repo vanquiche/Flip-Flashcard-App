@@ -150,9 +150,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   }, [categoryRef]);
 
   useEffect(() => {
-    // navigation.setOptions({
-    //   title: categoryTitle.toUpperCase(),
-    // });
     db.find({ _id: categoryRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
@@ -282,6 +279,8 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             <Title style={{ color: colors.secondary, marginRight: 10 }}>DESIGN</Title>
             <PatternSelector
               setPattern={selectPattern}
+              pattern={cardSet.design}
+              color={cardSet.color}
             />
           </View>
         </View>

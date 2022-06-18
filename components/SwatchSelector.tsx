@@ -120,7 +120,7 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
 
   return (
     <>
-      <Portal>
+      <Portal theme={{colors: {backdrop: 'transparent'}}}>
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
@@ -143,7 +143,6 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
                       key={uuid.v4().toString()}
                       color={swatch}
                       onChange={setColor}
-                      selected={swatchColor.current}
                     />
                   ));
                 }, [defaultColor])}
@@ -196,11 +195,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  // caret: {
-  //   position: 'absolute',
-  //   bottom: -68,
-  // }
+  }
 });
 
 export default SwatchSelector;

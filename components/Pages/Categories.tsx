@@ -18,47 +18,21 @@ import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
 
 // UTILITIES
-import db from '../../db-services';
 import checkDuplicate from '../../utility/checkDuplicate';
 import useMarkSelection from '../../hooks/useMarkSelection';
 import getData from '../../utility/getData';
-import Swatch from '../Swatch';
+import * as Haptics from 'expo-haptics';
 
 // COMPONENTS
 import ActionDialog from '../ActionDialog';
 import TitleCard from '../TitleCard';
 import AlertDialog from '../AlertDialog';
+import SwatchSelector from '../SwatchSelector';
 
 // TYPES
 import { Category, Set } from '../types';
 import { StackNavigationTypes } from '../types';
 import { cardReducer } from '../../reducers/CardReducer';
-import SwatchSelector from '../SwatchSelector';
-import useSelectColor from '../../hooks/useSelectColor';
-import { Popable, Popover } from 'react-native-popable';
-
-const defaultColor = [
-  '#C0392B',
-  '#E74C3C',
-  '#9B59B6',
-  '#8E44AD',
-  '#2980B9',
-  '#3498DB',
-  '#1ABC9C',
-  '#16A085',
-  '#27AE60',
-  '#2ECC71',
-  '#F1C40F',
-  '#F39C12',
-  '#E67E22',
-  '#D35400',
-  '#FFFFFF',
-  '#BDC3C7',
-  '#95A5A6',
-  '#7F8C8D',
-  '#34495E',
-  '#2C3E50',
-];
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
@@ -153,6 +127,9 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const selectColor = useCallback((color: string) => {
     setCategory((prev) => ({ ...prev, color }));
+    // if (category.color !== color) {
+    //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // }
   }, []);
 
   useEffect(() => {
@@ -283,11 +260,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
             style={{ width: '80%', height: 40, margin: 0, marginBottom: 6 }}
           />
 
-          <SwatchSelector
-            color={category.color}
-            setColor={selectColor}
-          />
-
+          <SwatchSelector color={category.color} setColor={selectColor} />
         </View>
       </ActionDialog>
     </View>

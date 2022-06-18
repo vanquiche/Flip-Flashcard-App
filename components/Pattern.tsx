@@ -1,27 +1,26 @@
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground } from 'react-native';
-import React, { useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
+import React from 'react';
 
 interface Props {
   uri: any;
-  // name: string;
+  name: string;
   select: any;
 }
-const Pattern: React.FC<Props> = ({ uri, select }) => {
+const Pattern: React.FC<Props> = ({ uri, select, name }) => {
 
   const handlePress = () => {
-    select('hello');
-    // console.log(name)
+    select(name);
   };
 
   return (
     <Pressable
       style={styles.container}
       onPress={handlePress}
-      // onLongPress={(e) => e.preventDefault()}
+      onLongPress={(e) => e.preventDefault()}
     >
       <ImageBackground
+        resizeMode='center'
         source={uri}
-        // style={styles.image}
         imageStyle={styles.image}
       />
     </Pressable>
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 8,
     backgroundColor: 'black',
-    margin: 5
+    margin: 5,
   },
   image: {
     height: 45,
