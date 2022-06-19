@@ -10,6 +10,7 @@ export interface StackNavigationTypes {
         categoryRef: string;
         color?: string;
         setRef: string;
+        design?: string;
         // categoryTitle: string;
         // setTitle: string;
       };

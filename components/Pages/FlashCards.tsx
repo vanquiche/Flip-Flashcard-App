@@ -12,6 +12,8 @@ import { DateTime } from 'luxon';
 import uuid from 'react-native-uuid';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
+import checkDuplicate from '../../utility/checkDuplicate';
+import getData from '../../utility/getData';
 
 import ActionDialog from '../ActionDialog';
 import Card from '../Card';
@@ -20,9 +22,7 @@ import AlertDialog from '../AlertDialog';
 
 import { Flashcard } from '../types';
 import { StackNavigationTypes } from '../types';
-import getData from '../../utility/getData';
 import { cardReducer } from '../../reducers/CardReducer';
-import checkDuplicate from '../../utility/checkDuplicate';
 
 const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
   id: '',
@@ -45,7 +45,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const { colors } = useTheme();
-  const { setRef, categoryRef, color } = route.params;
+  const { setRef, categoryRef, color, design } = route.params;
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const closeDialog = () => {
@@ -188,11 +188,12 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
       {startQuiz && (
         <Quiz
-          color={color}
+          set={setName}
           cards={flashcards}
+          color={color as string}
+          pattern={design as string}
           navigation={navigation}
           onDismiss={() => setStartQuiz(false)}
-          set={setName}
         />
       )}
 
@@ -217,6 +218,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
                   key={card._id}
                   card={card}
                   color={color}
+                  pattern={design}
                   handleDelete={deleteCard}
                   handleEdit={editCard}
                   multiSelect={multiSelectMode}

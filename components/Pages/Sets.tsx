@@ -1,11 +1,15 @@
-import { View, ActivityIndicator, ScrollView } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet
+} from 'react-native';
 import {
   Text,
   IconButton,
   TextInput,
   useTheme,
   Button,
-  Checkbox,
   Title,
 } from 'react-native-paper';
 import React, {
@@ -18,21 +22,22 @@ import React, {
 
 // UTILITIES
 import uuid from 'react-native-uuid';
+import { DateTime } from 'luxon';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
+import checkDuplicate from '../../utility/checkDuplicate';
+import getData from '../../utility/getData';
+// REDUCER
+import { cardReducer } from '../../reducers/CardReducer';
 
 // COMPONENTS
 import TitleCard from '../TitleCard';
 import ActionDialog from '../ActionDialog';
 import AlertDialog from '../AlertDialog';
+import SwatchSelector from '../SwatchSelector';
+import PatternSelector from '../PatternSelector';
 
 import { Set, StackNavigationTypes } from '../types';
-import getData from '../../utility/getData';
-import { cardReducer } from '../../reducers/CardReducer';
-import checkDuplicate from '../../utility/checkDuplicate';
-import SwatchSelector from '../SwatchSelector';
-import { DateTime } from 'luxon';
-import PatternSelector from '../PatternSelector';
 
 const INITIAL_STATE: {
   id?: string;
@@ -43,8 +48,8 @@ const INITIAL_STATE: {
 } = {
   id: '',
   name: '',
-  design: '',
   color: 'tomato',
+  design: 'default',
   favorite: false,
 };
 
@@ -56,7 +61,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
-  const [showSwatch, setShowSwatch] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
@@ -76,8 +80,10 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewSet = () => {
+    // check for cards with matching names
     const exist = checkDuplicate(cardSet.name, 'name', cardSets);
 
+    // create payload to dispatch into db
     if (!exist) {
       const newSet: Set = {
         _id: uuid.v4().toString(),
@@ -99,6 +105,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const editSet = (set: Set) => {
+    // place selected card into current state of set
     setCardSet({
       id: set._id,
       name: set.name,
@@ -106,14 +113,17 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       design: set.design,
       favorite: set.favorite,
     });
+    // turn on edit mode to switch function of action dialog
     setEditMode(true);
     setShowDialog(true);
   };
 
   const submitEdit = () => {
+    // submit update to dispatch
     const docQuery = {
       name: cardSet.name,
       color: cardSet.color,
+      design: cardSet.design,
       favorite: cardSet.favorite,
     };
     dispatch({ type: 'update', payload: cardSet, query: docQuery });
@@ -142,14 +152,20 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const selectPattern = useCallback((design) => {
-    setCardSet(prev => ({...prev, design}))
-  }, [])
+    setCardSet((prev) => ({ ...prev, design }));
+  }, []);
+
+  const selectColor = useCallback((color) => {
+    setCardSet((prev) => ({ ...prev, color }));
+  }, []);
 
   useEffect(() => {
+    // find cards within the parent category
     getData({ type: 'set', categoryRef: categoryRef }, dispatch);
   }, [categoryRef]);
 
   useEffect(() => {
+    // set title of screen to category name
     db.find({ _id: categoryRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
@@ -160,13 +176,8 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          height: 50,
-        }}
-      >
+      {/* ACTION BUTTONS */}
+      <View style={styles.buttonContainer}>
         {!multiSelectMode && (
           <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
             NEW SET
@@ -200,6 +211,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         )}
       </View>
 
+      {/* ALERT USER OF DELETION */}
       <AlertDialog
         visible={showAlert}
         onDismiss={() => setShowAlert(false)}
@@ -230,6 +242,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
                     navigation.navigate('Cards', {
                       color: set.color,
                       setRef: set._id,
+                      design: set.design,
                       categoryRef: categoryRef,
                     })
                   }
@@ -240,7 +253,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         </ScrollView>
       </Suspense>
 
-      {/* ADD NEW CATEGORY DIALOG */}
+      {/* ADD/EDIT CATEGORY DIALOG */}
       <ActionDialog
         visible={showDialog}
         dismiss={() => setShowDialog(false)}
@@ -249,16 +262,16 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         onSubmit={editMode ? submitEdit : addNewSet}
         disableSubmit={cardSet.name ? false : true}
       >
-          <TextInput
-            mode='outlined'
-            label='SET NAME'
-            outlineColor='lightgrey'
-            activeOutlineColor={colors.secondary}
-            maxLength={32}
-            style={{ height: 40, margin: 0 }}
-            value={cardSet.name}
-            onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
-          />
+        <TextInput
+          mode='outlined'
+          label='SET NAME'
+          outlineColor='lightgrey'
+          activeOutlineColor={colors.secondary}
+          maxLength={32}
+          style={{ height: 40, margin: 0 }}
+          value={cardSet.name}
+          onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
+        />
         <View
           style={{
             flexDirection: 'row',
@@ -267,16 +280,17 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
             marginTop: 15,
           }}
         >
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <SwatchSelector
-            color={cardSet.color}
-            setColor={(color) => setCardSet((prev) => ({ ...prev, color }))}
-          />
-            <Title style={{ color: colors.secondary, marginLeft: 10 }}>COLOR</Title>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <SwatchSelector color={cardSet.color} setColor={selectColor} />
+            <Title style={{ color: colors.secondary, marginLeft: 10 }}>
+              COLOR
+            </Title>
           </View>
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Title style={{ color: colors.secondary, marginRight: 10 }}>DESIGN</Title>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Title style={{ color: colors.secondary, marginRight: 10 }}>
+              DESIGN
+            </Title>
             <PatternSelector
               setPattern={selectPattern}
               pattern={cardSet.design}
@@ -304,5 +318,13 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 50,
+  },
+});
 
 export default Sets;

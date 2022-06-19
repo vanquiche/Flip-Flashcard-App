@@ -26,6 +26,8 @@ import { Flashcard } from './types';
 
 import AlertDialog from './AlertDialog';
 
+import Images from '../assets/patterns/images'
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -35,6 +37,7 @@ const BACK_CARD_POSITION_DEFAULT = 180;
 interface Props {
   card: Flashcard;
   color?: string;
+  pattern?: any;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
@@ -44,7 +47,7 @@ interface Props {
 }
 
 const Card: React.FC<Props> = React.memo(
-  ({ card, color, handleEdit, handleDelete, multiSelect, markForDelete }) => {
+  ({ card, color, pattern, handleEdit, handleDelete, multiSelect, markForDelete }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [cardFacingFront, setCardFacingFront] = useState(true);
@@ -202,7 +205,7 @@ const Card: React.FC<Props> = React.memo(
               resizeMode='repeat'
               imageStyle={[styles.image]}
               style={styles.cardPattern}
-              source={require('../assets/patterns/pattern.png')}
+              source={Images[pattern]}
             />
 
             <Title style={[styles.cardTitle, {top: 25}]}>Q .</Title>
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
     width: 256,
     height: 190,
     // aspectRatio: 1.35,
-    padding: 10,
+    padding: 15,
     marginVertical: 12,
     borderRadius: 15,
     backgroundColor: 'white',
@@ -281,13 +284,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cardPattern: {
-    flex: 1,
     width: '100%',
     height: '100%',
     position: 'absolute',
-    // transform: [{ scaleY: -1 }],
-    // backgroundColor: 'blue',
-    // alignSelf: 'center'
+
   },
   image: {
     tintColor: 'white',

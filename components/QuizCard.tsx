@@ -1,10 +1,9 @@
 import {
   View,
-  TouchableOpacity,
   StyleSheet,
   Dimensions,
-  KeyboardAvoidingView,
-  Keyboard,
+  ImageBackground,
+
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {
@@ -20,18 +19,12 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
-  runOnJS,
-  LightSpeedInLeft,
-  LightSpeedInRight,
-  LightSpeedOutLeft,
-  RollInRight,
-  RollOutLeft,
-  SlideInLeft,
+
   SlideOutLeft,
   SlideInRight,
-  ZoomIn,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+
+import Images from '../assets/patterns/images';
 
 import { Flashcard } from './types';
 
@@ -41,7 +34,8 @@ const BACK_CARD_POSITION_DEFAULT = 180;
 
 interface PropTypes {
   card: Flashcard;
-  color?: string;
+  color: string;
+  pattern: string;
   canFlip: boolean;
   next?: boolean;
   slideRemaining?: boolean;
@@ -54,6 +48,7 @@ const Card: React.FC<PropTypes> = ({
   card,
   next,
   color,
+  pattern,
   result,
   canFlip,
   nextCard,
@@ -126,7 +121,13 @@ const Card: React.FC<PropTypes> = ({
       >
         {/* front of card - prompt */}
         <Animated.View style={[styles.textContainer, rStyles_card_front]}>
-          <Title style={styles.cardTitle}>PROMPT</Title>
+          <ImageBackground
+            resizeMode='repeat'
+            imageStyle={[styles.image]}
+            style={styles.cardPattern}
+            source={Images[pattern]}
+          />
+          <Title style={styles.cardTitle}>Q .</Title>
           <Text style={styles.text}>{card.prompt}</Text>
         </Animated.View>
 
@@ -135,9 +136,7 @@ const Card: React.FC<PropTypes> = ({
           <Text style={[styles.text, styles.cardBackText]}>
             {card.solution}
           </Text>
-          <Title style={[styles.cardBackText, styles.cardTitle]}>
-            SOLUTION
-          </Title>
+          <Title style={[styles.cardBackText, styles.cardTitle]}>A .</Title>
           <Text
             style={[
               styles.text,
@@ -182,12 +181,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'tomato',
-    width: '85%',
-    // height: 185,
-    aspectRatio: 1 / 0.7,
-    paddingVertical: 20,
+    width: 256,
+    height: 190,
+    padding: 15,
     borderRadius: 15,
     justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 20,
   },
   cardBackText: {
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 20,
     // margin: 15,
     color: 'white',
     backfaceVisibility: 'hidden',
@@ -224,6 +223,18 @@ const styles = StyleSheet.create({
     // shadowOffset: { width: 2, height: 10 },
     // shadowOpacity: 0.15,
     // shadowRadius: 5,
+  },
+  cardPattern: {
+    // flex: 1,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+
+  },
+  image: {
+    tintColor: 'white',
+    opacity: 0.3,
+    borderRadius: 10,
   },
 });
 

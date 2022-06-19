@@ -63,6 +63,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
                   name: 'Cards',
                   params: {
                     color: set.color,
+                    design: set.design,
                     setRef: set._id,
                     categoryRef: set.categoryRef,
                   },
@@ -77,7 +78,6 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (isFocused) {
-      // console.log('useEffect: getting favorites');
       getData({ type: 'set', favorite: true }, cardDispatch);
     } else return;
   }, [isFocused]);

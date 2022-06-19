@@ -21,7 +21,8 @@ import { Flashcard } from './types';
 interface Props {
   navigation: any;
   cards: Flashcard[];
-  color?: string;
+  pattern: string;
+  color: string;
   set?: string;
   onDismiss: () => void;
 }
@@ -30,19 +31,22 @@ const Quiz: React.FC<Props> = ({
   navigation,
   onDismiss,
   cards,
+  pattern,
   color,
   set,
 }) => {
-  const { colors } = useTheme();
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [startQuiz, setStartQuiz] = useState(false);
-  const [completeQuiz, setCompleteQuiz] = useState(false);
   const [cardCount, setCardCount] = useState(0);
   const [answer, setAnswer] = useState('');
+  const [result, setResult] = useState('');
+
+  // VIEW STATE
+  const [startQuiz, setStartQuiz] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [result, setResult] = useState('')
+  const [completeQuiz, setCompleteQuiz] = useState(false);
 
+  const { colors } = useTheme();
   const score = useRef(0);
 
   const lastSlide = cardCount === flashcards.length - 1;
@@ -54,14 +58,18 @@ const Quiz: React.FC<Props> = ({
     const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
     const solution = flashcards[cardCount].solution.toLowerCase();
     if (userInput === solution) {
-      setResult('Correct!')
+      setResult('Correct!');
       score.current++;
     } else {
-      setResult('Incorrect!')
+      setResult('Incorrect!');
     }
-    // console.log(userInput)
-    // console.log(solution)
     setSubmitted(true);
+  };
+
+  const goToNextSlide = () => {
+    setAnswer('');
+    setSubmitted(false);
+    setCardCount((prev) => prev + 1);
   };
 
   // ANIMATION VALUES
@@ -127,7 +135,7 @@ const Quiz: React.FC<Props> = ({
       tabBarStyle: {
         transform: [{ translateY: tabAnimate }],
         backgroundColor: colors.primary,
-        height: 70
+        height: 70,
       },
     });
 
@@ -148,7 +156,7 @@ const Quiz: React.FC<Props> = ({
         tabBarStyle: {
           transform: [{ translateY: tabAnimate }],
           backgroundColor: colors.primary,
-          height: 70
+          height: 70,
         },
       });
     };
@@ -180,7 +188,7 @@ const Quiz: React.FC<Props> = ({
       slideInputUp.remove();
       resetInput.remove();
     };
-  }, [Keyboard]);
+  }, []);
 
   return (
     <Portal>
@@ -196,7 +204,7 @@ const Quiz: React.FC<Props> = ({
           <IconButton
             icon='close-box'
             onPress={() => setShowAlert(true)}
-            style={{ position: 'absolute', top: 0, left: 0 }}
+            style={{ position: 'absolute', top: -10, left: -25 }}
           />
 
           {/* START AND OPEN QUIZ */}
@@ -231,26 +239,22 @@ const Quiz: React.FC<Props> = ({
               {/* FLASHCARDS AND INPUT */}
               {!completeQuiz && (
                 <View style={{ alignItems: 'center' }}>
-
                   <ProgressBar
                     color={color}
                     progress={(cardCount + 1) / flashcards.length}
                     style={{ width: 275, height: 6, borderRadius: 5 }}
                   />
                   <QuizCard
-                    color={color}
-                    card={flashcards[cardCount]}
                     key={flashcards[cardCount]._id}
-                    canFlip={submitted}
-                    next={submitted}
+                    color={color}
                     result={result}
-                    slideRemaining={lastSlide}
+                    next={submitted}
+                    pattern={pattern}
+                    canFlip={submitted}
                     showSolution={submitted}
-                    nextCard={() => {
-                      setAnswer('');
-                      setSubmitted(false);
-                      setCardCount((prev) => prev + 1);
-                    }}
+                    nextCard={goToNextSlide}
+                    slideRemaining={lastSlide}
+                    card={flashcards[cardCount]}
                   />
                   <TextInput
                     mode='outlined'

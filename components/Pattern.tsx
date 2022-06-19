@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
 import React from 'react';
 
+import Images from '../assets/patterns/images'
+
 interface Props {
-  uri: any;
   name: string;
   select: any;
 }
-const Pattern: React.FC<Props> = ({ uri, select, name }) => {
+const Pattern: React.FC<Props> = ({ select, name }) => {
 
   const handlePress = () => {
     select(name);
@@ -20,7 +21,7 @@ const Pattern: React.FC<Props> = ({ uri, select, name }) => {
     >
       <ImageBackground
         resizeMode='center'
-        source={uri}
+        source={Images[name]}
         imageStyle={styles.image}
       />
     </Pressable>

@@ -21,22 +21,15 @@ import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
 import Pattern from './Pattern';
+import Images from '../assets/patterns/images'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
 const PATTERNS = [
-  {
-    name: 'pattern',
-    uri: require('../assets/patterns/pattern.png'),
-  },
-  {
-    name: 'heart',
-    uri: require('../assets/patterns/heart.png'),
-  },
-  {
-    name: 'square-pattern',
-    uri: require('../assets/patterns/square-pattern.png'),
-  },
+  'default',
+  'pattern',
+  'heart',
+  'checker'
 ];
 
 interface Props {
@@ -81,11 +74,6 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
     }
   };
 
-  const getSelectedPattern = useMemo(() => {
-    const p = PATTERNS.find((item) => item.name === pattern);
-    if (p) return p.uri;
-    else return null;
-  }, [pattern]);
 
   // shift swatch selector when keyboard shows/hide
   useEffect(() => {
@@ -138,8 +126,7 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
                   return PATTERNS.map((p) => (
                     <Pattern
                       key={uuid.v4().toString()}
-                      uri={p.uri}
-                      name={p.name}
+                      name={p}
                       select={setPattern}
                     />
                   ));
@@ -165,8 +152,8 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
         onLayout={measureSwatch}
       >
         <ImageBackground
-          source={getSelectedPattern}
-          imageStyle={[styles.image]}
+          source={Images[pattern]}
+          imageStyle={styles.image}
           resizeMode='cover'
         />
       </Pressable>
