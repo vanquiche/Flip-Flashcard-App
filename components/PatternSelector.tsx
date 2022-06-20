@@ -21,16 +21,11 @@ import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
 import Pattern from './Pattern';
-import Images from '../assets/patterns/images'
+import Images, {PATTERN_LIST} from '../assets/patterns/images'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
-const PATTERNS = [
-  'default',
-  'pattern',
-  'heart',
-  'checker'
-];
+
 
 interface Props {
   pattern: string;
@@ -123,14 +118,14 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {useMemo(() => {
-                  return PATTERNS.map((p) => (
+                  return PATTERN_LIST.map((p) => (
                     <Pattern
                       key={uuid.v4().toString()}
                       name={p}
                       select={setPattern}
                     />
                   ));
-                }, [PATTERNS])}
+                }, [PATTERN_LIST])}
               </View>
             </ScrollView>
           </View>

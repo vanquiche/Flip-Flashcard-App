@@ -6,4 +6,11 @@ const patternImgs: Record<string, any> = {
   default: null
 };
 
+export const PATTERN_LIST = [
+  'default',
+  'pattern',
+  'heart',
+  'checker'
+];
+
 export default patternImgs
