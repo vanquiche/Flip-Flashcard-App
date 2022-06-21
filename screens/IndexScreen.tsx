@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import AlertNotification from '../components/AlertNotification';
 import { dismissMessage } from '../redux/notificationSlice';
-import { removeRefFromCheckIn, getCheckInRef } from '../redux/checkInSlice';
+import { removeReferences, getReferences } from '../redux/referenceSlice';
 import { getUserData, updateUser } from '../redux/userSlice';
 import { showMessage } from '../redux/notificationSlice';
 import loginStreak from '../utility/loginStreak';
@@ -43,7 +43,7 @@ const IndexScreen = () => {
 
   useEffect(() => {
     // console.log('IndexScreen rendered');
-    dispatch(getCheckInRef())
+    dispatch(getReferences())
     dispatch(getUserData());
     if (user._id) {
       const dt = DateTime;
@@ -60,7 +60,7 @@ const IndexScreen = () => {
         // then remove quiz references
         // otherwise get references
         diff.hours > 24
-          ? dispatch(removeRefFromCheckIn())
+          ? dispatch(removeReferences())
           : false;
       }
 

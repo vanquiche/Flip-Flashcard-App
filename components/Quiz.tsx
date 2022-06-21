@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { updateUser } from '../redux/userSlice';
 import db from '../db-services';
-import { addNewRefToCheckIn, getCheckInRef } from '../redux/checkInSlice';
+import { addNewReference, getReferences } from '../redux/referenceSlice';
 
 interface Props {
   navigation: any;
@@ -59,7 +59,7 @@ const Quiz: React.FC<Props> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
-  const {quizes} = useSelector((state: RootState) => state.checkIn)
+  const {references} = useSelector((state: RootState) => state.reference)
 
   const { colors } = useTheme();
   const score = useRef(0);
@@ -91,7 +91,7 @@ const Quiz: React.FC<Props> = ({
     setCompleteQuiz(true);
     // if quiz has not been taken today then award points
     // console.log(setRef)
-    if (!quizes.find(quiz => quiz.ref === setRef)) {
+    if (!references.find(quiz => quiz.ref === setRef)) {
       const xp = score.current * 15;
       const awardedPoints = {
         experiencePoints: user.experiencePoints + xp,
@@ -105,7 +105,7 @@ const Quiz: React.FC<Props> = ({
         (err: Error, numRemoved: number) => {}
       );
       // add set to checkin
-      dispatch(addNewRefToCheckIn(setRef))
+      dispatch(addNewReference(setRef))
     }
 
   };

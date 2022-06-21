@@ -8,14 +8,14 @@ interface CheckInObject {
 }
 
 interface CheckInState {
-  quizes: CheckInObject[];
+  references: CheckInObject[];
 }
 
 const initialState: CheckInState = {
-  quizes: [],
+  references: [],
 };
 
-export const getCheckInRef = createAsyncThunk('checkIn/getRefs', () => {
+export const getReferences = createAsyncThunk('reference/getRefs', () => {
   return new Promise<CheckInObject[]>((resolve, reject) => {
     db.find({ type: 'checkIn' }, (err: Error, docs: any[]) => {
       if (err) reject(err.message);
@@ -25,8 +25,8 @@ export const getCheckInRef = createAsyncThunk('checkIn/getRefs', () => {
   });
 });
 
-export const addNewRefToCheckIn = createAsyncThunk(
-  'checkIn/addNewRef',
+export const addNewReference = createAsyncThunk(
+  'reference/addNewRef',
   (ref: string) => {
     return new Promise<CheckInObject>((resolve, reject) => {
       const doc = {
@@ -35,15 +35,15 @@ export const addNewRefToCheckIn = createAsyncThunk(
       };
       db.insert(doc, (err: Error, newDoc: any) => {
         if (err) reject(err.message);
-        console.log('set added to ref');
+        console.log(ref + ' added to ref');
         resolve(newDoc);
       });
     });
   }
 );
 
-export const removeRefFromCheckIn = createAsyncThunk(
-  'checkIn/removeRefs',
+export const removeReferences = createAsyncThunk(
+  'reference/removeRefs',
   () => {
     return new Promise<void>((resolve, reject) => {
       db.remove(
@@ -58,22 +58,22 @@ export const removeRefFromCheckIn = createAsyncThunk(
   }
 );
 
-export const checkInSlice = createSlice({
-  name: 'checkIn',
+export const referenceSlices = createSlice({
+  name: 'reference',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(addNewRefToCheckIn.fulfilled, (state, action) => {
-        state.quizes.push(action.payload);
+      .addCase(addNewReference.fulfilled, (state, action) => {
+        state.references.push(action.payload);
       })
-      .addCase(removeRefFromCheckIn.fulfilled, () => {
+      .addCase(removeReferences.fulfilled, () => {
         return initialState;
       })
-      .addCase(getCheckInRef.fulfilled, (state, action) => {
-        state.quizes = action.payload;
+      .addCase(getReferences.fulfilled, (state, action) => {
+        state.references = action.payload;
       });
   },
 });
 
-export default checkInSlice.reducer;
+export default referenceSlices.reducer;
