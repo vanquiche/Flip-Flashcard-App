@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   favicon: {
     position: 'absolute',
     top: 0,
-    right: 0,
+    left: 0,
   },
   textContent: {
     textAlign: 'center',

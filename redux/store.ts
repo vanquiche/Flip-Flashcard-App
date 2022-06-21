@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice'
-import notificationReducer from './notificationSlice'
+import notificationReducer from './notificationSlice';
+import checkInReducer from './checkInSlice'
 
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    notification: notificationReducer
+    notification: notificationReducer,
+    checkIn: checkInReducer
   },
 });
 

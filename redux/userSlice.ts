@@ -88,7 +88,7 @@ export const userSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = 'suceeded';
-        Object.assign(state, action.payload);
+        Object.assign(state.user, action.payload);
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = 'suceeded';

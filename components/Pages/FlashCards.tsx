@@ -1,5 +1,5 @@
 import { View, ScrollView, ActivityIndicator } from 'react-native';
-import React, { useState, useEffect, Suspense, useReducer } from 'react';
+import React, { useState, useEffect, Suspense, useReducer, useRef } from 'react';
 import {
   IconButton,
   useTheme,
@@ -44,9 +44,11 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
   const [showAlert, setShowAlert] = useState(false);
 
+  const categoryXP = useRef<number>(0);
   const { colors } = useTheme();
-  const { setRef, categoryRef, color, design } = route.params;
   const { selection, selectItem, clearSelection } = useMarkSelection();
+
+  const { setRef, categoryRef, color, design } = route.params;
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -128,7 +130,12 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
       });
       setSetName(docs[0].name);
     });
-  }, [setRef]);
+
+    db.find({_id: categoryRef}, (err: Error, docs: any[]) => {
+      categoryXP.current = docs[0].experiencePoints
+    })
+
+  }, [setRef, categoryRef]);
 
   return (
     <View>
@@ -190,8 +197,11 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         <Quiz
           set={setName}
           cards={flashcards}
-          color={color as string}
           pattern={design as string}
+          color={color as string}
+          setRef={setRef}
+          categoryRef={categoryRef}
+          categoryXP={categoryXP.current}
           navigation={navigation}
           onDismiss={() => setStartQuiz(false)}
         />

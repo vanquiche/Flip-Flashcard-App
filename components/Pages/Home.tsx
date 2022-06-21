@@ -36,10 +36,9 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     (state: RootState) => state.user
   );
 
-  const dispatch = useDispatch<AppDispatch>();
-
   const isFocused = useIsFocused();
   const { colors } = useTheme();
+
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -82,54 +81,18 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     } else return;
   }, [isFocused]);
 
-  useEffect(() => {
-    if (user._id) {
-      const lastLogin = user.login.week;
-      // get date of last login from week
-      const streak = loginStreak(lastLogin[lastLogin.length - 1]);
-      console.log('streak: ' + streak);
-
-      if (streak === null) {
-        // login is less than 24hrs old then do nothing
-        return;
-      } else if (streak === false) {
-        // login is older than 2days
-        // set streak to 0
-        const updateLogin = {
-          login: {
-            week: sortWeek(user.login.week),
-            streak: 0,
-          },
-        };
-        dispatch(updateUser(updateLogin));
-      } else if (streak) {
-        // login is greater than one day but less than 2days
-        // increment streak
-        const updateLogin = {
-          experiencePoints: user.experiencePoints + 50,
-          login: {
-            week: sortWeek(user.login.week),
-            streak: user.login.streak + 1,
-          },
-        };
-        dispatch(updateUser(updateLogin));
-        dispatch(showMessage('you earned 50 xp points for consecutive logins'))
-      }
-    } else return;
-  }, []);
-
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: 'row', marginTop: 15 }}>
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>
-            LEVEL: {user?.level}
+            LEVEL: {user.level}
           </Title>
         </View>
 
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>
-            XP: {user?.experiencePoints}
+            XP: {user.experiencePoints}
           </Title>
         </View>
       </View>

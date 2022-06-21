@@ -16,11 +16,19 @@ import Results from './Results';
 import QuizStartPage from './QuizStartPage';
 import AlertDialog from './AlertDialog';
 
-import { Flashcard } from './types';
+import { Flashcard, StackNavigationTypes } from './types';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { updateUser } from '../redux/userSlice';
+import db from '../db-services';
+import { addNewRefToCheckIn, getCheckInRef } from '../redux/checkInSlice';
 
 interface Props {
   navigation: any;
+  categoryRef: string;
+  setRef: string;
   cards: Flashcard[];
+  categoryXP: number;
   pattern: string;
   color: string;
   set?: string;
@@ -29,7 +37,10 @@ interface Props {
 
 const Quiz: React.FC<Props> = ({
   navigation,
+  categoryRef,
+  setRef,
   onDismiss,
+  categoryXP,
   cards,
   pattern,
   color,
@@ -45,6 +56,10 @@ const Quiz: React.FC<Props> = ({
   const [submitted, setSubmitted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [completeQuiz, setCompleteQuiz] = useState(false);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
+  const {quizes} = useSelector((state: RootState) => state.checkIn)
 
   const { colors } = useTheme();
   const score = useRef(0);
@@ -70,6 +85,29 @@ const Quiz: React.FC<Props> = ({
     setAnswer('');
     setSubmitted(false);
     setCardCount((prev) => prev + 1);
+  };
+
+  const submitResults = () => {
+    setCompleteQuiz(true);
+    // if quiz has not been taken today then award points
+    // console.log(setRef)
+    if (!quizes.find(quiz => quiz.ref === setRef)) {
+      const xp = score.current * 15;
+      const awardedPoints = {
+        experiencePoints: user.experiencePoints + xp,
+      };
+      // add points to user
+      dispatch(updateUser(awardedPoints));
+      // add points to category
+      db.update(
+        { _id: categoryRef },
+        { $set: { points: xp + categoryXP } },
+        (err: Error, numRemoved: number) => {}
+      );
+      // add set to checkin
+      dispatch(addNewRefToCheckIn(setRef))
+    }
+
   };
 
   // ANIMATION VALUES
@@ -118,6 +156,7 @@ const Quiz: React.FC<Props> = ({
     }).start();
   };
 
+  // start animation to hide header and tabbar when quiz begins
   useEffect(() => {
     // slide header and tab out of view
     slideHeaderUp();
@@ -162,6 +201,7 @@ const Quiz: React.FC<Props> = ({
     };
   }, [navigation]);
 
+  // shuffle cards in random order
   useEffect(() => {
     const shuffleArray = (array: Flashcard[]) => {
       let shuffled = [...array];
@@ -174,6 +214,7 @@ const Quiz: React.FC<Props> = ({
     shuffleArray(cards);
   }, [cards]);
 
+  // shift component out of keyboard view
   useEffect(() => {
     const slideInputUp = Keyboard.addListener(
       'keyboardWillShow',
@@ -189,6 +230,8 @@ const Quiz: React.FC<Props> = ({
       resetInput.remove();
     };
   }, []);
+
+
 
   return (
     <Portal>
@@ -290,7 +333,7 @@ const Quiz: React.FC<Props> = ({
                         mode='text'
                         color={colors.secondary}
                         labelStyle={{ fontSize: 16 }}
-                        onPress={() => setCompleteQuiz(true)}
+                        onPress={submitResults}
                       >
                         Results
                       </Button>

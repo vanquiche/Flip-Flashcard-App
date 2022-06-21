@@ -21,12 +21,13 @@ const Profile = () => {
     dispatch(deleteUser())
   };
 
-  console.log(user.login.week)
+  // console.log(user.login.week)
   return (
     <View>
-      <Text>Hello {user?.username}</Text>
+      <Text>Hello {user.username}</Text>
       <Text>Last Login: {lastLoginDate.toLocaleString()}</Text>
-      <Text>Login Streak: {user?.login.streak}</Text>
+      <Text>Login Streak: {user.login.streak}</Text>
+      <Text>XP: {user.experiencePoints}</Text>
       <Button
         mode='contained'
         color='tomato'
