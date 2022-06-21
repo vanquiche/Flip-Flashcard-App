@@ -19,7 +19,7 @@ export const getCheckInRef = createAsyncThunk('checkIn/getRefs', () => {
   return new Promise<CheckInObject[]>((resolve, reject) => {
     db.find({ type: 'checkIn' }, (err: Error, docs: any[]) => {
       if (err) reject(err.message);
-      // console.log(docs);
+      console.log(docs);
       resolve(docs);
     });
   });
@@ -35,7 +35,7 @@ export const addNewRefToCheckIn = createAsyncThunk(
       };
       db.insert(doc, (err: Error, newDoc: any) => {
         if (err) reject(err.message);
-        // console.log('set added to ref');
+        console.log('set added to ref');
         resolve(newDoc);
       });
     });

@@ -43,7 +43,7 @@ const IndexScreen = () => {
 
   useEffect(() => {
     // console.log('IndexScreen rendered');
-
+    dispatch(getCheckInRef())
     dispatch(getUserData());
     if (user._id) {
       const dt = DateTime;
@@ -61,7 +61,7 @@ const IndexScreen = () => {
         // otherwise get references
         diff.hours > 24
           ? dispatch(removeRefFromCheckIn())
-          : dispatch(getCheckInRef());
+          : false;
       }
 
       if (streak === null) {
