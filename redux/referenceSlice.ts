@@ -19,7 +19,7 @@ export const getReferences = createAsyncThunk('reference/getRefs', () => {
   return new Promise<CheckInObject[]>((resolve, reject) => {
     db.find({ type: 'checkIn' }, (err: Error, docs: any[]) => {
       if (err) reject(err.message);
-      console.log(docs);
+      // console.log(docs);
       resolve(docs);
     });
   });

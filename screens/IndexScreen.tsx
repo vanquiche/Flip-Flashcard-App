@@ -1,22 +1,30 @@
 import { StatusBar } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, useTheme } from 'react-native-paper';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// COMPONENTS
 import HomeScreen from './HomeScreen';
 import CategoryScreen from './CategoryScreen';
 import ShopScreen from './ShopScreen';
 import ProfileScreen from './ProfileScreen';
 import SignUp from '../components/Pages/SignUp';
+import AlertNotification from '../components/AlertNotification';
+
+// REDUX STORE
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import AlertNotification from '../components/AlertNotification';
 import { dismissMessage } from '../redux/notificationSlice';
 import { removeReferences, getReferences } from '../redux/referenceSlice';
 import { getUserData, updateUser } from '../redux/userSlice';
 import { showMessage } from '../redux/notificationSlice';
-import loginStreak from '../utility/loginStreak';
-import sortWeek from '../utility/sortWeek';
+import { getFavorites } from '../redux/preferenceSlice';
+import { getPoints } from '../redux/categoryPointSlice';
+
+// UTILITIES
 import { DateTime } from 'luxon';
+import sortWeek from '../utility/sortWeek';
+import loginStreak from '../utility/loginStreak';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,6 +51,8 @@ const IndexScreen = () => {
 
   useEffect(() => {
     // console.log('IndexScreen rendered');
+    dispatch(getPoints());
+    dispatch(getFavorites());
     dispatch(getReferences())
     dispatch(getUserData());
     if (user._id) {

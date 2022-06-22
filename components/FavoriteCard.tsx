@@ -15,7 +15,7 @@ interface Collection {
   name: string;
   color: string;
   favorite?: boolean;
-  createdAt: Date | number;
+  createdAt: string | Date;
   categoryRef?: string;
 }
 
@@ -38,19 +38,19 @@ const TitleCard: React.FC<Props> = React.memo(
           setCount(docs.length);
         }
       );
-    }, []);
+    }, [card._id]);
 
     return (
       <Pressable
-        style={[styles.card, { backgroundColor: card.color }]}
-        // disable navigation when canMark is true
+        style={[styles.card, { backgroundColor: colors.primary }]}
         onPress={onPress}
-        // exiting={ZoomOut}
-        // entering={SlideInLeft.delay(200)}
-        // layout={Layout.springify().damping(15).delay(200)}
       >
-        <Title style={styles.cardCount}>{count}</Title>
-        <Title style={styles.textContent}>{card.name}</Title>
+        <Title style={[styles.cardCount, { color: colors.secondary }]}>
+          {count}
+        </Title>
+        <Title style={[styles.textContent, { color: colors.secondary }]}>
+          {card.name}
+        </Title>
       </Pressable>
     );
   },

@@ -33,6 +33,9 @@ import SwatchSelector from '../SwatchSelector';
 import { Category, Set } from '../types';
 import { StackNavigationTypes } from '../types';
 import { cardReducer } from '../../reducers/CardReducer';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
+import { removePoints } from '../../redux/categoryPointSlice';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
@@ -44,7 +47,7 @@ interface Props extends StackNavigationTypes {}
 
 const Categories: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [categories, dispatch] = useReducer(cardReducer, []);
+  const [categories, cardDispatch] = useReducer(cardReducer, []);
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -56,6 +59,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
+  const dispatch = useDispatch<AppDispatch>()
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -76,10 +80,9 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         type: 'category',
         createdAt: DateTime.now().toISO(),
         points: 0,
-        level: 0,
       };
 
-      dispatch({ type: 'insert', payload: newDoc });
+      cardDispatch({ type: 'insert', payload: newDoc });
     }
     closeDialog();
   };
@@ -96,12 +99,13 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const submitEdit = () => {
     const docQuery = { name: category.name, color: category.color };
-    dispatch({ type: 'update', payload: category, query: docQuery });
+    cardDispatch({ type: 'update', payload: category, query: docQuery });
     closeDialog();
   };
 
   const deleteCategory = (id: string) => {
-    dispatch({ type: 'remove', payload: id });
+    cardDispatch({ type: 'remove', payload: id });
+    dispatch(removePoints(id))
   };
 
   const cancelMultiDeletion = () => {
@@ -120,7 +124,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      dispatch({ type: 'remove', payload: selection.current[i] });
+      cardDispatch({ type: 'remove', payload: selection.current[i] });
+      dispatch(removePoints(selection.current[i]))
     }
     cancelMultiDeletion();
   };
@@ -133,7 +138,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    getData({ type: 'category' }, dispatch);
+    getData({ type: 'category' }, cardDispatch);
   }, []);
 
   useEffect(() => {

@@ -26,7 +26,6 @@ export interface Category {
   color: string;
   createdAt: Date | string;
   points: number;
-  level: number;
 }
 
 export interface Set {
@@ -50,9 +49,11 @@ export interface Flashcard {
   categoryRef: string;
 }
 
-interface Theme {
-  tabColor: string;
+export interface Theme {
+  name: string;
+  fontColor: string;
   cardColor: string;
+  tabColor: string;
   headerColor: string;
 }
 

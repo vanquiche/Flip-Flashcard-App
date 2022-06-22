@@ -2,13 +2,17 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice'
 import notificationReducer from './notificationSlice';
 import referenceReducer from './referenceSlice'
+import categoryPointReducer from './categoryPointSlice'
+import preferenceReducer from './preferenceSlice'
 
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    reference: referenceReducer,
     notification: notificationReducer,
-    reference: referenceReducer
+    categoryPoint: categoryPointReducer,
+    preference: preferenceReducer
   },
 });
 

@@ -132,7 +132,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
     });
 
     db.find({_id: categoryRef}, (err: Error, docs: any[]) => {
-      categoryXP.current = docs[0].experiencePoints
+      if (docs.length > 0) {
+        categoryXP.current = docs[0].points
+      }
     })
 
   }, [setRef, categoryRef]);

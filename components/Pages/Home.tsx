@@ -1,9 +1,5 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, {
-  useEffect,
-  useReducer,
-  Suspense,
-} from 'react';
+import React, { useEffect, useReducer, Suspense } from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -26,19 +22,15 @@ import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { updateUser } from '../../redux/userSlice';
-import {showMessage} from '../../redux/notificationSlice'
+import { showMessage } from '../../redux/notificationSlice';
 
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
-  const [favorites, cardDispatch] = useReducer(cardReducer, []);
-  const { user, loading } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { favorites } = useSelector((state: RootState) => state.preference);
+  const { user, loading } = useSelector((state: RootState) => state.user);
 
-  const isFocused = useIsFocused();
   const { colors } = useTheme();
-
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -75,19 +67,11 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      getData({ type: 'set', favorite: true }, cardDispatch);
-    } else return;
-  }, [isFocused]);
-
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: 'row', marginTop: 15 }}>
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
-          <Title style={{ color: colors.secondary }}>
-            LEVEL: {user.level}
-          </Title>
+          <Title style={{ color: colors.secondary }}>LEVEL: {user.level}</Title>
         </View>
 
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>

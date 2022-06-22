@@ -1,9 +1,4 @@
-import {
-  View,
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet
-} from 'react-native';
+import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import {
   Text,
   IconButton,
@@ -38,9 +33,12 @@ import SwatchSelector from '../SwatchSelector';
 import PatternSelector from '../PatternSelector';
 
 import { Set, StackNavigationTypes } from '../types';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
+import { addFavorite, removeFavorite } from '../../redux/preferenceSlice';
 
 const INITIAL_STATE: {
-  id?: string;
+  id: string;
   name: string;
   color: string;
   design: string;
@@ -57,7 +55,7 @@ interface Props extends StackNavigationTypes {}
 
 const Sets: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [cardSets, dispatch] = useReducer(cardReducer, []);
+  const [cardSets, cardDispatch] = useReducer(cardReducer, []);
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -69,6 +67,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { colors } = useTheme();
   const { categoryRef } = route.params;
+  const dispatch = useDispatch<AppDispatch>();
 
   // CRUD functions
   const closeDialog = () => {
@@ -95,13 +94,20 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
       };
-      dispatch({ type: 'insert', payload: newSet });
+      cardDispatch({ type: 'insert', payload: newSet });
+
+      // if set is favorited then add to preference store
+      if (newSet.favorite) {
+        dispatch(addFavorite(newSet));
+      }
     }
     closeDialog();
   };
 
   const deleteSet = (id: string) => {
-    dispatch({ type: 'remove', payload: id });
+    cardDispatch({ type: 'remove', payload: id });
+    // remove favorite from preference store
+    dispatch(removeFavorite(id));
   };
 
   const editSet = (set: Set) => {
@@ -126,7 +132,21 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       design: cardSet.design,
       favorite: cardSet.favorite,
     };
-    dispatch({ type: 'update', payload: cardSet, query: docQuery });
+    cardDispatch({ type: 'update', payload: cardSet, query: docQuery });
+
+    // remove set from favorite store
+    if (!cardSet.favorite) {
+      dispatch(removeFavorite(cardSet.id));
+    } else if (cardSet.favorite) {
+      // search for set and add to favorite store
+      db.find({ _id: cardSet.id }, (err: Error, docs: Set[]) => {
+        if (err) console.log(err.message);
+        // console.log(docs[0])
+        const updated = Object.assign(docs[0], cardSet)
+        // console.log(updated)
+        dispatch(addFavorite(updated));
+      });
+    }
     closeDialog();
   };
 
@@ -146,7 +166,9 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      dispatch({ type: 'remove', payload: selection.current[i] });
+      cardDispatch({ type: 'remove', payload: selection.current[i] });
+      // remove from favorites
+      dispatch(removeFavorite(selection.current[i]));
     }
     cancelMultiDeletion();
   };
@@ -161,7 +183,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     // find cards within the parent category
-    getData({ type: 'set', categoryRef: categoryRef }, dispatch);
+    getData({ type: 'set', categoryRef: categoryRef }, cardDispatch);
   }, [categoryRef]);
 
   useEffect(() => {

@@ -22,6 +22,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { updateUser } from '../redux/userSlice';
 import db from '../db-services';
 import { addNewReference, getReferences } from '../redux/referenceSlice';
+import { addPoints } from '../redux/categoryPointSlice';
 
 interface Props {
   navigation: any;
@@ -46,6 +47,7 @@ const Quiz: React.FC<Props> = ({
   color,
   set,
 }) => {
+
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [cardCount, setCardCount] = useState(0);
   const [answer, setAnswer] = useState('');
@@ -99,12 +101,9 @@ const Quiz: React.FC<Props> = ({
       // add points to user
       dispatch(updateUser(awardedPoints));
       // add points to category
-      db.update(
-        { _id: categoryRef },
-        { $set: { points: xp + categoryXP } },
-        (err: Error, numRemoved: number) => {}
-      );
-      // add set to checkin
+      dispatch(addPoints({id: categoryRef, points: xp + categoryXP}))
+      // add set to reference
+      // can only earn points once/day
       dispatch(addNewReference(setRef))
     }
 
