@@ -35,7 +35,7 @@ import { StackNavigationTypes } from '../types';
 import { cardReducer } from '../../reducers/CardReducer';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { removePoints } from '../../redux/categoryPointSlice';
+import { addCategory, getPoints, removeCategory } from '../../redux/categoryPointSlice';
 
 const INITIAL_STATE: { id?: string; name: string; color: string } = {
   id: '',
@@ -83,6 +83,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
       };
 
       cardDispatch({ type: 'insert', payload: newDoc });
+      dispatch(addCategory(newDoc))
     }
     closeDialog();
   };
@@ -105,7 +106,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const deleteCategory = (id: string) => {
     cardDispatch({ type: 'remove', payload: id });
-    dispatch(removePoints(id))
+    dispatch(removeCategory(id))
   };
 
   const cancelMultiDeletion = () => {
@@ -125,7 +126,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
       cardDispatch({ type: 'remove', payload: selection.current[i] });
-      dispatch(removePoints(selection.current[i]))
+      dispatch(removeCategory(selection.current[i]))
     }
     cancelMultiDeletion();
   };
