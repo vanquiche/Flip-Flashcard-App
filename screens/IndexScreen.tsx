@@ -13,24 +13,22 @@ import AlertNotification from '../components/AlertNotification';
 // REDUX STORE
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { dismissMessage } from '../redux/notificationSlice';
-import { removeReferences, getReferences } from '../redux/referenceSlice';
-import { getUserData, updateUser } from '../redux/userSlice';
-import { showMessage } from '../redux/notificationSlice';
-import { getFavorites } from '../redux/preferenceSlice';
-import { getPoints } from '../redux/categoryPointSlice';
+
 
 // UTILITIES
 import { DateTime } from 'luxon';
 import sortWeek from '../utility/sortWeek';
 import loginStreak from '../utility/loginStreak';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { dismissNotification } from '../redux/storeSlice';
+import { getUserData } from '../redux/userThunkActions';
+import { getFavoriteSets } from '../redux/cardThunkActions';
 
 const Tab = createBottomTabNavigator();
 
 const IndexScreen = () => {
-  const { user } = useSelector((state: RootState) => state.user);
-  const { alert } = useSelector((state: RootState) => state.notification);
+  const { user } = useSelector((state: RootState) => state.store);
+  const { notification } = useSelector((state: RootState) => state.store);
 
   const dispatch = useDispatch<AppDispatch>();
   const { colors } = useTheme();
@@ -46,69 +44,26 @@ const IndexScreen = () => {
   };
 
   const clearNotification = () => {
-    dispatch(dismissMessage());
+    dispatch(dismissNotification());
   };
 
   useEffect(() => {
-    // console.log('IndexScreen rendered');
-    dispatch(getPoints());
-    dispatch(getFavorites());
-    dispatch(getReferences())
+    // get user
+    // get favorites
+    // get completed quizes
+    // get categoryPoints
+    // get login data
     dispatch(getUserData());
-    if (user._id) {
-      const dt = DateTime;
-      const today = dt.now();
-      const lastLogin = user.login.week[user.login.week.length - 1];
+    dispatch(getFavoriteSets())
 
-      const diff = today.diff(dt.fromISO(lastLogin), 'hours').toObject();
-      // console.log(diff.hours)
-      // get date of last login from week
-      const streak = loginStreak(lastLogin);
-      // console.log('streak: ' + streak);
-      if (diff.hours) {
-        // if time passed is greater than 24hrs
-        // then remove quiz references
-        // otherwise get references
-        diff.hours > 24
-          ? dispatch(removeReferences())
-          : false;
-      }
-
-      if (streak === null) {
-        // login is less than 24hrs old then do nothing
-        return;
-      } else if (streak === false) {
-        // login is older than 2days
-        // set streak to 0
-        const updateLogin = {
-          login: {
-            week: sortWeek(user.login.week),
-            streak: 0,
-          },
-        };
-        dispatch(updateUser(updateLogin));
-      } else if (streak) {
-        // login is greater than one day but less than 2days
-        // increment streak
-        const updateLogin = {
-          experiencePoints: user.experiencePoints + 50,
-          login: {
-            week: sortWeek(user.login.week),
-            streak: user.login.streak + 1,
-          },
-        };
-        dispatch(updateUser(updateLogin));
-        dispatch(showMessage('you earned 50 xp points for consecutive logins'));
-      }
-    }
   }, []);
 
   return (
     <>
       <AlertNotification
         dismiss={clearNotification}
-        visible={alert.show}
-        message={alert.message}
+        visible={notification.show}
+        message={notification.message}
       />
       <StatusBar hidden />
       <Tab.Navigator

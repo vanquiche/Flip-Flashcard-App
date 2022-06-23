@@ -4,40 +4,38 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Title, Text, TextInput, useTheme, Button } from 'react-native-paper';
 import db from '../../db-services';
 // import { UserContext } from '../../context/userContext';
-import { User, StackNavigationTypes } from '../types';
+import { User, StackNavigationTypes, initUser, defaultTheme } from '../types';
 import { DateTime } from 'luxon';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import {createNewUser} from '../../redux/userSlice'
+import { createNewUser } from '../../redux/userThunkActions';
 
 interface Props extends StackNavigationTypes {}
 
-const SignUp: React.FC<Props> = ({navigation}) => {
+const SignUp: React.FC<Props> = ({ navigation }) => {
   const [newUser, setNewUser] = useState({
     username: '',
-    icon: '',
   });
 
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   // const { user, userDispatch } = useContext(UserContext);
+  const dt = DateTime
 
   const { colors } = useTheme();
 
   const createUser = () => {
-    const createUser: User = {
+    const createUser = {
       type: 'user',
       username: newUser.username,
-      icon: newUser.icon,
-      level: 1,
-      experiencePoints: 0,
-      heartcoin: 100,
+      xp: 0,
+      heartcoin: 0,
       achievements: [],
-      login: {
-        week: [DateTime.now().toISO()],
-        streak: 0,
-      }
+      completedQuiz: [],
+      login: [dt.now().toISO()],
+      streak: 0,
+      theme: defaultTheme
     };
-    dispatch(createNewUser(createUser))
+    dispatch(createNewUser(createUser));
   };
 
   return (

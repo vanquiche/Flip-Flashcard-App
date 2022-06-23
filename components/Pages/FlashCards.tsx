@@ -1,5 +1,11 @@
 import { View, ScrollView, ActivityIndicator } from 'react-native';
-import React, { useState, useEffect, Suspense, useReducer, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  useReducer,
+  useRef,
+} from 'react';
 import {
   IconButton,
   useTheme,
@@ -22,9 +28,16 @@ import AlertDialog from '../AlertDialog';
 
 import { Flashcard } from '../types';
 import { StackNavigationTypes } from '../types';
-import { cardReducer } from '../../reducers/CardReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import {
+  addFlashCard,
+  getCards,
+  removeCard,
+  updateCard,
+} from '../../redux/cardThunkActions';
 
-const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
+const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
   id: '',
   prompt: '',
   solution: '',
@@ -33,7 +46,6 @@ const INITIAL_STATE: { id?: string; prompt: string; solution: string } = {
 interface Props extends StackNavigationTypes {}
 
 const FlashCards: React.FC<Props> = ({ navigation, route }) => {
-  const [flashcards, dispatch] = useReducer(cardReducer, []);
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
   const [setName, setSetName] = useState('');
@@ -48,6 +60,8 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
+  const { cards } = useSelector((state: RootState) => state.store);
+  const dispatch = useDispatch<AppDispatch>();
   const { setRef, categoryRef, color, design } = route.params;
 
   const closeDialog = () => {
@@ -59,7 +73,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewCard = () => {
-    const exist = checkDuplicate(flashcard.prompt, 'prompt', flashcards);
+    const exist = checkDuplicate(flashcard.prompt, 'prompt', cards.flashcard);
 
     if (!exist) {
       const newCard: Flashcard = {
@@ -71,13 +85,13 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         categoryRef: categoryRef,
         setRef: setRef,
       };
-      dispatch({ type: 'insert', payload: newCard });
+      dispatch(addFlashCard(newCard));
     }
     closeDialog();
   };
 
   const deleteCard = (id: string) => {
-    dispatch({ type: 'remove-single', payload: id });
+    dispatch(removeCard({ id, type: 'flashcard' }));
   };
 
   const editCard = (card: Flashcard) => {
@@ -92,7 +106,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
   const submitEdit = () => {
     const docQuery = { prompt: flashcard.prompt, solution: flashcard.solution };
-    dispatch({ type: 'update', payload: flashcard, query: docQuery });
+    dispatch(
+      updateCard({ id: flashcard.id, type: 'flashcard', query: docQuery })
+    );
     closeDialog();
   };
 
@@ -112,14 +128,19 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      dispatch({ type: 'remove-single', payload: selection.current[i] });
+      dispatch(removeCard({ id: selection.current[i], type: 'flashcard' }));
     }
     cancelMultiDeletion();
   };
 
   useEffect(() => {
     // fetch data from db
-    getData({ type: 'flashcard', setRef: setRef }, dispatch);
+    dispatch(
+      getCards({
+        type: 'flashcard',
+        query: { type: 'flashcard', setRef: setRef },
+      })
+    );
   }, [setRef]);
 
   useEffect(() => {
@@ -131,12 +152,11 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
       setSetName(docs[0].name);
     });
 
-    db.find({_id: categoryRef}, (err: Error, docs: any[]) => {
+    db.find({ _id: categoryRef }, (err: Error, docs: any[]) => {
       if (docs.length > 0) {
-        categoryXP.current = docs[0].points
+        categoryXP.current = docs[0].points;
       }
-    })
-
+    });
   }, [setRef, categoryRef]);
 
   return (
@@ -161,7 +181,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
           <Button
             color={colors.secondary}
             onPress={() => setStartQuiz(true)}
-            disabled={flashcards.length === 0}
+            disabled={cards.flashcard.length === 0}
           >
             QUIZ
           </Button>
@@ -176,7 +196,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
               clearSelection();
               setMultiSelectMode(true);
             }}
-            disabled={flashcards.length === 0}
+            disabled={cards.flashcard.length === 0}
           >
             EDIT
           </Button>
@@ -198,7 +218,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
       {startQuiz && (
         <Quiz
           set={setName}
-          cards={flashcards}
+          cards={cards.flashcard}
           pattern={design as string}
           color={color as string}
           setRef={setRef}
@@ -224,7 +244,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
               alignItems: 'center',
             }}
           >
-            {flashcards.map((card: Flashcard) => {
+            {cards.flashcard.map((card: Flashcard) => {
               return (
                 <Card
                   key={card._id}

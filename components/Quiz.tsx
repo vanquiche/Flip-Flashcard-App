@@ -19,10 +19,9 @@ import AlertDialog from './AlertDialog';
 import { Flashcard, StackNavigationTypes } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { updateUser } from '../redux/userSlice';
 import db from '../db-services';
-import { addNewReference, getReferences } from '../redux/referenceSlice';
-import { addPoints } from '../redux/categoryPointSlice';
+import { updateUser } from '../redux/userThunkActions';
+import { updateCard } from '../redux/cardThunkActions';
 
 interface Props {
   navigation: any;
@@ -47,7 +46,6 @@ const Quiz: React.FC<Props> = ({
   color,
   set,
 }) => {
-
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [cardCount, setCardCount] = useState(0);
   const [answer, setAnswer] = useState('');
@@ -60,8 +58,7 @@ const Quiz: React.FC<Props> = ({
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.user);
-  const {references} = useSelector((state: RootState) => state.reference)
+  const { user } = useSelector((state: RootState) => state.store);
 
   const { colors } = useTheme();
   const score = useRef(0);
@@ -93,20 +90,28 @@ const Quiz: React.FC<Props> = ({
     setCompleteQuiz(true);
     // if quiz has not been taken today then award points
     // console.log(setRef)
-    if (!references.find(quiz => quiz.ref === setRef)) {
-      const xp = score.current * 15;
+    if (!user.completedQuiz.includes(setRef)) {
+      const award = score.current * 15;
       const awardedPoints = {
-        experiencePoints: user.experiencePoints + xp,
+        xp: user.xp + award,
       };
+      const update = [...user.completedQuiz, setRef]
       // add points to user
+      // dispatch(updateUser(awardedPoints));
       dispatch(updateUser(awardedPoints));
       // add points to category
-      dispatch(addPoints({id: categoryRef, points: xp + categoryXP}))
+      dispatch(
+        updateCard({
+          id: categoryRef,
+          type: 'category',
+          query: { points: award + categoryXP },
+        })
+      );
       // add set to reference
       // can only earn points once/day
-      dispatch(addNewReference(setRef))
+      dispatch(updateUser({ completedQuiz: update }));
+      // dispatch(addNewReference(setRef))
     }
-
   };
 
   // ANIMATION VALUES
@@ -229,8 +234,6 @@ const Quiz: React.FC<Props> = ({
       resetInput.remove();
     };
   }, []);
-
-
 
   return (
     <Portal>

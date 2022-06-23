@@ -2,6 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
 import React from 'react';
 import AlertNotification from './AlertNotification';
+import { DateTime, WeekdayNumbers } from 'luxon';
 
 interface Props {
   dates: string[];
@@ -10,6 +11,7 @@ interface Props {
 
 const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   // console.log(dates)
+  const dt = DateTime
   const { colors } = useTheme();
   // console.log(user.login.notify)
 
@@ -31,41 +33,42 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   // };
 
   // convert prop dates into day number i.e sunday === 0
-  const convertDateToNumber = dates.map((date) => {
-    const day = new Date(date).getDay();
-    return day;
-  });
+  // const convertDateToNumber = dates.map((date) => {
+
+  //   const day = dt.fromISO(date).weekday
+  //   return day;
+  // });
 
   // console.log(convertDateToNumber)
   // create an object corresponding for each day of the week
-  const days = displayWeek.map((w) => {
-    const exist = convertDateToNumber.includes(w.date);
-    // console.log(exist)
-    if (exist) {
-      const date = {
-        name: w.name,
-        date: w.date,
-        loggedIn: true,
-      };
-      return date;
-    } else {
-      const date = {
-        name: w.name,
-        date: w.date,
-        loggedIn: false,
-      };
-      return date;
-    }
-  });
+  // const days = displayWeek.map((w) => {
+  //   const exist = convertDateToNumber.includes(w.date as WeekdayNumbers);
+  //   // console.log(exist)
+  //   if (exist) {
+  //     const date = {
+  //       name: w.name,
+  //       date: w.date,
+  //       loggedIn: true,
+  //     };
+  //     return date;
+  //   } else {
+  //     const date = {
+  //       name: w.name,
+  //       date: w.date,
+  //       loggedIn: false,
+  //     };
+  //     return date;
+  //   }
+  // });
 
   // console.log(days);
-  const compareDate = (day: number) => {
-    return days.find((d) => {
-      if (d.date === day) {
-        return d;
-      }
-    });
-  };
+  // const compareDate = (day: number) => {
+  //   return days.find((d) => {
+  //     if (d.date === day) {
+  //       return d;
+  //     }
+  //   });
+  // };
 
   return (
     <>
@@ -86,7 +89,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
         }}
       >
         <Title style={{ color: colors.secondary }}>LOGIN GOAL</Title>
-        <View style={styles.container}>
+        {/* <View style={styles.container}>
           {displayWeek.map((d, index) => {
             const day = compareDate(d.date);
             return (
@@ -107,7 +110,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
               </View>
             );
           })}
-        </View>
+        </View> */}
         <Title style={{ color: colors.secondary }}>
           LOGIN STREAK: {streak}
         </Title>

@@ -32,12 +32,17 @@ import SwatchSelector from '../SwatchSelector';
 // TYPES
 import { Category, Set } from '../types';
 import { StackNavigationTypes } from '../types';
-import { cardReducer } from '../../reducers/CardReducer';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../redux/store';
-import { addCategory, getPoints, removeCategory } from '../../redux/categoryPointSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import {
+  addCategoryCard,
+  getCards,
+  removeCard,
+  updateCard,
+} from '../../redux/cardThunkActions';
+import { checkLogin } from '../../redux/dailyThunkAction';
 
-const INITIAL_STATE: { id?: string; name: string; color: string } = {
+const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
   name: '',
   color: 'tomato',
@@ -47,7 +52,7 @@ interface Props extends StackNavigationTypes {}
 
 const Categories: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [categories, cardDispatch] = useReducer(cardReducer, []);
+
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -59,7 +64,10 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  const dispatch = useDispatch<AppDispatch>()
+
+  const { user, cards } = useSelector((state: RootState) => state.store);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -70,7 +78,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const addNewCategory = () => {
-    const exist = checkDuplicate(category.name, 'name', categories);
+    const exist = checkDuplicate(category.name, 'name', cards.category);
 
     if (!exist) {
       const newDoc: Category = {
@@ -82,8 +90,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         points: 0,
       };
 
-      cardDispatch({ type: 'insert', payload: newDoc });
-      dispatch(addCategory(newDoc))
+      dispatch(addCategoryCard(newDoc));
     }
     closeDialog();
   };
@@ -100,13 +107,14 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const submitEdit = () => {
     const docQuery = { name: category.name, color: category.color };
-    cardDispatch({ type: 'update', payload: category, query: docQuery });
+    dispatch(
+      updateCard({ id: category.id, type: 'category', query: docQuery })
+    );
     closeDialog();
   };
 
   const deleteCategory = (id: string) => {
-    cardDispatch({ type: 'remove', payload: id });
-    dispatch(removeCategory(id))
+    dispatch(removeCard({ id, type: 'category' }));
   };
 
   const cancelMultiDeletion = () => {
@@ -125,8 +133,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
-      cardDispatch({ type: 'remove', payload: selection.current[i] });
-      dispatch(removeCategory(selection.current[i]))
+      dispatch(removeCard({ id: selection.current[i], type: 'category' }));
     }
     cancelMultiDeletion();
   };
@@ -139,7 +146,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    getData({ type: 'category' }, cardDispatch);
+    dispatch(getCards({ type: 'category', query: { type: 'category' } }));
+    dispatch(checkLogin(user.login[user.login.length - 1]));
   }, []);
 
   useEffect(() => {
@@ -181,7 +189,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
               clearSelection();
               setMultiSelectMode(true);
             }}
-            disabled={categories.length === 0}
+            disabled={cards.category.length === 0}
           >
             EDIT
           </Button>
@@ -218,7 +226,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
               justifyContent: 'center',
             }}
           >
-            {categories?.map((category: Category) => {
+            {cards.category?.map((category: Category) => {
               return (
                 <TitleCard
                   key={category._id}

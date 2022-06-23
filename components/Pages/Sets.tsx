@@ -23,7 +23,6 @@ import useMarkSelection from '../../hooks/useMarkSelection';
 import checkDuplicate from '../../utility/checkDuplicate';
 import getData from '../../utility/getData';
 // REDUCER
-import { cardReducer } from '../../reducers/CardReducer';
 
 // COMPONENTS
 import TitleCard from '../TitleCard';
@@ -33,9 +32,14 @@ import SwatchSelector from '../SwatchSelector';
 import PatternSelector from '../PatternSelector';
 
 import { Set, StackNavigationTypes } from '../types';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../redux/store';
-import { addFavorite, removeFavorite } from '../../redux/preferenceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import {
+  addSetCard,
+  getCards,
+  removeCard,
+  updateCard,
+} from '../../redux/cardThunkActions';
 
 const INITIAL_STATE: {
   id: string;
@@ -55,7 +59,7 @@ interface Props extends StackNavigationTypes {}
 
 const Sets: React.FC<Props> = ({ navigation, route }) => {
   // data state
-  const [cardSets, cardDispatch] = useReducer(cardReducer, []);
+
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -65,11 +69,15 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  const { colors } = useTheme();
   const { categoryRef } = route.params;
+  const { colors } = useTheme();
+
+  const { cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  // CRUD functions
+  // console.log(categoryRef)
+
+  // // CRUD functions
   const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {
@@ -80,7 +88,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   const addNewSet = () => {
     // check for cards with matching names
-    const exist = checkDuplicate(cardSet.name, 'name', cardSets);
+    const exist = checkDuplicate(cardSet.name, 'name', cards.set);
 
     // create payload to dispatch into db
     if (!exist) {
@@ -94,107 +102,87 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
       };
-      cardDispatch({ type: 'insert', payload: newSet });
+      dispatch(addSetCard(newSet));
 
-      // if set is favorited then add to preference store
-      if (newSet.favorite) {
-        dispatch(addFavorite(newSet));
-      }
+      closeDialog();
     }
-    closeDialog();
-  };
+  }
 
-  const deleteSet = (id: string) => {
-    cardDispatch({ type: 'remove', payload: id });
-    // remove favorite from preference store
-    dispatch(removeFavorite(id));
-  };
-
-  const editSet = (set: Set) => {
-    // place selected card into current state of set
-    setCardSet({
-      id: set._id,
-      name: set.name,
-      color: set.color,
-      design: set.design,
-      favorite: set.favorite,
-    });
-    // turn on edit mode to switch function of action dialog
-    setEditMode(true);
-    setShowDialog(true);
-  };
-
-  const submitEdit = () => {
-    // submit update to dispatch
-    const docQuery = {
-      name: cardSet.name,
-      color: cardSet.color,
-      design: cardSet.design,
-      favorite: cardSet.favorite,
+    const deleteSet = (id: string) => {
+      dispatch(removeCard({ id, type: 'set' }));
     };
-    cardDispatch({ type: 'update', payload: cardSet, query: docQuery });
 
-    // remove set from favorite store
-    if (!cardSet.favorite) {
-      dispatch(removeFavorite(cardSet.id));
-    } else if (cardSet.favorite) {
-      // search for set and add to favorite store
-      db.find({ _id: cardSet.id }, (err: Error, docs: Set[]) => {
-        if (err) console.log(err.message);
-        // console.log(docs[0])
-        const updated = Object.assign(docs[0], cardSet)
-        // console.log(updated)
-        dispatch(addFavorite(updated));
+    const editSet = (set: Set) => {
+      // place selected card into current state of set
+      setCardSet({
+        id: set._id,
+        name: set.name,
+        color: set.color,
+        design: set.design,
+        favorite: set.favorite,
       });
-    }
-    closeDialog();
-  };
+      // turn on edit mode to switch function of action dialog
+      setEditMode(true);
+      setShowDialog(true);
+    };
 
-  const cancelMultiDeletion = () => {
-    setMultiSelectMode(false);
-    setShowAlert(false);
-  };
+    const submitEdit = () => {
+      // submit update to dispatch
+      const docQuery = {
+        name: cardSet.name,
+        color: cardSet.color,
+        design: cardSet.design,
+        favorite: cardSet.favorite,
+      };
+      dispatch(updateCard({ id: cardSet.id, type: 'set', query: docQuery }));
 
-  const confirmAlert = () => {
-    if (selection.current.length > 0) {
-      setShowAlert(true);
-    } else {
+      closeDialog();
+    };
+
+    const cancelMultiDeletion = () => {
+      setMultiSelectMode(false);
+      setShowAlert(false);
+    };
+
+    const confirmAlert = () => {
+      if (selection.current.length > 0) {
+        setShowAlert(true);
+      } else {
+        cancelMultiDeletion();
+      }
+    };
+
+    const deleteSelection = () => {
+      // cycle through selection and delete each ID
+      for (let i = 0; i < selection.current.length; i++) {
+        dispatch(removeCard({ id: selection.current[i], type: 'set' }));
+      }
       cancelMultiDeletion();
-    }
-  };
+    };
 
-  const deleteSelection = () => {
-    // cycle through selection and delete each ID
-    for (let i = 0; i < selection.current.length; i++) {
-      cardDispatch({ type: 'remove', payload: selection.current[i] });
-      // remove from favorites
-      dispatch(removeFavorite(selection.current[i]));
-    }
-    cancelMultiDeletion();
-  };
+    const selectPattern = useCallback((design) => {
+      setCardSet((prev) => ({ ...prev, design }));
+    }, []);
 
-  const selectPattern = useCallback((design) => {
-    setCardSet((prev) => ({ ...prev, design }));
-  }, []);
+    const selectColor = useCallback((color) => {
+      setCardSet((prev) => ({ ...prev, color }));
+    }, []);
 
-  const selectColor = useCallback((color) => {
-    setCardSet((prev) => ({ ...prev, color }));
-  }, []);
+    useEffect(() => {
+      // find cards within the parent category
+      dispatch(getCards({type: 'set', query: { type: 'set', categoryRef: categoryRef }}));
+    }, [categoryRef]);
 
-  useEffect(() => {
-    // find cards within the parent category
-    getData({ type: 'set', categoryRef: categoryRef }, cardDispatch);
-  }, [categoryRef]);
-
-  useEffect(() => {
-    // set title of screen to category name
-    db.find({ _id: categoryRef }, (err: Error, docs: any) => {
-      if (err) console.log(err);
-      navigation.setOptions({
-        title: docs[0].name.toUpperCase(),
+    useEffect(() => {
+      // set title of screen to category name
+      db.find({ _id: categoryRef }, (err: Error, docs: any) => {
+        if (err) console.log(err);
+        navigation.setOptions({
+          title: docs[0].name.toUpperCase(),
+        });
       });
-    });
-  }, [categoryRef]);
+    }, []);
+
 
   return (
     <View>
@@ -214,7 +202,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
               clearSelection();
               setMultiSelectMode(true);
             }}
-            disabled={cardSets.length === 0}
+            disabled={cards.set.length === 0}
           >
             EDIT
           </Button>
@@ -251,7 +239,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
               justifyContent: 'center',
             }}
           >
-            {cardSets.map((set: Set) => {
+            {cards.set.map((set: Set) => {
               return (
                 <TitleCard
                   key={set._id}

@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
+import { Login } from '../components/types';
 
-const sortWeek = (week: string[]) => {
-  const latestLogin = DateTime.fromISO(week[week.length - 1]);
+const sortWeek = (week: Login[]) => {
+  const latestLogin = DateTime.fromISO(week[week.length - 1].date);
   const today = DateTime.now();
   const diff = today.diff(latestLogin, 'days').toObject();
 
