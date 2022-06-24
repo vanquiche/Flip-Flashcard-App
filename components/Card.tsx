@@ -7,7 +7,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import { Text, useTheme, Title } from 'react-native-paper';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -21,12 +21,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { IconButton } from 'react-native-paper';
 
-import Tooltip from 'react-native-walkthrough-tooltip';
 import { Flashcard } from './types';
 
 import AlertDialog from './AlertDialog';
 
-import Images from '../assets/patterns/images'
+import Images from '../assets/patterns/images';
+import Popup from './Popup';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -38,37 +38,44 @@ interface Props {
   card: Flashcard;
   color?: string;
   pattern?: any;
+  multiSelect: boolean;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
-  multiSelect: boolean;
   markForDelete: (id: any, state: boolean) => void;
 }
 
 const Card: React.FC<Props> = React.memo(
-  ({ card, color, pattern, handleEdit, handleDelete, multiSelect, markForDelete }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
+  ({
+    card,
+    color,
+    pattern,
+    handleEdit,
+    handleDelete,
+    multiSelect,
+    markForDelete,
+  }) => {
+    const [showPopup, setShowPopup] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [cardFacingFront, setCardFacingFront] = useState(true);
     const [checked, setChecked] = useState(false);
 
     const { colors } = useTheme();
+
+    const cardRef = useRef<View>(null);
+    // hold popup coordinates
+    const popupX = useRef(0);
+    const popupY = useRef(0);
+
+    // animation values for card flip
     const cardFlip = useSharedValue(0);
     const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
     const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
-
     const cardOpacity = useSharedValue(1);
     const cardOpacityAnimatedStyle = useAnimatedStyle(() => {
       return {
         opacity: withSpring(cardOpacity.value),
-      };
-    });
-
-    const tooltipScale = useSharedValue(0);
-    const tooltipAnimateStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: withTiming(tooltipScale.value) }],
       };
     });
 
@@ -108,8 +115,7 @@ const Card: React.FC<Props> = React.memo(
 
     const handleLongPress = () => {
       // console.log('long press')
-      tooltipScale.value = 1;
-      setShowTooltip(true);
+      setShowPopup(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     };
 
@@ -123,28 +129,18 @@ const Card: React.FC<Props> = React.memo(
       markForDelete(card._id, !checked);
     };
 
-    const PopupIcons = () => {
-      return (
-        <Animated.View style={[styles.popup, tooltipAnimateStyle]}>
-          <IconButton
-            icon='delete'
-            color={colors.secondary}
-            onPress={() => {
-              setShowTooltip(false);
-              setShowAlert(true);
-            }}
-          />
-          <IconButton
-            icon='pencil'
-            color={colors.secondary}
-            onPress={() => {
-              setShowTooltip(false);
-              handleEdit(card, card._id);
-            }}
-          />
-          {/* <IconButton icon='palette' onPress={handleColor} /> */}
-        </Animated.View>
-      );
+    const measureCard = () => {
+      // wait for entering animation to end before measuring card
+      setTimeout(() => {
+        if (cardRef.current) {
+          cardRef.current.measure((width, height, px, py, fx, fy) => {
+            // const measurements = { width, height, px, py, fx, fy };
+            // console.log(measurements)
+            popupY.current = fy + 25;
+            popupX.current = fx + 40;
+          });
+        }
+      }, 600);
     };
 
     return (
@@ -154,6 +150,14 @@ const Card: React.FC<Props> = React.memo(
           visible={showAlert}
           onDismiss={() => setShowAlert(false)}
           onConfirm={() => handleDelete(card._id)}
+        />
+
+        <Popup
+          visible={showPopup}
+          layout={{ x: popupX.current, y: popupY.current }}
+          dismiss={() => setShowPopup(false)}
+          onEditPress={() => handleEdit(card, card._id)}
+          onDeletePress={() => setShowAlert(true)}
         />
 
         {/* Card */}
@@ -170,6 +174,8 @@ const Card: React.FC<Props> = React.memo(
           exiting={ZoomOut}
           entering={SlideInLeft.delay(300)}
           layout={Layout.springify().damping(15).delay(200)}
+          onLayout={measureCard}
+          ref={cardRef}
         >
           {/* indicator of card selection */}
           {multiSelect && (
@@ -179,25 +185,6 @@ const Card: React.FC<Props> = React.memo(
               style={{ position: 'absolute', left: 0, top: 0 }}
             />
           )}
-
-          <Tooltip
-            placement='top'
-            isVisible={showTooltip}
-            onClose={() => {
-              setShowTooltip(false);
-              tooltipScale.value = 0;
-            }}
-            content={<PopupIcons />}
-            showChildInTooltip={false}
-            childContentSpacing={30}
-            disableShadow={true}
-            contentStyle={{
-              borderRadius: 10,
-              backgroundColor: colors.primary,
-            }}
-          >
-            <Text style={{ color: 'transparent' }}>tooltip</Text>
-          </Tooltip>
           {/* FRONT OF CARD */}
           <Animated.View style={[styles.textContainer, rStyles_card_front]}>
             {/* CARD DESIGN */}
@@ -208,7 +195,7 @@ const Card: React.FC<Props> = React.memo(
               source={Images[pattern]}
             />
 
-            <Title style={[styles.cardTitle, {top: 25}]}>Q .</Title>
+            <Title style={[styles.cardTitle, { top: 25 }]}>Q .</Title>
             <Text style={styles.textContent}>{card.prompt}</Text>
           </Animated.View>
 
@@ -223,7 +210,11 @@ const Card: React.FC<Props> = React.memo(
             <Text style={[styles.textContent, styles.cardBackText]}>
               {card.solution}
             </Text>
-            <Title style={[styles.cardBackText, styles.cardTitle, {bottom: 25}]}>A .</Title>
+            <Title
+              style={[styles.cardBackText, styles.cardTitle, { bottom: 25 }]}
+            >
+              A .
+            </Title>
           </Animated.View>
         </AnimatedPressable>
       </>
@@ -287,7 +278,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-
   },
   image: {
     tintColor: 'white',

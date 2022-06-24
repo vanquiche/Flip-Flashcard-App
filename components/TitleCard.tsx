@@ -1,6 +1,11 @@
-import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import {
+  View,
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 import { Text, useTheme, IconButton } from 'react-native-paper';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -11,11 +16,11 @@ import Animated, {
   ZoomOut,
   withSpring,
 } from 'react-native-reanimated';
-import Tooltip from 'react-native-walkthrough-tooltip';
 
 import AlertDialog from './AlertDialog';
 
 import Images from '../assets/patterns/images';
+import Popup from './Popup';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -48,7 +53,7 @@ const TitleCard: React.FC<Props> = ({
   onPress,
   markForDelete,
 }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -59,41 +64,14 @@ const TitleCard: React.FC<Props> = ({
       opacity: withSpring(cardOpacity.value),
     };
   });
-  const tooltipScale = useSharedValue(0);
-  const tooltipAnimateStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: withTiming(tooltipScale.value) }],
-    };
-  });
 
   const { colors } = useTheme();
-
-  const PopupIcons = () => {
-    return (
-      <Animated.View style={[styles.popup, tooltipAnimateStyle]}>
-        <IconButton
-          icon='delete'
-          color='white'
-          onPress={() => {
-            setShowTooltip(false);
-            setShowAlert(true);
-          }}
-        />
-        <IconButton
-          icon='pencil'
-          color='white'
-          onPress={() => {
-            setShowTooltip(false);
-            handleEdit(card);
-          }}
-        />
-      </Animated.View>
-    );
-  };
+  const cardRef = useRef<View>(null);
+  const popupX = useRef(0);
+  const popupY = useRef(0);
 
   const handleLongPress = () => {
-    tooltipScale.value = 1;
-    setShowTooltip(true);
+    setShowPopup(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
@@ -107,6 +85,19 @@ const TitleCard: React.FC<Props> = ({
     markForDelete(card._id, !checked);
   };
 
+  const measureCard = () => {
+    setTimeout(() => {
+      if (cardRef.current) {
+        cardRef.current.measure((width, height, px, py, fx, fy) => {
+          // const measurements = { width, height, px, py, fx, fy };
+          // console.log(measurements)
+          popupY.current = fy;
+          popupX.current = fx;
+        });
+      }
+    }, 550);
+  };
+
   return (
     <>
       <AlertDialog
@@ -115,7 +106,18 @@ const TitleCard: React.FC<Props> = ({
         onDismiss={() => setShowAlert(false)}
         onConfirm={() => handleDelete(card._id)}
       />
+
+      <Popup
+        layout={{ x: popupX.current, y: popupY.current }}
+        visible={showPopup}
+        dismiss={() => setShowPopup(false)}
+        onEditPress={() => handleEdit(card)}
+        onDeletePress={() => setShowAlert(true)}
+      />
+
       <AnimatedPressable
+        ref={cardRef}
+        onLayout={measureCard}
         style={[
           styles.card,
           {
@@ -127,7 +129,7 @@ const TitleCard: React.FC<Props> = ({
         onPress={multiSelect ? toggleCheck : onPress}
         onLongPress={handleLongPress}
         exiting={ZoomOut}
-        entering={SlideInLeft.delay(200)}
+        entering={SlideInLeft.delay(200).duration(350)}
         layout={Layout.springify().damping(15).delay(200)}
       >
         {/* indicator of card selection */}
@@ -139,29 +141,9 @@ const TitleCard: React.FC<Props> = ({
           />
         )}
 
-        <Tooltip
-          placement='top'
-          isVisible={showTooltip}
-          onClose={() => {
-            setShowTooltip(false);
-            tooltipScale.value = 0;
-          }}
-          content={<PopupIcons />}
-          showChildInTooltip={false}
-          childContentSpacing={10}
-          disableShadow={true}
-          contentStyle={{
-            borderRadius: 10,
-            backgroundColor: colors.secondary,
-          }}
-        >
-          {/* <View style={{zIndex: 100}}> */}
-
-          <Text style={[styles.textContent, { backgroundColor: card.color }]}>
-            {card.name}
-          </Text>
-          {/* </View> */}
-        </Tooltip>
+        <Text style={[styles.textContent, { backgroundColor: card.color }]}>
+          {card.name}
+        </Text>
         {card.design && (
           <ImageBackground
             source={Images[card.design] || null}
