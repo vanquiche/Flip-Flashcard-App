@@ -14,15 +14,12 @@ import AlertNotification from '../components/AlertNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 
-
 // UTILITIES
-import { DateTime } from 'luxon';
-import sortWeek from '../utility/sortWeek';
-import loginStreak from '../utility/loginStreak';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { dismissNotification } from '../redux/storeSlice';
 import { getUserData } from '../redux/userThunkActions';
 import { getFavoriteSets } from '../redux/cardThunkActions';
+import { getCards } from '../redux/cardThunkActions';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,14 +45,10 @@ const IndexScreen = () => {
   };
 
   useEffect(() => {
-    // get user
-    // get favorites
-    // get completed quizes
-    // get categoryPoints
-    // get login data
-    dispatch(getUserData());
-    dispatch(getFavoriteSets())
 
+    dispatch(getUserData());
+    dispatch(getFavoriteSets());
+    dispatch(getCards({ type: 'category', query: { type: 'category' } }));
   }, []);
 
   return (

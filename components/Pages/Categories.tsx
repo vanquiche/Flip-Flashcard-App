@@ -40,7 +40,8 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import { checkLogin } from '../../redux/dailyThunkAction';
+import { checkLogin } from '../../redux/userThunkActions';
+
 
 const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
@@ -146,15 +147,9 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(getCards({ type: 'category', query: { type: 'category' } }));
     dispatch(checkLogin(user.login[user.login.length - 1]));
   }, []);
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'CATEGORIES',
-    });
-  }, []);
 
   return (
     <View>

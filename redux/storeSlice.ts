@@ -1,18 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DateTime } from 'luxon';
 import {
   initUser,
   User,
   Set,
-  Theme,
   Category,
-  defaultTheme,
-  Status,
   Flashcard,
-  Login,
   Collection,
 } from '../components/types';
-import sortWeek from '../utility/sortWeek';
 import {
   addCategoryCard,
   addFlashCard,
@@ -22,12 +16,13 @@ import {
   removeCard,
   updateCard,
 } from './cardThunkActions';
-import { checkLogin, completeQuiz } from './dailyThunkAction';
 import {
   createNewUser,
   deleteUser,
   getUserData,
   updateUser,
+  checkLogin,
+  completeQuiz
 } from './userThunkActions';
 
 interface StoreInit {
@@ -113,21 +108,18 @@ export const storeSlice = createSlice({
             ),
           },
           // update favorite sets list
-
           favoriteSets: state.favoriteSets.filter(
             (f) => f._id !== action.payload.id
           ),
-          // return current theme state
         };
       })
       .addCase(updateCard.fulfilled, (state, action) => {
         if (action.payload.type) {
           const key = action.payload.type;
-          let updateCategoryPoints;
           let updateFavs;
 
           // update cards by card type i.e. 'category', 'set', 'flashcard'
-          const updated = state.cards[key].map((c: Collection) => {
+          const updatedCards = state.cards[key].map((c: Collection) => {
             if (c._id === action.payload.id) {
               return { ...c, ...action.payload.query };
             }
@@ -146,19 +138,14 @@ export const storeSlice = createSlice({
 
           return {
             ...state,
-            // update cards
             cards: {
               ...state.cards,
-              [key]: updated,
+              [key]: updatedCards,
             },
-            // update favorite sets
             favoriteSets: updateFavs as Set[],
           };
         } else return state;
       })
-      // .addCase(getCards.pending, (state) => {
-      //   state.loading = true
-      // })
       .addCase(getCards.fulfilled, (state, action) => {
         const key = action.payload.type;
         return {

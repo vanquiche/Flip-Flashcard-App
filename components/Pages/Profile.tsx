@@ -23,12 +23,6 @@ const Profile = () => {
     dispatch(deleteUser());
   };
 
-  useEffect(() => {
-    if (cards.category.length === 0) {
-      dispatch(getCards({ type: 'category', query: { type: 'category' } }));
-    } else return;
-  }, []);
-
   // console.log(user.login.week)
   return (
     <View>
