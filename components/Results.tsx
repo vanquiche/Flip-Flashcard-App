@@ -3,14 +3,17 @@ import React from 'react';
 import { Text, Title, useTheme, Button } from 'react-native-paper';
 
 import Animated, { SlideInRight } from 'react-native-reanimated';
+import XPbar from './XPbar';
+import { Category, Set } from './types';
 
 interface Props {
+  set: Set;
   total: number;
   score: number;
   dismiss?: () => void;
 }
 
-const Results: React.FC<Props> = ({ total, score, dismiss }) => {
+const Results: React.FC<Props> = ({ total, set, score, dismiss }) => {
   const { colors } = useTheme();
   const percentage = Math.floor((score / total) * 100);
 
@@ -22,31 +25,20 @@ const Results: React.FC<Props> = ({ total, score, dismiss }) => {
       <Title style={{ color: colors.secondary, textAlign: 'center' }}>
         RESULTS
       </Title>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 10,
-        }}
-      >
+      <View style={styles.metricContainer}>
         <Title style={{ color: colors.secondary }}>SCORE</Title>
         <Title style={{ color: colors.secondary }}>
           {score}/{total}
         </Title>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginBottom: 10,
-        }}
-      >
+      <View style={styles.metricContainer}>
         <Title style={{ color: colors.secondary }}>GRADE</Title>
         <Title style={{ color: colors.secondary }}>{percentage}%</Title>
       </View>
 
+      <XPbar total={100} set={set} />
       {/* will add logic to restart quiz later */}
-      
+
       {/* <Button
         mode='contained'
         color={colors.secondary}
@@ -63,7 +55,7 @@ const Results: React.FC<Props> = ({ total, score, dismiss }) => {
         labelStyle={{ color: 'white', fontSize: 16 }}
         onPress={dismiss}
       >
-        return home
+        return
       </Button>
     </Animated.View>
   );
@@ -75,12 +67,19 @@ const styles = StyleSheet.create({
     // height: 400,
     backgroundColor: 'lightblue',
     padding: 30,
+    paddingVertical: 25,
     borderRadius: 12,
   },
   button: {
     marginVertical: 10,
     paddingVertical: 8,
     elevation: 0,
+    marginTop: 15,
+  },
+  metricContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
   },
 });
 

@@ -42,7 +42,6 @@ import {
 } from '../../redux/cardThunkActions';
 import { checkLogin } from '../../redux/userThunkActions';
 
-
 const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
   name: '',
@@ -146,11 +145,6 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
     // }
   }, []);
 
-  useEffect(() => {
-    dispatch(checkLogin(user.login[user.login.length - 1]));
-  }, []);
-
-
   return (
     <View>
       {/* button wrapper */}
@@ -162,44 +156,41 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
           paddingHorizontal: 15,
         }}
       >
-        {!multiSelectMode && (
-          <Button
-            mode='contained'
-            style={styles.button}
-            labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
-            color={colors.primary}
-            onPress={() => setShowDialog(true)}
-          >
-            NEW
-          </Button>
-        )}
-        {/* start mode to mark for deletion */}
-        {!multiSelectMode && (
-          <Button
-            mode='contained'
-            style={styles.button}
-            labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
-            color={colors.primary}
-            onPress={() => {
-              clearSelection();
-              setMultiSelectMode(true);
-            }}
-            disabled={cards.category.length === 0}
-          >
-            EDIT
-          </Button>
-        )}
+        {!multiSelectMode ? (
+          <>
+            <Button
+              mode='contained'
+              style={styles.button}
+              labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
+              color={colors.primary}
+              onPress={() => setShowDialog(true)}
+            >
+              NEW
+            </Button>
 
-        {/* confirm selection for deletion */}
-        {multiSelectMode && (
+            <Button
+              mode='contained'
+              style={styles.button}
+              labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
+              color={colors.primary}
+              onPress={() => {
+                clearSelection();
+                setMultiSelectMode(true);
+              }}
+              disabled={cards.category.length === 0}
+            >
+              DELETE
+            </Button>
+          </>
+        ) : (
           <Button
             mode='text'
-            style={[styles.button, { position: 'absolute', right: 0 }]}
+            style={[styles.button, { position: 'absolute', right: 12 }]}
             labelStyle={styles.buttonLabel}
             color='red'
             onPress={confirmAlert}
           >
-            DELETE
+            REMOVE
           </Button>
         )}
       </View>

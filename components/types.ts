@@ -90,18 +90,6 @@ interface Achievement {
   points: number;
 }
 
-export interface User {
-  _id: string;
-  type: 'user';
-  xp: number;
-  username: string;
-  heartcoin: number;
-  achievements: Achievement[];
-  completedQuiz: string[];
-  login: string[];
-  streak: number;
-  theme: Theme
-}
 
 export interface Login {
   _id: string;
@@ -130,6 +118,19 @@ export const defaultTheme: Theme = {
   tabColor: 'pink',
   headerColor: 'pink',
 };
+
+export interface User {
+  _id: string;
+  type: 'user';
+  xp: number;
+  username: string;
+  heartcoin: number;
+  achievements: Achievement[];
+  completedQuiz: string[];
+  login: string[];
+  streak: number;
+  theme: Theme
+}
 
 type Datatype = 'user';
 

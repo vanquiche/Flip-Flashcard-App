@@ -8,7 +8,7 @@ import {
   ProgressBar,
   Button,
 } from 'react-native-paper';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 
 import QuizContainer from './QuizContainer';
 import QuizCard from './QuizCard';
@@ -22,6 +22,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import db from '../db-services';
 import { updateUser } from '../redux/userThunkActions';
 import { updateCard } from '../redux/cardThunkActions';
+import { showNotification } from '../redux/storeSlice';
 
 interface Props {
   navigation: any;
@@ -58,7 +59,11 @@ const Quiz: React.FC<Props> = ({
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.store);
+  const { user, cards: quiz } = useSelector((state: RootState) => state.store);
+
+  const selectedQuizSet = useMemo(() => {
+    return quiz.set.find((c) => c._id === setRef);
+  }, []);
 
   const { colors } = useTheme();
   const score = useRef(0);
@@ -95,7 +100,7 @@ const Quiz: React.FC<Props> = ({
       const awardedPoints = {
         xp: user.xp + award,
       };
-      const update = [...user.completedQuiz, setRef]
+      const update = [...user.completedQuiz, setRef];
       // add points to user
       // dispatch(updateUser(awardedPoints));
       dispatch(updateUser(awardedPoints));
@@ -110,6 +115,7 @@ const Quiz: React.FC<Props> = ({
       // add set to reference
       // can only earn points once/day
       dispatch(updateUser({ completedQuiz: update }));
+      dispatch(showNotification(`you earned ${award} points`));
       // dispatch(addNewReference(setRef))
     }
   };
@@ -275,9 +281,10 @@ const Quiz: React.FC<Props> = ({
               {/* SHOW QUIZ RESULTS */}
               {completeQuiz && (
                 <Results
-                  total={flashcards.length}
-                  score={score.current}
                   dismiss={onDismiss}
+                  score={score.current}
+                  total={flashcards.length}
+                  set={selectedQuizSet!}
                 />
               )}
 

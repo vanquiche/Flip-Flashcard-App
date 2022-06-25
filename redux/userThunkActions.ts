@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { User } from '../components/types';
 import db from '../db-services';
 import { DateTime } from 'luxon';
+import loginStreak from '../utility/loginStreak';
+import sortWeek from '../utility/sortWeek';
 
 export const createNewUser = createAsyncThunk(
   'user/createUser',
@@ -26,7 +28,7 @@ export const getUserData = createAsyncThunk('store/getUser', () => {
 
 export const deleteUser = createAsyncThunk('store/deleteCurrentUser', () => {
   return new Promise<void>((resolve, reject) => {
-    db.remove({}, {multi: true}, (err: Error, numRemoved: number) => {
+    db.remove({}, { multi: true }, (err: Error, numRemoved: number) => {
       if (err) reject(err.message);
       resolve();
     });
@@ -51,22 +53,44 @@ export const updateUser = createAsyncThunk(
 
 export const checkLogin = createAsyncThunk(
   'store/checkLogin',
-  (lastLogin: string) => {
-    return new Promise<void | string>((resolve, reject) => {
+  (payload: { lastLogin: string[]; streak: number; xp: number }) => {
+    return new Promise<void | string[]>((resolve, reject) => {
       const dt = DateTime;
       const today = dt.now();
-      const { hours } = today.diff(dt.fromISO(lastLogin), 'hours').toObject();
+      const loggedInLast = payload.lastLogin[payload.lastLogin.length - 1];
+      const { hours } = today
+        .diff(dt.fromISO(loggedInLast), 'hours')
+        .toObject();
+
+      const updatedWeek = sortWeek(payload.lastLogin);
 
       if (hours) {
+        // if checkin is no older than 24h then do nothing
         if (hours < 24) {
           resolve();
         } else if (hours > 24) {
+          const inStreak = loginStreak(loggedInLast);
+          const xp = inStreak ? payload.xp + 25 : payload.xp;
+          const streak = inStreak
+            ? payload.streak + 1
+            : !inStreak
+            ? 0
+            : payload.streak;
+
           db.update(
             { type: 'user' },
-            { $push: { login: today.toISO() } },
+            {
+              $set: {
+                xp: xp,
+                streak: streak,
+                completedQuiz: [],
+                login: updatedWeek,
+              },
+            },
             (err: Error, numReplaced: number) => {
-              if (err) reject(err.message);
-              resolve(today.toISO());
+              if (err) reject(err);
+              // if (err) console.log(err)
+              resolve(updatedWeek);
             }
           );
         }

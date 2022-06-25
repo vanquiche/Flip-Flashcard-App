@@ -1,4 +1,4 @@
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import React, {
   useState,
   useEffect,
@@ -166,51 +166,55 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          height: 50,
+          height: 75,
+          paddingHorizontal: 15,
         }}
       >
-        {/* ADD NEW FLASHCARD */}
-        {!multiSelectMode && (
-          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
-            NEW CARD
-          </Button>
-        )}
+        {!multiSelectMode ? (
+          <>
+            <Button
+              mode='contained'
+              style={styles.button}
+              color={colors.primary}
+              labelStyle={{ color: colors.secondary }}
+              onPress={() => setShowDialog(true)}
+            >
+              NEW
+            </Button>
 
-        {/* BUTTON TO START QUIZ */}
-        {!multiSelectMode && (
-          <Button
-            color={colors.secondary}
-            onPress={() => setStartQuiz(true)}
-            disabled={cards.flashcard.length === 0}
-          >
-            QUIZ
-          </Button>
-        )}
+            <Button
+              mode='contained'
+              color={colors.primary}
+              style={[styles.button]}
+              labelStyle={{ color: colors.secondary }}
+              onPress={() => setStartQuiz(true)}
+              disabled={cards.flashcard.length === 0}
+            >
+              QUIZ
+            </Button>
 
-        {/* START MULTI-SELECT */}
-        {!multiSelectMode && (
-          <Button
-            mode='text'
-            color={colors.secondary}
-            onPress={() => {
-              clearSelection();
-              setMultiSelectMode(true);
-            }}
-            disabled={cards.flashcard.length === 0}
-          >
-            EDIT
-          </Button>
-        )}
-
-        {/* confirm selection for deletion */}
-        {multiSelectMode && (
+            <Button
+              mode='contained'
+              style={styles.button}
+              labelStyle={{ color: colors.secondary }}
+              color={colors.primary}
+              onPress={() => {
+                clearSelection();
+                setMultiSelectMode(true);
+              }}
+              disabled={cards.flashcard.length === 0}
+            >
+              DELETE
+            </Button>
+          </>
+        ) : (
           <Button
             mode='text'
             color='red'
             onPress={confirmAlert}
-            style={{ position: 'absolute', right: 0 }}
+            style={[styles.button, { position: 'absolute', right: 12 }]}
           >
-            DELETE
+            REMOVE
           </Button>
         )}
       </View>
@@ -301,5 +305,14 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    marginVertical: 10,
+    height: 50,
+    elevation: 0,
+    justifyContent: 'center',
+  },
+});
 
 export default FlashCards;

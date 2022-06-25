@@ -15,6 +15,8 @@ import React, {
   useCallback,
 } from 'react';
 
+import Animated from 'react-native-reanimated';
+
 // UTILITIES
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
@@ -106,117 +108,128 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
       closeDialog();
     }
-  }
+  };
 
-    const deleteSet = (id: string) => {
-      dispatch(removeCard({ id, type: 'set' }));
+  const deleteSet = (id: string) => {
+    dispatch(removeCard({ id, type: 'set' }));
+  };
+
+  const editSet = (set: Set) => {
+    // place selected card into current state of set
+    setCardSet({
+      id: set._id,
+      name: set.name,
+      color: set.color,
+      design: set.design,
+      favorite: set.favorite,
+    });
+    // turn on edit mode to switch function of action dialog
+    setEditMode(true);
+    setShowDialog(true);
+  };
+
+  const submitEdit = () => {
+    // submit update to dispatch
+    const docQuery = {
+      name: cardSet.name,
+      color: cardSet.color,
+      design: cardSet.design,
+      favorite: cardSet.favorite,
     };
+    dispatch(updateCard({ id: cardSet.id, type: 'set', query: docQuery }));
 
-    const editSet = (set: Set) => {
-      // place selected card into current state of set
-      setCardSet({
-        id: set._id,
-        name: set.name,
-        color: set.color,
-        design: set.design,
-        favorite: set.favorite,
-      });
-      // turn on edit mode to switch function of action dialog
-      setEditMode(true);
-      setShowDialog(true);
-    };
+    closeDialog();
+  };
 
-    const submitEdit = () => {
-      // submit update to dispatch
-      const docQuery = {
-        name: cardSet.name,
-        color: cardSet.color,
-        design: cardSet.design,
-        favorite: cardSet.favorite,
-      };
-      dispatch(updateCard({ id: cardSet.id, type: 'set', query: docQuery }));
+  const cancelMultiDeletion = () => {
+    setMultiSelectMode(false);
+    setShowAlert(false);
+  };
 
-      closeDialog();
-    };
-
-    const cancelMultiDeletion = () => {
-      setMultiSelectMode(false);
-      setShowAlert(false);
-    };
-
-    const confirmAlert = () => {
-      if (selection.current.length > 0) {
-        setShowAlert(true);
-      } else {
-        cancelMultiDeletion();
-      }
-    };
-
-    const deleteSelection = () => {
-      // cycle through selection and delete each ID
-      for (let i = 0; i < selection.current.length; i++) {
-        dispatch(removeCard({ id: selection.current[i], type: 'set' }));
-      }
+  const confirmAlert = () => {
+    if (selection.current.length > 0) {
+      setShowAlert(true);
+    } else {
       cancelMultiDeletion();
-    };
+    }
+  };
 
-    const selectPattern = useCallback((design) => {
-      setCardSet((prev) => ({ ...prev, design }));
-    }, []);
+  const deleteSelection = () => {
+    // cycle through selection and delete each ID
+    for (let i = 0; i < selection.current.length; i++) {
+      dispatch(removeCard({ id: selection.current[i], type: 'set' }));
+    }
+    cancelMultiDeletion();
+  };
 
-    const selectColor = useCallback((color) => {
-      setCardSet((prev) => ({ ...prev, color }));
-    }, []);
+  const selectPattern = useCallback((design) => {
+    setCardSet((prev) => ({ ...prev, design }));
+  }, []);
 
-    useEffect(() => {
-      // find cards within the parent category
-      dispatch(getCards({type: 'set', query: { type: 'set', categoryRef: categoryRef }}));
-    }, [categoryRef]);
+  const selectColor = useCallback((color) => {
+    setCardSet((prev) => ({ ...prev, color }));
+  }, []);
 
-    useEffect(() => {
-      // set title of screen to category name
-      db.find({ _id: categoryRef }, (err: Error, docs: any) => {
-        if (err) console.log(err);
-        navigation.setOptions({
-          title: docs[0].name.toUpperCase(),
-        });
+  useEffect(() => {
+    // find cards within the parent category
+    dispatch(
+      getCards({
+        type: 'set',
+        query: { type: 'set', categoryRef: categoryRef },
+      })
+    );
+  }, [categoryRef]);
+
+  useEffect(() => {
+    // set title of screen to category name
+    db.find({ _id: categoryRef }, (err: Error, docs: any) => {
+      if (err) console.log(err);
+      navigation.setOptions({
+        title: docs[0].name.toUpperCase(),
       });
-    }, []);
-
+    });
+  }, []);
 
   return (
     <View>
       {/* ACTION BUTTONS */}
       <View style={styles.buttonContainer}>
-        {!multiSelectMode && (
-          <Button color={colors.secondary} onPress={() => setShowDialog(true)}>
-            NEW SET
-          </Button>
-        )}
-        {/* start mode to mark for deletion */}
-        {!multiSelectMode && (
-          <Button
-            mode='text'
-            color={colors.secondary}
-            onPress={() => {
-              clearSelection();
-              setMultiSelectMode(true);
-            }}
-            disabled={cards.set.length === 0}
-          >
-            EDIT
-          </Button>
-        )}
+        {!multiSelectMode ? (
+          <>
+            <Button
+              mode='contained'
+              style={styles.button}
+              color={colors.primary}
+              labelStyle={{ color: colors.secondary }}
+              onPress={() => setShowDialog(true)}
+            >
+              NEW
+            </Button>
 
-        {/* confirm selection for deletion */}
-        {multiSelectMode && (
+            {/* start mode to mark for deletion */}
+
+            <Button
+              mode='contained'
+              style={styles.button}
+              color={colors.primary}
+              labelStyle={{ color: colors.secondary }}
+              onPress={() => {
+                clearSelection();
+                setMultiSelectMode(true);
+              }}
+              disabled={cards.set.length === 0}
+            >
+              DELETE
+            </Button>
+          </>
+        ) : (
           <Button
             mode='text'
             color='red'
             onPress={confirmAlert}
-            style={{ position: 'absolute', right: 0 }}
+            style={[styles.button, { position: 'absolute', right: 12 }]}
           >
-            DELETE
+            REMOVE
           </Button>
         )}
       </View>
@@ -333,7 +346,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    height: 75,
+    paddingHorizontal: 15,
+  },
+  button: {
+    marginVertical: 10,
     height: 50,
+    elevation: 0,
+    justifyContent: 'center',
   },
 });
 

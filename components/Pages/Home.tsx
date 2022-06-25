@@ -19,6 +19,8 @@ import sortWeek from '../../utility/sortWeek';
 import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
+import { checkLogin } from '../../redux/userThunkActions';
+import { showNotification } from '../../redux/storeSlice';
 
 interface Props extends StackNavigationTypes {}
 
@@ -26,8 +28,14 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
   const { user, loading, favoriteSets } = useSelector(
     (state: RootState) => state.store
   );
+  const dispatch = useDispatch<AppDispatch>();
 
   const level = user.xp / 300 < 1 ? 1 : Math.floor(user.xp / 300);
+
+  const inStreak = loginStreak(user.login[user.login.length - 1])
+  if (inStreak) {
+    dispatch(showNotification(`logged in ${user.streak} days consecutively!`))
+  }
 
   const { colors } = useTheme();
 
@@ -66,9 +74,19 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+  useEffect(() => {
+    dispatch(
+      checkLogin({
+        lastLogin: user.login,
+        streak: user.streak,
+        xp: user.xp
+      })
+    );
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: 'row', marginTop: 15 }}>
+      <View style={{ flexDirection: 'row', marginTop: 15, marginHorizontal: 10,justifyContent: 'space-around' }}>
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>LEVEL: {level}</Title>
         </View>

@@ -1,7 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
 import React from 'react';
-import AlertNotification from './AlertNotification';
 import { DateTime, WeekdayNumbers } from 'luxon';
 
 interface Props {

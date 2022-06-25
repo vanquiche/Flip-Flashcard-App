@@ -7,6 +7,8 @@ import Animated, {
   ZoomOut,
 } from 'react-native-reanimated';
 import db from '../db-services';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -25,29 +27,21 @@ interface Props {
   onPress?: () => void;
 }
 
-const TitleCard: React.FC<Props> = React.memo(
+const FavoriteCard: React.FC<Props> = React.memo(
   ({ card, onPress }) => {
-    const [count, setCount] = useState(0);
     const { colors } = useTheme();
+    // const {cards} = useSelector((state: RootState) => state.store)
 
-    useEffect(() => {
-      db.find(
-        { type: 'flashcard', setRef: card._id },
-        (err: Error, docs: any) => {
-          if (err) console.log(err);
-          setCount(docs.length);
-        }
-      );
-    }, [card._id]);
+    // const cardCount = cards.flashcard.filter(f => f.setRef === card._id)
 
     return (
       <Pressable
         style={[styles.card, { backgroundColor: colors.primary }]}
         onPress={onPress}
       >
-        <Title style={[styles.cardCount, { color: colors.secondary }]}>
-          {count}
-        </Title>
+        {/* <Title style={[styles.cardCount, { color: colors.secondary }]}>
+          {cardCount.length}
+        </Title> */}
         <Title style={[styles.textContent, { color: colors.secondary }]}>
           {card.name}
         </Title>
@@ -57,7 +51,6 @@ const TitleCard: React.FC<Props> = React.memo(
   (prevProps, nextProps) => {
     if (
       prevProps.card.name === nextProps.card.name &&
-      prevProps.card.color === nextProps.card.color &&
       prevProps.card?.favorite === nextProps.card?.favorite
     )
       return true;
@@ -79,7 +72,7 @@ const styles = StyleSheet.create({
   textContent: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
   },
   cardCount: {
     position: 'absolute',
@@ -88,4 +81,4 @@ const styles = StyleSheet.create({
     right: 10,
   },
 });
-export default TitleCard;
+export default FavoriteCard;

@@ -7,6 +7,7 @@ import {
   Flashcard,
   Collection,
 } from '../components/types';
+import loginStreak from '../utility/loginStreak';
 import {
   addCategoryCard,
   addFlashCard,
@@ -22,7 +23,7 @@ import {
   getUserData,
   updateUser,
   checkLogin,
-  completeQuiz
+  completeQuiz,
 } from './userThunkActions';
 
 interface StoreInit {
@@ -162,9 +163,42 @@ export const storeSlice = createSlice({
         } else return state;
       })
       .addCase(checkLogin.fulfilled, (state, action) => {
+        // if no payload was return then checkin
+        // is younger than 24h
         if (action.payload) {
-          state.user.login.push(action.payload);
+          // check last login if streak
+          // requirement is met, if so increase streak
+
+          // function compares lastlogin with
+          // today's date and will return
+          // true if inStreak
+          const inStreak = loginStreak(
+            state.user.login[state.user.login.length - 1]
+          );
+          // if in streak then increment user streak
+          // if not then reset to 0
+          const streak = inStreak
+            ? state.user.streak + 1
+            : !inStreak
+            ? 0
+            : state.user.streak;
+
+          // update streak and add today's date to login array
+          state.user.streak = streak;
+          state.user.login = action.payload;
+
+          // if in streak add bonus xp and notify user
+          if (inStreak) {
+            // state.notification.show = true;
+            // state.notification.message = 'logged in consecutively';
+            state.user.xp = state.user.xp + 25;
+          }
         }
+        // don't mutate state if nothing is returned
+        else return state;
+      })
+      .addCase(checkLogin.rejected, (state, action) => {
+        console.log(action.payload);
       })
       .addCase(completeQuiz.fulfilled, (state, action) => {
         state.user.completedQuiz.push(action.payload);

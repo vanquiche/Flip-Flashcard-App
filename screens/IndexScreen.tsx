@@ -24,11 +24,11 @@ import { getCards } from '../redux/cardThunkActions';
 const Tab = createBottomTabNavigator();
 
 const IndexScreen = () => {
-  const { user } = useSelector((state: RootState) => state.store);
-  const { notification } = useSelector((state: RootState) => state.store);
-
+  const { user, notification } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
+  
   const { colors } = useTheme();
+
   const TabIcon = (props: { icon: string }) => {
     return (
       <IconButton
@@ -45,7 +45,6 @@ const IndexScreen = () => {
   };
 
   useEffect(() => {
-
     dispatch(getUserData());
     dispatch(getFavoriteSets());
     dispatch(getCards({ type: 'category', query: { type: 'category' } }));
@@ -73,7 +72,11 @@ const IndexScreen = () => {
       >
         {/* if there is no user then render Signup page, else render normal screens */}
         {!user._id ? (
-          <Tab.Screen name='SignUp' component={SignUp} />
+          <Tab.Screen
+            name='SignUp'
+            component={SignUp}
+            options={{ tabBarIconStyle: { display: 'none' } }}
+          />
         ) : (
           <>
             <Tab.Screen
