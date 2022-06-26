@@ -32,10 +32,12 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   const level = user.xp / 300 < 1 ? 1 : Math.floor(user.xp / 300);
 
-  const inStreak = loginStreak(user.login[user.login.length - 1])
-  if (inStreak) {
-    dispatch(showNotification(`logged in ${user.streak} days consecutively!`))
-  }
+  // bad code?? 
+
+  // const inStreak = loginStreak(user.login[user.login.length - 1]);
+  // if (inStreak) {
+  //   dispatch(showNotification(`logged in ${user.streak} days consecutively!`));
+  // }
 
   const { colors } = useTheme();
 

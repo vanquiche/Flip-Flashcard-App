@@ -1,7 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Title, useTheme } from 'react-native-paper';
-import Animated, { SlideInLeft } from 'react-native-reanimated';
+import Animated, {
+  SlideInLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withDelay,
+} from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Set } from './types';
@@ -9,9 +15,10 @@ import { Set } from './types';
 interface Props {
   set: Set;
   total: number;
+  score: number;
 }
 
-const XPbar: React.FC<Props> = ({ total, set }) => {
+const XPbar: React.FC<Props> = ({ total, set, score }) => {
   const { user, cards } = useSelector((state: RootState) => state.store);
   const { colors } = useTheme();
 
@@ -21,7 +28,30 @@ const XPbar: React.FC<Props> = ({ total, set }) => {
 
   // current user xp
   // total xp before next level
-  const awardedPoints = (points / total) * 100;
+
+  const currentCategoryXP = useMemo(() => {
+    const awardedPoints = (points / total) * 100;
+    if (points > total) {
+      const subtraction = (points)
+        .toString()
+        .split('')
+        .splice(1)
+        .join('');
+      return parseInt(subtraction);
+    } else return awardedPoints;
+  }, []);
+
+  const progressBarStart = useSharedValue(currentCategoryXP);
+
+  const progressBarAnim = useAnimatedStyle(() => {
+    return {
+      width: withTiming(
+        `${progressBarStart.value}%`,
+        { duration: 1300 },
+        () => (progressBarStart.value = currentCategoryXP + score)
+      ),
+    };
+  });
 
   return (
     <>
@@ -37,25 +67,33 @@ const XPbar: React.FC<Props> = ({ total, set }) => {
         <Title style={{ color: colors.secondary }}>
           {category?.name.toUpperCase()} XP:
         </Title>
-        <Title style={{ color: colors.secondary }}>
-          {points} / {total}
-        </Title>
+        <Title style={{ color: colors.secondary }}>{points}</Title>
       </View>
+      {/* XP BAR */}
       <View style={[styles.progressBar, { borderColor: colors.secondary }]}>
-        <Animated.View
-          style={[
-            styles.pointBar,
-            {
-              width: `${
-                awardedPoints > total ? awardedPoints * 10 : awardedPoints
-              }%`,
-              backgroundColor: colors.secondary,
-            },
-          ]}
-          entering={
-            !setCompleted ? SlideInLeft.delay(600).duration(1000) : undefined
-          }
-        />
+        {!setCompleted ? (
+          // animated progress bar
+          <Animated.View
+            style={[
+              styles.pointBar,
+              {
+                // starting point
+                width: `${currentCategoryXP - score}%`,
+                backgroundColor: colors.secondary,
+              },
+              progressBarAnim,
+            ]}
+
+          />
+        ) : (
+          // static progress bar
+          <View
+            style={[
+              styles.pointBar,
+              { backgroundColor: colors.secondary, width: `${currentCategoryXP}%` },
+            ]}
+          />
+        )}
       </View>
     </>
   );
@@ -80,7 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5
+    marginVertical: 5,
   },
 });
 

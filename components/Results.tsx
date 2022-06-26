@@ -36,7 +36,7 @@ const Results: React.FC<Props> = ({ total, set, score, dismiss }) => {
         <Title style={{ color: colors.secondary }}>{percentage}%</Title>
       </View>
 
-      <XPbar total={100} set={set} />
+      <XPbar total={100} set={set} score={score}/>
       {/* will add logic to restart quiz later */}
 
       {/* <Button
