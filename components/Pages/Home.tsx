@@ -25,19 +25,12 @@ import { showNotification } from '../../redux/storeSlice';
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
-  const { user, loading, favoriteSets } = useSelector(
+  const { user, loading, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  const level = user.xp / 300 < 1 ? 1 : Math.floor(user.xp / 300);
-
-  // bad code?? 
-
-  // const inStreak = loginStreak(user.login[user.login.length - 1]);
-  // if (inStreak) {
-  //   dispatch(showNotification(`logged in ${user.streak} days consecutively!`));
-  // }
+  const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
   const { colors } = useTheme();
 
@@ -76,25 +69,32 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+  // notify user if login is in-streak
   useEffect(() => {
-    dispatch(
-      checkLogin({
-        lastLogin: user.login,
-        streak: user.streak,
-        xp: user.xp
-      })
-    );
-  }, []);
+    const inStreak = loginStreak(user.login[user.login.length - 1]);
+    if (inStreak) {
+      dispatch(
+        showNotification(`logged in ${user.streak} days consecutively!`)
+      );
+    } else return;
+  }, [user.login]);
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: 'row', marginTop: 15, marginHorizontal: 10,justifyContent: 'space-around' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          marginTop: 15,
+          marginHorizontal: 10,
+          justifyContent: 'space-around',
+        }}
+      >
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
           <Title style={{ color: colors.secondary }}>LEVEL: {level}</Title>
         </View>
 
         <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
-          <Title style={{ color: colors.secondary }}>XP: {user.xp}</Title>
+          <Title style={{ color: colors.secondary }}>HEARTS: {user.heartcoin}</Title>
         </View>
       </View>
 

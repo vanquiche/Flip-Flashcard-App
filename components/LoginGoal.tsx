@@ -13,7 +13,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   const { colors } = useTheme();
 
   const displayWeek = [
-    { name: 'S', date: 0 },
+    { name: 'S', date: 7 },
     { name: 'M', date: 1 },
     { name: 'T', date: 2 },
     { name: 'W', date: 3 },
@@ -47,6 +47,9 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
     }
   });
 
+  // console.log(days)
+  // console.log(dt.now().weekday)
+
   const checkDates = (day: number) => {
     return days.find((d) => {
       if (d.date === day) {
@@ -67,7 +70,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
         borderRadius: 15,
       }}
     >
-      <Title style={{ color: colors.secondary }}>LOGIN GOAL</Title>
+      <Title style={{ color: colors.secondary }}>DAYS LOGGED IN</Title>
       <View style={styles.container}>
         {displayWeek.map((d, index) => {
           const loggedInDay = checkDates(d.date);

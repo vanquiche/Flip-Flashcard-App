@@ -23,6 +23,7 @@ import db from '../db-services';
 import { updateUser } from '../redux/userThunkActions';
 import { updateCard } from '../redux/cardThunkActions';
 import { showNotification } from '../redux/storeSlice';
+import checkForLevelUp from '../utility/checkForLevelUp';
 
 interface Props {
   navigation: any;
@@ -59,7 +60,7 @@ const Quiz: React.FC<Props> = ({
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user, cards: quiz } = useSelector((state: RootState) => state.store);
+  const { user, cards: quiz, levelUpCondition } = useSelector((state: RootState) => state.store);
 
   const selectedQuizSet = useMemo(() => {
     return quiz.set.find((c) => c._id === setRef);
@@ -94,29 +95,33 @@ const Quiz: React.FC<Props> = ({
   const submitResults = () => {
     setCompleteQuiz(true);
     // if quiz has not been taken today then award points
-    // console.log(setRef)
     if (!user.completedQuiz.includes(setRef)) {
-      const award = score.current * 15;
-      const awardedPoints = {
-        xp: user.xp + award,
-      };
+      let awardHeartCoin = 0;
+      const awardPoints = score.current;
+      const leveledUp = checkForLevelUp(user.xp, awardPoints, levelUpCondition);
+      if (leveledUp) {
+        awardHeartCoin = 10 * leveledUp;
+      }
       const update = [...user.completedQuiz, setRef];
-      // add points to user
-      // dispatch(updateUser(awardedPoints));
-      dispatch(updateUser(awardedPoints));
+
       // add points to category
       dispatch(
         updateCard({
           id: categoryRef,
           type: 'category',
-          query: { points: award + categoryXP },
+          query: { points: awardPoints + categoryXP },
+        })
+        );
+        // add points to user
+        // add set to reference
+      // can only earn points once/day
+      dispatch(
+        updateUser({
+          completedQuiz: update,
+          xp: user.xp + awardPoints,
+          heartcoin: awardHeartCoin,
         })
       );
-      // add set to reference
-      // can only earn points once/day
-      dispatch(updateUser({ completedQuiz: update }));
-      dispatch(showNotification(`you earned ${award} points`));
-      // dispatch(addNewReference(setRef))
     }
   };
 
@@ -252,11 +257,13 @@ const Quiz: React.FC<Props> = ({
             onDismiss={() => setShowAlert(false)}
           />
           {/* CLOSE QUIZ */}
-          <IconButton
-            icon='close-box'
-            onPress={() => setShowAlert(true)}
-            style={{ position: 'absolute', top: -10, left: -25 }}
-          />
+          {!completeQuiz && (
+            <IconButton
+              icon='close-box'
+              onPress={() => setShowAlert(true)}
+              style={{ position: 'absolute', top: -10, left: -25 }}
+            />
+          )}
 
           {/* START AND OPEN QUIZ */}
           {!startQuiz && (
@@ -285,6 +292,7 @@ const Quiz: React.FC<Props> = ({
                   score={score.current}
                   total={flashcards.length}
                   set={selectedQuizSet!}
+                  pointTotal={levelUpCondition}
                 />
               )}
 

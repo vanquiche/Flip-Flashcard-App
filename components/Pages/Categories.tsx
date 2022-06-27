@@ -41,6 +41,7 @@ import {
   updateCard,
 } from '../../redux/cardThunkActions';
 import { checkLogin } from '../../redux/userThunkActions';
+import { removeFavorite } from '../../redux/storeSlice';
 
 const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
@@ -115,6 +116,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const deleteCategory = (id: string) => {
     dispatch(removeCard({ id, type: 'category' }));
+    dispatch(removeFavorite(id))
   };
 
   const cancelMultiDeletion = () => {
@@ -134,6 +136,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
       dispatch(removeCard({ id: selection.current[i], type: 'category' }));
+      dispatch(removeFavorite(selection.current[i]))
     }
     cancelMultiDeletion();
   };

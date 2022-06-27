@@ -1,0 +1,88 @@
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { Colors, IconButton, Title, useTheme } from 'react-native-paper';
+
+interface Props {
+  total: number;
+  points: number;
+  title: string;
+  progressColor?: string;
+}
+
+const PointTracker: React.FC<Props> = ({
+  total,
+  points,
+  title,
+  progressColor,
+}) => {
+  const { colors } = useTheme();
+  const level = Math.floor(points / total);
+  const progress =
+    points < total
+      ? points / total
+      : points.toString().split('').splice(1).join('');
+
+  // console.log(progress);
+
+  return (
+    <View style={styles.container}>
+
+      <View>
+        <Title style={{ color: colors.secondary, width: 75, flex: 1 }} numberOfLines={1}>{title.toUpperCase()}</Title>
+      </View>
+
+      <Title style={{ color: colors.secondary, marginRight: -10 }}>
+        {level}
+      </Title>
+      {/* </View> */}
+
+      <View style={[styles.progressBar, { borderColor: colors.secondary }]}>
+        <View
+          style={[
+            styles.progress,
+            { backgroundColor: progressColor, width: `${progress}%` },
+          ]}
+        />
+      </View>
+
+      <Title style={{ color: colors.secondary, marginLeft: -10 }}>
+        {level + 1}
+      </Title>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    // marginHorizontal: 20,
+    marginVertical: 5,
+    width: '95%',
+  },
+  progressBar: {
+    height: 14,
+    width: '60%',
+    borderWidth: 2,
+    overflow: 'hidden',
+    borderRadius: 10,
+    marginHorizontal: 5,
+  },
+  progress: {
+    height: 14,
+    backgroundColor: 'brown',
+  },
+  star: {
+    position: 'absolute',
+    transform: [{ translateX: -35 }, { translateY: -45 }],
+    padding: 0,
+    margin: 0,
+    zIndex: 10,
+  },
+});
+
+export default React.memo(PointTracker, (prev, next) => {
+  if (prev.points === next.points) return true;
+  return false;
+});

@@ -39,6 +39,7 @@ interface StoreInit {
     set: Set[];
     flashcard: Flashcard[];
   };
+  levelUpCondition: number;
 }
 
 const initialState: StoreInit = {
@@ -54,6 +55,7 @@ const initialState: StoreInit = {
     set: [],
     flashcard: [],
   },
+  levelUpCondition: 100
 };
 
 export const storeSlice = createSlice({
@@ -68,6 +70,9 @@ export const storeSlice = createSlice({
       state.notification.show = true;
       state.notification.message = action.payload;
     },
+    removeFavorite: (state, action: PayloadAction<string>) => {
+      state.favoriteSets = state.favoriteSets.filter(f => f.categoryRef !== action.payload)
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -206,6 +211,6 @@ export const storeSlice = createSlice({
   },
 });
 
-export const { dismissNotification, showNotification } = storeSlice.actions;
+export const { dismissNotification, showNotification, removeFavorite } = storeSlice.actions;
 
 export default storeSlice.reducer;

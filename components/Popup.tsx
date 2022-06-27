@@ -76,8 +76,8 @@ const Popup: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    height: 110,
-    justifyContent: 'space-around',
+    height: 115,
+    justifyContent: 'space-evenly',
   },
   button: {
     width: 100,

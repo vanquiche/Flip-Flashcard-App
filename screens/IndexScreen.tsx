@@ -9,6 +9,7 @@ import ShopScreen from './ShopScreen';
 import ProfileScreen from './ProfileScreen';
 import SignUp from '../components/Pages/SignUp';
 import AlertNotification from '../components/AlertNotification';
+import TabIcon from '../components/TabIcon';
 
 // REDUX STORE
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,37 +18,39 @@ import { AppDispatch, RootState } from '../redux/store';
 // UTILITIES
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { dismissNotification } from '../redux/storeSlice';
-import { getUserData } from '../redux/userThunkActions';
+import { getUserData, checkLogin } from '../redux/userThunkActions';
 import { getFavoriteSets } from '../redux/cardThunkActions';
 import { getCards } from '../redux/cardThunkActions';
 
 const Tab = createBottomTabNavigator();
 
+
+
 const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
-  
-  const { colors } = useTheme();
 
-  const TabIcon = (props: { icon: string }) => {
-    return (
-      <IconButton
-        icon={props.icon}
-        size={30}
-        color={colors.secondary}
-        style={{ marginTop: 5 }}
-      />
-    );
-  };
+  const { colors } = useTheme();
 
   const clearNotification = () => {
     dispatch(dismissNotification());
   };
 
+  // HYDRATE DATA
   useEffect(() => {
     dispatch(getUserData());
     dispatch(getFavoriteSets());
     dispatch(getCards({ type: 'category', query: { type: 'category' } }));
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      checkLogin({
+        lastLogin: user.login,
+        streak: user.streak,
+        xp: user.xp,
+      })
+    );
   }, []);
 
   return (
@@ -83,28 +86,28 @@ const IndexScreen = () => {
               name='Home-page'
               component={HomeScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='home' />,
+                tabBarIcon: ({ focused }) => <TabIcon icon='home' color={colors.secondary}/>,
               }}
             />
             <Tab.Screen
               name='flashcards'
               component={CategoryScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='cards' />,
+                tabBarIcon: ({ focused }) => <TabIcon icon='cards' color={colors.secondary}/>,
               }}
             />
             <Tab.Screen
               name='store'
               component={ShopScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='store' />,
+                tabBarIcon: ({ focused }) => <TabIcon icon='store' color={colors.secondary}/>,
               }}
             />
             <Tab.Screen
               name='Profile-page'
               component={ProfileScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='heart' />,
+                tabBarIcon: ({ focused }) => <TabIcon icon='heart' color={colors.secondary}/>,
               }}
             />
           </>

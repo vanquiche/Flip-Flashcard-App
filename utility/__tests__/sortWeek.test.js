@@ -23,7 +23,7 @@ const dateOld = sortWeek([fivedaysAgo, sixdaysAgo, sevendaysAgo])
 // const date1compare = createWeek(4)
 
 
-describe('sortWeek fuction test', () => {
+xdescribe('sortWeek fuction test', () => {
   test('add new date to empty array', () => {
     expect(empty.length).toStrictEqual(1);
   });
