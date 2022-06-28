@@ -62,15 +62,15 @@ const Quiz: React.FC<Props> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { user, cards: quiz, levelUpCondition } = useSelector((state: RootState) => state.store);
 
-  const originalHeaderStyle = {
-    backgroundColor: user.theme.headerColor,
-    height: 70,
-  }
+  // const originalHeaderStyle = {
+  //   backgroundColor: user.theme.headerColor,
+  //   height: 70,
+  // }
 
-  const originalTabBarStyle = {
-    backgroundColor: user.theme.tabColor,
-    height: 70,
-  }
+  // const originalTabBarStyle = {
+  //   backgroundColor: user.theme.tabColor,
+  //   height: 70,
+  // }
 
   const selectedQuizSet = useMemo(() => {
     return quiz.set.find((c) => c._id === setRef);
@@ -136,36 +136,36 @@ const Quiz: React.FC<Props> = ({
   };
 
   // ANIMATION VALUES
-  const headerAnimate = useRef<any>(new Animated.Value(0)).current;
+  // const headerAnimate = useRef<any>(new Animated.Value(0)).current;
   const inputAnimate = useRef<any>(new Animated.Value(0)).current;
-  const tabAnimate = useRef<any>(new Animated.Value(0)).current;
+  // const tabAnimate = useRef<any>(new Animated.Value(0)).current;
 
-  const resetTab = () => {
-    Animated.spring(tabAnimate, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start();
-  };
-  const slideTabDown = () => {
-    Animated.spring(tabAnimate, {
-      toValue: 70,
-      useNativeDriver: true,
-    }).start();
-  };
+  // const resetTab = () => {
+  //   Animated.spring(tabAnimate, {
+  //     toValue: 0,
+  //     useNativeDriver: true,
+  //   }).start();
+  // };
+  // const slideTabDown = () => {
+  //   Animated.spring(tabAnimate, {
+  //     toValue: 70,
+  //     useNativeDriver: true,
+  //   }).start();
+  // };
 
-  const slideHeaderUp = () => {
-    Animated.spring(headerAnimate, {
-      toValue: -70,
-      useNativeDriver: true,
-    }).start();
-  };
+  // const slideHeaderUp = () => {
+  //   Animated.spring(headerAnimate, {
+  //     toValue: -70,
+  //     useNativeDriver: true,
+  //   }).start();
+  // };
 
-  const resetHeader = () => {
-    Animated.spring(headerAnimate, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start();
-  };
+  // const resetHeader = () => {
+  //   Animated.spring(headerAnimate, {
+  //     toValue: 0,
+  //     useNativeDriver: true,
+  //   }).start();
+  // };
 
   const slideDialogUp = () => {
     Animated.spring(inputAnimate, {
@@ -181,54 +181,54 @@ const Quiz: React.FC<Props> = ({
     }).start();
   };
 
-  // start animation to hide header and tabbar when quiz begins
-  useEffect(() => {
-    // slide header and tab out of view
-    slideHeaderUp();
-    slideTabDown();
-    // slide header up
-    navigation.setOptions({
-      headerStyle: {
-        transform: [{ translateY: headerAnimate }],
-        // backgroundColor: user.theme.headerColor,
-        // height: 70,
-        ...originalHeaderStyle
-      },
-    });
-    // slide tab down
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        transform: [{ translateY: tabAnimate }],
-        // backgroundColor: user.theme.tabColor,
-        // height: 70,
-        ...originalTabBarStyle
-      },
-    });
+  // // start animation to hide header and tabbar when quiz begins
+  // useEffect(() => {
+  //   // slide header and tab out of view
+  //   slideHeaderUp();
+  //   slideTabDown();
+  //   // slide header up
+  //   navigation.setOptions({
+  //     headerStyle: {
+  //       transform: [{ translateY: headerAnimate }],
+  //       // backgroundColor: user.theme.headerColor,
+  //       // height: 70,
+  //       ...originalHeaderStyle
+  //     },
+  //   });
+  //   // slide tab down
+  //   navigation.getParent()?.setOptions({
+  //     tabBarStyle: {
+  //       transform: [{ translateY: tabAnimate }],
+  //       backgroundColor: user.theme.tabColor,
+  //       height: 70,
+  //       // ...originalTabBarStyle
+  //     },
+  //   });
 
-    return () => {
-      // return header and tab to original position
-      resetHeader();
-      resetTab();
-      // slide header down
-      navigation.setOptions({
-        headerStyle: {
-          transform: [{ translateY: headerAnimate }],
-          // backgroundColor: colors.primary,
-          // height: 70,
-          ...originalHeaderStyle
-        },
-      });
-      // slide tab up
-      navigation.getParent()?.setOptions({
-        tabBarStyle: {
-          transform: [{ translateY: tabAnimate }],
-          // backgroundColor: colors.primary,
-          // height: 70,
-          ...originalTabBarStyle
-        },
-      });
-    };
-  }, [navigation]);
+  //   return () => {
+  //     // return header and tab to original position
+  //     resetHeader();
+  //     resetTab();
+  //     // slide header down
+  //     navigation.setOptions({
+  //       headerStyle: {
+  //         transform: [{ translateY: headerAnimate }],
+  //         // backgroundColor: colors.primary,
+  //         // height: 70,
+  //         ...originalHeaderStyle
+  //       },
+  //     });
+  //     // slide tab up
+  //     navigation.getParent()?.setOptions({
+  //       tabBarStyle: {
+  //         transform: [{ translateY: tabAnimate }],
+  //         backgroundColor: user.theme.tabColor,
+  //         height: 70,
+  //         // ...originalTabBarStyle
+  //       },
+  //     });
+  //   };
+  // }, [navigation]);
 
   // shuffle cards in random order
   useEffect(() => {

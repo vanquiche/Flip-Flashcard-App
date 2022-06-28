@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 import s from '../styles/styles';
 import THEMES from '../../assets/theme/userTheme';
 import ThemeDisplay from '../ThemeDisplay';
-import { Title } from 'react-native-paper';
+import { IconButton, Title } from 'react-native-paper';
 import { Theme } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -37,7 +37,7 @@ const Themes = () => {
         snapToAlignment='center'
         snapToInterval={SCREEN_WIDTH}
         contentOffset={{ x: SCREEN_WIDTH * userThemeIndex, y: 0 }}
-        contentContainerStyle={{alignItems: 'center'}}
+        contentContainerStyle={{ alignItems: 'center' }}
       >
         <View
           style={{
@@ -52,6 +52,14 @@ const Themes = () => {
               style={{ marginHorizontal: SCREEN_WIDTH * 0.2 }}
               onPress={() => changeTheme(t)}
             >
+              {userThemeIndex === i && (
+                <IconButton
+                  icon='check-circle-outline'
+                  size={80}
+                  color='black'
+                  style={{ position: 'absolute', zIndex: 30, top: SCREEN_HEIGHT * 0.2, left: SCREEN_WIDTH * 0.13 }}
+                />
+              )}
               <ThemeDisplay key={i} theme={t} />
             </Pressable>
           ))}
