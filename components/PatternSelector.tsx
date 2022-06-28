@@ -164,6 +164,8 @@ const styles = StyleSheet.create({
     margin: 0,
     position: 'relative',
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'white'
   },
   dialog: {
     height: 150,

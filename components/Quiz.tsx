@@ -62,6 +62,16 @@ const Quiz: React.FC<Props> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { user, cards: quiz, levelUpCondition } = useSelector((state: RootState) => state.store);
 
+  const originalHeaderStyle = {
+    backgroundColor: user.theme.headerColor,
+    height: 70,
+  }
+
+  const originalTabBarStyle = {
+    backgroundColor: user.theme.tabColor,
+    height: 70,
+  }
+
   const selectedQuizSet = useMemo(() => {
     return quiz.set.find((c) => c._id === setRef);
   }, []);
@@ -180,16 +190,18 @@ const Quiz: React.FC<Props> = ({
     navigation.setOptions({
       headerStyle: {
         transform: [{ translateY: headerAnimate }],
-        backgroundColor: colors.primary,
-        height: 70,
+        // backgroundColor: user.theme.headerColor,
+        // height: 70,
+        ...originalHeaderStyle
       },
     });
     // slide tab down
     navigation.getParent()?.setOptions({
       tabBarStyle: {
         transform: [{ translateY: tabAnimate }],
-        backgroundColor: colors.primary,
-        height: 70,
+        // backgroundColor: user.theme.tabColor,
+        // height: 70,
+        ...originalTabBarStyle
       },
     });
 
@@ -201,16 +213,18 @@ const Quiz: React.FC<Props> = ({
       navigation.setOptions({
         headerStyle: {
           transform: [{ translateY: headerAnimate }],
-          backgroundColor: colors.primary,
-          height: 70,
+          // backgroundColor: colors.primary,
+          // height: 70,
+          ...originalHeaderStyle
         },
       });
       // slide tab up
       navigation.getParent()?.setOptions({
         tabBarStyle: {
           transform: [{ translateY: tabAnimate }],
-          backgroundColor: colors.primary,
-          height: 70,
+          // backgroundColor: colors.primary,
+          // height: 70,
+          ...originalTabBarStyle
         },
       });
     };

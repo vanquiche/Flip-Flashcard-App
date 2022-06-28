@@ -30,19 +30,20 @@ interface Props {
 const FavoriteCard: React.FC<Props> = React.memo(
   ({ card, onPress }) => {
     const { colors } = useTheme();
+    const {user} = useSelector((state: RootState) => state.store)
     // const {cards} = useSelector((state: RootState) => state.store)
 
     // const cardCount = cards.flashcard.filter(f => f.setRef === card._id)
 
     return (
       <Pressable
-        style={[styles.card, { backgroundColor: colors.primary }]}
+        style={[styles.card, { backgroundColor: user.theme.cardColor }]}
         onPress={onPress}
       >
         {/* <Title style={[styles.cardCount, { color: colors.secondary }]}>
           {cardCount.length}
         </Title> */}
-        <Title style={[styles.textContent, { color: colors.secondary }]}>
+        <Title style={[styles.textContent, { color: user.theme.fontColor }]}>
           {card.name}
         </Title>
       </Pressable>

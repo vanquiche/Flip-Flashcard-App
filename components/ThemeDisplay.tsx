@@ -14,9 +14,7 @@ const ThemeDisplay: React.FC<Props> = ({ theme }) => {
   const icons = ['home', 'card', 'cart', 'heart'];
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.bgColor }]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.bgColor }]}>
       <Title style={[styles.title, { color: theme.fontColor }]}>
         {theme.name.toUpperCase()}
       </Title>
@@ -26,8 +24,14 @@ const ThemeDisplay: React.FC<Props> = ({ theme }) => {
       <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card4, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.tab, { backgroundColor: theme.tabColor }]}>
-        {icons.map((i) => (
-          <IconButton icon={i} key={i} size={18} color={theme.iconColor} />
+        {icons.map((icon, index) => (
+          <IconButton
+            icon={icon}
+            key={icon}
+            style={index === 1 ? {transform: [{translateY: -5}]} : {}}
+            size={18}
+            color={index === 1 ? theme.actionIconColor : theme.iconColor}
+          />
         ))}
       </View>
     </View>
@@ -42,6 +46,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'grey'
     // marginHorizontal: SCREEN_WIDTH * 0.25
   },
   title: {

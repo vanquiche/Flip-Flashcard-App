@@ -2,6 +2,8 @@ import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
 import React from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 interface Props {
   dates: string[];
@@ -9,6 +11,7 @@ interface Props {
 }
 
 const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
+  const { user } = useSelector((state: RootState) => state.store);
   const dt = DateTime;
   const { colors } = useTheme();
 
@@ -61,7 +64,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   return (
     <View
       style={{
-        backgroundColor: colors.primary,
+        backgroundColor: user.theme.cardColor,
         marginHorizontal: 15,
         marginVertical: 15,
         height: 185,
@@ -70,7 +73,7 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
         borderRadius: 15,
       }}
     >
-      <Title style={{ color: colors.secondary }}>DAYS LOGGED IN</Title>
+      <Title style={{ color: user.theme.fontColor }}>DAYS LOGGED IN</Title>
       <View style={styles.container}>
         {displayWeek.map((d, index) => {
           const loggedInDay = checkDates(d.date);
@@ -84,14 +87,23 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
                   style={{ marginBottom: 13 }}
                 />
               )}
-              <Title style={{ position: 'absolute', color: colors.secondary }}>
+              <Title
+                style={[
+                  { position: 'absolute' },
+                  loggedInDay?.loggedIn
+                    ? { color: user.theme.cardColor }
+                    : { color: user.theme.fontColor },
+                ]}
+              >
                 {d.name}
               </Title>
             </View>
           );
         })}
       </View>
-      <Title style={{ color: colors.secondary }}>LOGIN STREAK: {streak}</Title>
+      <Title style={{ color: user.theme.fontColor }}>
+        LOGIN STREAK: {streak}
+      </Title>
     </View>
   );
 };

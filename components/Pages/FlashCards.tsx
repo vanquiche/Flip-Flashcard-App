@@ -36,6 +36,7 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
+import s from '../styles/styles'
 
 const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
   id: '',
@@ -60,7 +61,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
-  const { cards } = useSelector((state: RootState) => state.store);
+  const { user, cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
   const { setRef, categoryRef, color, design } = route.params;
 
@@ -163,20 +164,15 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
     <View>
       {/* CONTROL BUTTONS  */}
       <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          height: 75,
-          paddingHorizontal: 15,
-        }}
+        style={s.cardButtonWrapper}
       >
         {!multiSelectMode ? (
           <>
             <Button
               mode='contained'
-              style={styles.button}
-              color={colors.primary}
-              labelStyle={{ color: colors.secondary }}
+              style={s.cardActionButton}
+              color={user.theme.cardColor}
+              labelStyle={{ color: user.theme.fontColor }}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -184,9 +180,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
             <Button
               mode='contained'
-              color={colors.primary}
-              style={[styles.button]}
-              labelStyle={{ color: colors.secondary }}
+              color={user.theme.cardColor}
+              style={[s.cardActionButton]}
+              labelStyle={{ color: user.theme.fontColor }}
               onPress={() => setStartQuiz(true)}
               disabled={cards.flashcard.length === 0}
             >
@@ -195,9 +191,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
             <Button
               mode='contained'
-              style={styles.button}
-              labelStyle={{ color: colors.secondary }}
-              color={colors.primary}
+              style={s.cardActionButton}
+              labelStyle={{ color: user.theme.fontColor }}
+              color={user.theme.cardColor}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -210,9 +206,9 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         ) : (
           <Button
             mode='text'
-            color='red'
+            color='tomato'
             onPress={confirmAlert}
-            style={[styles.button, { position: 'absolute', right: 12 }]}
+            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
           >
             REMOVE
           </Button>
@@ -307,12 +303,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    marginVertical: 10,
-    height: 50,
-    elevation: 0,
-    justifyContent: 'center',
-  },
+
 });
 
 export default FlashCards;

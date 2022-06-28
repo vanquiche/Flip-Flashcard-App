@@ -21,12 +21,10 @@ const Themes = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  const changeTheme = useCallback((t: Theme) => {
-    const current = JSON.stringify(t) === JSON.stringify(user.theme);
+  const userThemeIndex = THEMES.findIndex((t) => t.name === user.theme.name);
 
-    if (!current) {
-      dispatch(updateUser({ theme: t }));
-    } else return;
+  const changeTheme = useCallback((t: Theme) => {
+    dispatch(updateUser({ theme: t }));
   }, []);
 
   return (
@@ -38,6 +36,8 @@ const Themes = () => {
         decelerationRate={0}
         snapToAlignment='center'
         snapToInterval={SCREEN_WIDTH}
+        contentOffset={{ x: SCREEN_WIDTH * userThemeIndex, y: 0 }}
+        contentContainerStyle={{alignItems: 'center'}}
       >
         <View
           style={{

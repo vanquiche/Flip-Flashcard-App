@@ -42,6 +42,7 @@ import {
 } from '../../redux/cardThunkActions';
 import { checkLogin } from '../../redux/userThunkActions';
 import { removeFavorite } from '../../redux/storeSlice';
+import s from '../styles/styles';
 
 const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
@@ -52,8 +53,6 @@ const INITIAL_STATE: { id: string; name: string; color: string } = {
 interface Props extends StackNavigationTypes {}
 
 const Categories: React.FC<Props> = ({ navigation, route }) => {
-  // data state
-
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -116,8 +115,12 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
   const deleteCategory = (id: string) => {
     dispatch(removeCard({ id, type: 'category' }));
-    dispatch(removeFavorite(id))
+    dispatch(removeFavorite(id));
   };
+
+  const selectColor = useCallback((color: string) => {
+    setCategory((prev) => ({ ...prev, color }));
+  }, []);
 
   const cancelMultiDeletion = () => {
     setMultiSelectMode(false);
@@ -136,36 +139,22 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
       dispatch(removeCard({ id: selection.current[i], type: 'category' }));
-      dispatch(removeFavorite(selection.current[i]))
+      dispatch(removeFavorite(selection.current[i]));
     }
     cancelMultiDeletion();
   };
 
-  const selectColor = useCallback((color: string) => {
-    setCategory((prev) => ({ ...prev, color }));
-    // if (category.color !== color) {
-    //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // }
-  }, []);
-
   return (
     <View>
       {/* button wrapper */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          height: 75,
-          paddingHorizontal: 15,
-        }}
-      >
+      <View style={[s.cardButtonWrapper]}>
         {!multiSelectMode ? (
           <>
             <Button
               mode='contained'
-              style={styles.button}
-              labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
-              color={colors.primary}
+              style={s.cardActionButton}
+              labelStyle={[{ color: user.theme.fontColor }]}
+              color={user.theme.cardColor}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -173,9 +162,9 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
             <Button
               mode='contained'
-              style={styles.button}
-              labelStyle={[styles.buttonLabel, { color: colors.secondary }]}
-              color={colors.primary}
+              style={s.cardActionButton}
+              labelStyle={[{ color: user.theme.fontColor }]}
+              color={user.theme.cardColor}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -188,9 +177,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         ) : (
           <Button
             mode='text'
-            style={[styles.button, { position: 'absolute', right: 12 }]}
-            labelStyle={styles.buttonLabel}
-            color='red'
+            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
+            color='tomato'
             onPress={confirmAlert}
           >
             REMOVE
@@ -207,14 +195,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
-          <View
-            style={{
-              paddingBottom: 150,
-              flexWrap: 'wrap',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
+          <View style={s.cardListContainer}>
             {cards.category?.map((category: Category) => {
               return (
                 <TitleCard
@@ -245,22 +226,16 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
         onSubmit={editMode ? submitEdit : addNewCategory}
         disableSubmit={category.name ? false : true}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
+        <View style={s.actionDialogChildrenContainer}>
           <TextInput
             mode='outlined'
             label='CATEGORY NAME'
             outlineColor='lightgrey'
-            activeOutlineColor={colors.secondary}
+            activeOutlineColor={user.theme.headerColor}
             maxLength={32}
             value={category.name}
             onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}
-            style={{ width: '80%', height: 40, margin: 0, marginBottom: 6 }}
+            style={styles.textInput}
           />
 
           <SwatchSelector color={category.color} setColor={selectColor} />
@@ -271,14 +246,11 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    marginVertical: 10,
-    height: 50,
-    elevation: 0,
-    justifyContent: 'center',
-  },
-  buttonLabel: {
-    // color: 'white',
+  textInput: {
+    width: '80%',
+    height: 40,
+    margin: 0,
+    marginBottom: 6,
   },
 });
 

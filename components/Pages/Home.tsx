@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
 import { showNotification } from '../../redux/storeSlice';
+import { DateTime } from 'luxon';
 
 interface Props extends StackNavigationTypes {}
 
@@ -32,7 +33,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const { colors } = useTheme();
+  // const { colors } = useTheme();
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -71,12 +72,20 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   // notify user if login is in-streak
   useEffect(() => {
+    // const lastLogin = DateTime.fromISO(
+    //   user.login[user.login.length - 1]
+    // ).toFormat('ff');
+
     const inStreak = loginStreak(user.login[user.login.length - 1]);
+
     if (inStreak) {
       dispatch(
         showNotification(`logged in ${user.streak} days consecutively!`)
       );
     } else return;
+    // console.log(lastLogin);
+    // console.log(inStreak);
+    // console.log(user.login)
   }, [user.login]);
 
   return (
@@ -89,18 +98,20 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           justifyContent: 'space-around',
         }}
       >
-        <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
-          <Title style={{ color: colors.secondary }}>LEVEL: {level}</Title>
+        <View style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}>
+          <Title style={{ color: user.theme.fontColor }}>LEVEL: {level}</Title>
         </View>
 
-        <View style={[styles.infoCard, { backgroundColor: colors.primary }]}>
-          <Title style={{ color: colors.secondary }}>HEARTS: {user.heartcoin}</Title>
+        <View style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}>
+          <Title style={{ color: user.theme.fontColor }}>
+            HEARTS: {user.heartcoin}
+          </Title>
         </View>
       </View>
 
       <LoginGoal dates={user.login} streak={user.streak} />
 
-      <Title style={{ textAlign: 'center', color: colors.secondary }}>
+      <Title style={{ textAlign: 'center', color: user.theme.cardColor }}>
         FAVORITE SETS
       </Title>
 

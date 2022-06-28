@@ -6,19 +6,21 @@ const themes: Theme[] = [
     name: 'Sprout',
     cardColor: 'lightgreen',
     fontColor: 'white',
-    tabColor: 'green',
-    headerColor: 'green',
-    bgColor: 'whitesmoke',
-    iconColor: 'white'
+    tabColor: '#0ead69',
+    headerColor: '#0ead69',
+    bgColor: '#ebf5df',
+    iconColor: '#8acb88',
+    actionIconColor: '#e4fde1'
   },
   {
     name: 'Sea Side',
-    cardColor: 'lightblue',
+    cardColor: '#5fa8d3',
     fontColor: 'white',
-    tabColor: 'blue',
-    headerColor: 'blue',
-    bgColor: 'white',
-    iconColor: 'white'
+    tabColor: '#0077b6',
+    headerColor: '#0077b6',
+    bgColor: '#e2eafc',
+    iconColor: '#5fa8d3',
+    actionIconColor: 'white'
   },
 ];
 

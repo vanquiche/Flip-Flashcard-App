@@ -1,4 +1,4 @@
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { IconButton, useTheme } from 'react-native-paper';
 
@@ -23,8 +23,6 @@ import { getFavoriteSets } from '../redux/cardThunkActions';
 import { getCards } from '../redux/cardThunkActions';
 
 const Tab = createBottomTabNavigator();
-
-
 
 const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
@@ -64,7 +62,7 @@ const IndexScreen = () => {
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: {
-            backgroundColor: colors.primary,
+            backgroundColor: user.theme.tabColor,
             // disable tabbar if no user exist
             // display: !user._id ? 'none' : 'flex',
             height: 70,
@@ -86,28 +84,64 @@ const IndexScreen = () => {
               name='Home-page'
               component={HomeScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='home' color={colors.secondary}/>,
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='home'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
               }}
             />
             <Tab.Screen
               name='flashcards'
               component={CategoryScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='cards' color={colors.secondary}/>,
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='cards'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
               }}
             />
             <Tab.Screen
               name='store'
               component={ShopScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='store' color={colors.secondary}/>,
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='store'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
               }}
             />
             <Tab.Screen
               name='Profile-page'
               component={ProfileScreen}
               options={{
-                tabBarIcon: ({ focused }) => <TabIcon icon='heart' color={colors.secondary}/>,
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='heart'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
               }}
             />
           </>

@@ -5,6 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AppBar from './AppBar';
 import uuid from 'react-native-uuid'
 import { useTheme } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 
 const Stack = createStackNavigator();
@@ -22,19 +24,17 @@ interface Props {
 }
 
 const StackNavigator: React.FC<Props> = ({ screens, title, id }) => {
+  const {user} = useSelector((state: RootState) => state.store)
   const {colors, fonts} = useTheme();
   return (
     <Stack.Navigator
       id={id}
-      // screenOptions={{
-      //   header: (props) => <AppBar {...props} title={title}/>,
-      // }}
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.primary,
+          backgroundColor: user.theme.headerColor,
           height: 70,
         },
-        headerTintColor: colors.secondary,
+        headerTintColor: user.theme.fontColor,
         headerTitleStyle: {
           fontFamily: 'BalooBhaiExtraBold',
           fontSize: 22
@@ -47,6 +47,11 @@ const StackNavigator: React.FC<Props> = ({ screens, title, id }) => {
           name={screen.name}
           component={screen.component}
           key={uuid.v4().toString()}
+          options={{
+            cardStyle: {
+              backgroundColor: user.theme.bgColor
+            }
+          }}
         />
       ))}
     </Stack.Navigator>

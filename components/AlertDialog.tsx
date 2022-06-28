@@ -8,6 +8,8 @@ import {
   useTheme,
 } from 'react-native-paper';
 import React, { useRef, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 interface Props {
   visible: boolean;
@@ -23,6 +25,7 @@ const AlertDialog: React.FC<Props> = ({
   onConfirm,
 }) => {
   const { colors } = useTheme();
+  const {user} = useSelector((state: RootState) => state.store)
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 
   const expand = () => {
@@ -50,13 +53,13 @@ const AlertDialog: React.FC<Props> = ({
       <Dialog
         style={[
           styles.dialog,
-          { backgroundColor: colors.primary },
+          { backgroundColor: user.theme.cardColor },
           { transform: [{ scale: scaleAnimation }] },
         ]}
         visible={visible}
         dismissable={false}
       >
-        <Title style={[styles.title, { color: colors.secondary }]}>
+        <Title style={[styles.title, { color: user.theme.fontColor }]}>
           {message.toUpperCase()}
         </Title>
         <View style={styles.buttonContainer}>
@@ -64,7 +67,7 @@ const AlertDialog: React.FC<Props> = ({
             style={styles.button}
             icon='close-circle-outline'
             size={50}
-            color='white'
+            color={user.theme.fontColor}
             onPress={onDismiss}
           />
 
@@ -72,7 +75,7 @@ const AlertDialog: React.FC<Props> = ({
             style={styles.button}
             icon='check-circle-outline'
             size={50}
-            color='white'
+            color={user.theme.fontColor}
             onPress={onConfirm}
           />
         </View>

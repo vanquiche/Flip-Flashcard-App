@@ -43,6 +43,8 @@ import {
   updateCard,
 } from '../../redux/cardThunkActions';
 
+import s from '../styles/styles'
+
 const INITIAL_STATE: {
   id: string;
   name: string;
@@ -74,7 +76,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   const { categoryRef } = route.params;
   const { colors } = useTheme();
 
-  const { cards } = useSelector((state: RootState) => state.store);
+  const { user, cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
   // console.log(categoryRef)
@@ -188,19 +190,19 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         title: docs[0].name.toUpperCase(),
       });
     });
-  }, []);
+  }, [categoryRef]);
 
   return (
     <View>
       {/* ACTION BUTTONS */}
-      <View style={styles.buttonContainer}>
+      <View style={s.cardButtonWrapper}>
         {!multiSelectMode ? (
           <>
             <Button
               mode='contained'
-              style={styles.button}
-              color={colors.primary}
-              labelStyle={{ color: colors.secondary }}
+              style={s.cardActionButton}
+              color={user.theme.cardColor}
+              labelStyle={{ color: user.theme.fontColor }}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -210,9 +212,9 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
             <Button
               mode='contained'
-              style={styles.button}
-              color={colors.primary}
-              labelStyle={{ color: colors.secondary }}
+              style={s.cardActionButton}
+              color={user.theme.cardColor}
+              labelStyle={{ color: user.theme.fontColor }}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -225,9 +227,9 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         ) : (
           <Button
             mode='text'
-            color='red'
+            color='tomato'
             onPress={confirmAlert}
-            style={[styles.button, { position: 'absolute', right: 12 }]}
+            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
           >
             REMOVE
           </Button>
@@ -245,12 +247,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
           <View
-            style={{
-              paddingBottom: 150,
-              flexWrap: 'wrap',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
+            style={s.cardListContainer}
           >
             {cards.set.map((set: Set) => {
               return (
@@ -289,29 +286,24 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
           mode='outlined'
           label='SET NAME'
           outlineColor='lightgrey'
-          activeOutlineColor={colors.secondary}
+          activeOutlineColor={user.theme.headerColor}
           maxLength={32}
           style={{ height: 40, margin: 0 }}
           value={cardSet.name}
           onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
         />
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 15,
-          }}
+          style={[s.actionDialogChildrenContainer, {marginTop: 15}]}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <SwatchSelector color={cardSet.color} setColor={selectColor} />
-            <Title style={{ color: colors.secondary, marginLeft: 10 }}>
+            <Title style={{ color: user.theme.fontColor, marginLeft: 10 }}>
               COLOR
             </Title>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Title style={{ color: colors.secondary, marginRight: 10 }}>
+            <Title style={{ color: user.theme.fontColor, marginRight: 10 }}>
               DESIGN
             </Title>
             <PatternSelector
@@ -324,7 +316,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
         <IconButton
           size={30}
-          color={colors.secondary}
+          color='yellow'
           style={{
             margin: 0,
             position: 'absolute',
@@ -343,18 +335,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 75,
-    paddingHorizontal: 15,
-  },
-  button: {
-    marginVertical: 10,
-    height: 50,
-    elevation: 0,
-    justifyContent: 'center',
-  },
+
 });
 
 export default Sets;

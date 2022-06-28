@@ -152,6 +152,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 10,
     margin: 0,
+    borderWidth: 2,
+    borderColor: 'white'
+    // elevation: 0
   },
   dialog: {
     height: 150,

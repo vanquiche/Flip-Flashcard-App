@@ -31,7 +31,9 @@ const Results: React.FC<Props> = ({
   dismiss,
 }) => {
   const { user, cards } = useSelector((state: RootState) => state.store);
-  const { colors } = useTheme();
+
+  const fontColor = { color: user.theme.fontColor };
+  const xpBarColor = { backgroundColor: user.theme.fontColor };
   const quizGrade = Math.floor((score / total) * 100);
 
   const category = useMemo(
@@ -65,40 +67,32 @@ const Results: React.FC<Props> = ({
 
   return (
     <Animated.View
-      style={[styles.container, { backgroundColor: colors.primary }]}
+      style={[styles.container, { backgroundColor: user.theme.cardColor }]}
       entering={SlideInRight.delay(500)}
     >
-      <Title style={{ color: colors.secondary, textAlign: 'center' }}>
-        RESULTS
-      </Title>
+      <Title style={[{ textAlign: 'center' }, fontColor]}>RESULTS</Title>
 
       <View style={styles.metricContainer}>
-        <Title style={{ color: colors.secondary }}>SCORE</Title>
-        <Title style={{ color: colors.secondary }}>
+        <Title style={fontColor}>SCORE</Title>
+        <Title style={fontColor}>
           {score}/{total}
         </Title>
       </View>
 
       <View style={styles.metricContainer}>
-        <Title style={{ color: colors.secondary }}>GRADE</Title>
-        <Title style={{ color: colors.secondary }}>{quizGrade}%</Title>
+        <Title style={fontColor}>GRADE</Title>
+        <Title style={fontColor}>{quizGrade}%</Title>
       </View>
 
       <View style={styles.progressBarContainer}>
-        <Title style={{ color: colors.secondary }}>
-          {category?.name.toUpperCase()} LEVEL:
-        </Title>
-        <Title style={{ color: colors.secondary }}>
-          {Math.floor(points / pointTotal)}
-        </Title>
+        <Title style={fontColor}>{category?.name.toUpperCase()} LEVEL:</Title>
+        <Title style={fontColor}>{Math.floor(points / pointTotal)}</Title>
       </View>
 
       <View style={styles.progressBarContainer}>
-        <Title style={{ color: colors.secondary }}>
-          {category?.name.toUpperCase()} XP:
-        </Title>
+        <Title style={fontColor}>{category?.name.toUpperCase()} XP:</Title>
         {!setCompleted ? (
-          <Title style={{ color: colors.secondary }}>
+          <Title style={fontColor}>
             <CountUp
               start={progressStart}
               end={progressEnd}
@@ -108,25 +102,22 @@ const Results: React.FC<Props> = ({
             / 100
           </Title>
         ) : (
-          <Title style={{ color: colors.secondary }}>
-            {getXPpercent} / 100
-          </Title>
+          <Title style={fontColor}>{getXPpercent} / 100</Title>
         )}
       </View>
 
       {/* XP BAR */}
 
-      <View style={[styles.progressBar, { borderColor: colors.secondary }]}>
+      <View style={[styles.progressBar, { borderColor: user.theme.fontColor }]}>
         {!setCompleted ? (
           // {/* // animated progress bar */}
           <Animated.View
             style={[
               styles.pointBar,
               {
-                // starting point
                 width: `${getXPpercent - score}%`,
-                backgroundColor: colors.secondary,
               },
+              xpBarColor,
               progressBarAnim,
             ]}
           />
@@ -136,9 +127,9 @@ const Results: React.FC<Props> = ({
             style={[
               styles.pointBar,
               {
-                backgroundColor: colors.secondary,
                 width: `${getXPpercent}%`,
               },
+              xpBarColor,
             ]}
           />
         )}
@@ -146,9 +137,9 @@ const Results: React.FC<Props> = ({
 
       <Button
         mode='contained'
-        color={colors.secondary}
+        color={user.theme.headerColor}
         style={styles.button}
-        labelStyle={{ color: 'white', fontSize: 16 }}
+        labelStyle={[fontColor, { fontSize: 16 }]}
         onPress={dismiss}
       >
         return

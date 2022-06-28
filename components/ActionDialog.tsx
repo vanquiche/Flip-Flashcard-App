@@ -7,6 +7,8 @@ import {
   useTheme,
 } from 'react-native-paper';
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 interface Props {
   children: React.ReactNode;
   visible: boolean;
@@ -26,6 +28,7 @@ const ActionDialog: React.FC<Props> = ({
   onCancel,
   onSubmit,
 }) => {
+  const {user} = useSelector((state: RootState) => state.store)
   const { colors } = useTheme();
   const slideAnimation = useRef<any>(new Animated.Value(0)).current;
   useEffect(() => {
@@ -65,7 +68,7 @@ const ActionDialog: React.FC<Props> = ({
           styles.dialog,
           {
             transform: [{ translateY: slideAnimation }],
-            backgroundColor: colors.primary,
+            backgroundColor: user.theme.cardColor,
           },
         ]}
         dismissable={false}
@@ -76,7 +79,7 @@ const ActionDialog: React.FC<Props> = ({
             style={[
               styles.title,
               {
-                color: colors.secondary,
+                color: user.theme.fontColor,
               },
             ]}
           >
@@ -88,7 +91,7 @@ const ActionDialog: React.FC<Props> = ({
               style={styles.button}
               icon='close-circle-outline'
               size={50}
-              color='white'
+              color={user.theme.fontColor}
               onPress={onCancel}
             />
 
@@ -96,7 +99,7 @@ const ActionDialog: React.FC<Props> = ({
               style={styles.button}
               icon='check-circle-outline'
               size={50}
-              color='white'
+              color={user.theme.fontColor}
               onPress={onSubmit}
               disabled={disableSubmit}
             />
