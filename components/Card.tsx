@@ -2,12 +2,11 @@ import {
   View,
   Pressable,
   StyleSheet,
-  Alert,
   Dimensions,
   ImageBackground,
 } from 'react-native';
 import { Text, useTheme, Title } from 'react-native-paper';
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -16,7 +15,6 @@ import Animated, {
   Layout,
   SlideInLeft,
   ZoomOut,
-  SlideInRight,
   withSpring,
 } from 'react-native-reanimated';
 import { IconButton } from 'react-native-paper';
@@ -30,7 +28,7 @@ import Popup from './Popup';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const FRONT_CARD_POSITION_DEFAULT = 0;
 const BACK_CARD_POSITION_DEFAULT = 180;
 
@@ -195,8 +193,12 @@ const Card: React.FC<Props> = React.memo(
               source={Images[pattern]}
             />
 
-            <Title style={[styles.cardTitle, { top: 25 }]}>Q .</Title>
-            <Text style={styles.textContent}>{card.prompt}</Text>
+            <Title style={[styles.cardTitle, { top: 0, left: 5 }]}>Q .</Title>
+            <View style={[styles.textBG, { backgroundColor: color }]}>
+              <Text style={[styles.textContent]} numberOfLines={3}>
+                {card.prompt}
+              </Text>
+            </View>
           </Animated.View>
 
           {/* BACK OF CARD */}
@@ -204,14 +206,17 @@ const Card: React.FC<Props> = React.memo(
             style={[
               styles.textContainer,
               rStyles_card_back,
-              // { backgroundColor: '#8ecae6' },
             ]}
           >
             <Text style={[styles.textContent, styles.cardBackText]}>
               {card.solution}
             </Text>
             <Title
-              style={[styles.cardBackText, styles.cardTitle, { bottom: 25 }]}
+              style={[
+                styles.cardBackText,
+                styles.cardTitle,
+                { bottom: 0, left: 5 },
+              ]}
             >
               A .
             </Title>
@@ -252,6 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     // marginVertical: 10,
     backfaceVisibility: 'hidden',
+    lineHeight: 30,
   },
   textContainer: {
     width: '100%',
@@ -265,9 +271,15 @@ const styles = StyleSheet.create({
   cardBackText: {
     transform: [{ scaleY: -1 }],
   },
+  textBG: {
+    borderRadius: 10,
+    padding: 5,
+    paddingTop: 7,
+  },
   cardTitle: {
     color: 'white',
     position: 'absolute',
+    fontSize: 26,
   },
 
   popup: {

@@ -8,8 +8,11 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { deleteUser } from '../../redux/userThunkActions';
 import { getCards } from '../../redux/cardThunkActions';
 import PointTracker from '../PointTracker';
+import { StackNavigationTypes } from '../types';
 
-const Profile = () => {
+interface Props extends StackNavigationTypes {}
+
+const Profile:React.FC<Props> = ({navigation}) => {
   const { user, loading, cards } = useSelector(
     (state: RootState) => state.store
   );
@@ -25,9 +28,10 @@ const Profile = () => {
     dispatch(deleteUser());
   };
 
-  // console.log(user.login)
+  // create button that goes to themes screen
   return (
     <View>
+      <Button onPress={() => navigation.navigate('Themes')}>Theme</Button>
       <Text>Hello {user.username}</Text>
       <Text>Last Login: {lastLoginDate}</Text>
       <Text>Login Streak: {user.streak}</Text>
