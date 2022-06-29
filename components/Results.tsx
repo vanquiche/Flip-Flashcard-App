@@ -32,8 +32,10 @@ const Results: React.FC<Props> = ({
 }) => {
   const { user, cards } = useSelector((state: RootState) => state.store);
 
-  const fontColor = { color: user.theme.fontColor };
-  const xpBarColor = { backgroundColor: user.theme.fontColor };
+  const _fontColor = user.theme.fontColor
+  const _xpBarColor =  user.theme.fontColor
+  const _cardColor = user.theme.cardColor
+  const _accentColor = user.theme.accentColor
   const quizGrade = Math.floor((score / total) * 100);
 
   const category = useMemo(
@@ -70,29 +72,29 @@ const Results: React.FC<Props> = ({
       style={[styles.container, { backgroundColor: user.theme.cardColor }]}
       entering={SlideInRight.delay(500)}
     >
-      <Title style={[{ textAlign: 'center' }, fontColor]}>RESULTS</Title>
+      <Title style={[{ textAlign: 'center', color: _fontColor }]}>RESULTS</Title>
 
       <View style={styles.metricContainer}>
-        <Title style={fontColor}>SCORE</Title>
-        <Title style={fontColor}>
+        <Title style={{color: _fontColor}}>SCORE</Title>
+        <Title style={{color: _fontColor}}>
           {score}/{total}
         </Title>
       </View>
 
       <View style={styles.metricContainer}>
-        <Title style={fontColor}>GRADE</Title>
-        <Title style={fontColor}>{quizGrade}%</Title>
+        <Title style={{color: _fontColor}}>GRADE</Title>
+        <Title style={{color: _fontColor}}>{quizGrade}%</Title>
       </View>
 
       <View style={styles.progressBarContainer}>
-        <Title style={fontColor}>{category?.name.toUpperCase()} LEVEL:</Title>
-        <Title style={fontColor}>{Math.floor(points / pointTotal)}</Title>
+        <Title style={{color: _fontColor}}>{category?.name.toUpperCase()} LEVEL:</Title>
+        <Title style={{color: _fontColor}}>{Math.floor(points / pointTotal)}</Title>
       </View>
 
       <View style={styles.progressBarContainer}>
-        <Title style={fontColor}>{category?.name.toUpperCase()} XP:</Title>
+        <Title style={{color: _fontColor}}>{category?.name.toUpperCase()} XP:</Title>
         {!setCompleted ? (
-          <Title style={fontColor}>
+          <Title style={{color: _fontColor}}>
             <CountUp
               start={progressStart}
               end={progressEnd}
@@ -102,7 +104,7 @@ const Results: React.FC<Props> = ({
             / 100
           </Title>
         ) : (
-          <Title style={fontColor}>{getXPpercent} / 100</Title>
+          <Title style={{color: _fontColor}}>{getXPpercent} / 100</Title>
         )}
       </View>
 
@@ -115,9 +117,9 @@ const Results: React.FC<Props> = ({
             style={[
               styles.pointBar,
               {
-                width: `${getXPpercent - score}%`,
-              },
-              xpBarColor,
+                  width: `${getXPpercent - score}%`,
+                },
+
               progressBarAnim,
             ]}
           />
@@ -128,8 +130,8 @@ const Results: React.FC<Props> = ({
               styles.pointBar,
               {
                 width: `${getXPpercent}%`,
-              },
-              xpBarColor,
+                borderColor: _xpBarColor
+              }
             ]}
           />
         )}
@@ -137,9 +139,9 @@ const Results: React.FC<Props> = ({
 
       <Button
         mode='contained'
-        color={user.theme.headerColor}
+        color={_accentColor}
         style={styles.button}
-        labelStyle={[fontColor, { fontSize: 16 }]}
+        labelStyle={[ { fontSize: 16, color: _fontColor }]}
         onPress={dismiss}
       >
         return

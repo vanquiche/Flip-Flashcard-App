@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   screenWrapper: {
     flex: 1,
-    paddingHorizontal: 10
+    // paddingHorizontal: 10
     // paddingTop: 20,
   },
   cardButtonWrapper: {

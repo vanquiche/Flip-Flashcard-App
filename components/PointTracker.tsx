@@ -21,8 +21,6 @@ const PointTracker: React.FC<Props> = ({
       ? points / total
       : points.toString().split('').splice(1).join('');
 
-  // console.log(progress);
-
   return (
     <View style={styles.container}>
       {title && (
@@ -88,6 +86,7 @@ const styles = StyleSheet.create({
 });
 
 export default React.memo(PointTracker, (prev, next) => {
-  if (prev.points === next.points) return true;
+  if (prev.points === next.points && prev.progressColor === next.progressColor)
+    return true;
   return false;
 });

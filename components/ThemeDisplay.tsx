@@ -19,10 +19,10 @@ const ThemeDisplay: React.FC<Props> = ({ theme }) => {
         {theme.name.toUpperCase()}
       </Title>
       <View style={[styles.header, { backgroundColor: theme.headerColor }]} />
-      <View style={[styles.card1, { backgroundColor: theme.cardColor }]} />
+      <View style={[styles.card1, { backgroundColor: theme.accentColor }]} />
+      <View style={[styles.card4, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card2, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
-      <View style={[styles.card4, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.tab, { backgroundColor: theme.tabColor }]}>
         {icons.map((icon, index) => (
           <IconButton
@@ -78,40 +78,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   card1: {
-    width: '43%',
-    height: '20%',
+    width: '80%',
+    height: '12%',
     backgroundColor: 'black',
     position: 'absolute',
-    top: '40%',
-    left: '5%',
+    top: '65%',
+    left: '10%',
     borderRadius: 10,
+    zIndex: 20
   },
   card2: {
-    width: '43%',
+    width: '42%',
     height: '20%',
     backgroundColor: 'black',
     position: 'absolute',
-    top: '40%',
-    right: '5%',
+    top: '18%',
+    right: '6%',
     borderRadius: 10,
+    zIndex: 20
   },
   card3: {
-    width: '90%',
+    width: '42%',
     height: '20%',
     backgroundColor: 'black',
     position: 'absolute',
-    top: '17%',
+    top: '18%',
     left: '5%',
     borderRadius: 10,
   },
   card4: {
     width: '90%',
-    height: '20%',
+    height: '40%',
     backgroundColor: 'black',
     position: 'absolute',
-    top: '63%',
+    top: '42%',
     left: '5%',
     borderRadius: 10,
+    zIndex: 10
   },
 });
 export default React.memo(ThemeDisplay);

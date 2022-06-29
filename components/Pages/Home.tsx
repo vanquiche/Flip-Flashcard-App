@@ -20,20 +20,20 @@ import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
-import { showNotification } from '../../redux/storeSlice';
-import { DateTime } from 'luxon';
+import s from '../styles/styles'
 
 interface Props extends StackNavigationTypes {}
 
 const Home: React.FC<Props> = ({ navigation, route }) => {
-  const { user, loading, favoriteSets, levelUpCondition } = useSelector(
+  const { user, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
+  const _cardColor = user.theme.cardColor;
+  const _fontColor = user.theme.fontColor;
 
-  // const { colors } = useTheme();
+  const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -74,41 +74,28 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     dispatch(
       checkLogin({
-        lastLogin: user.login,
         streak: user.streak,
-        xp: user.xp,
+        lastLogin: user.login,
+        heartcoins: user.heartcoin,
       })
     );
-  }, []);
+  }, [checkLogin]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: 15,
-          marginHorizontal: 10,
-          justifyContent: 'space-around',
-        }}
-      >
-        <View
-          style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}
-        >
+    <View style={s.screenWrapper}>
+      <View style={styles.infoCardContainer}>
+        <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
           <Title style={{ color: user.theme.fontColor }}>LEVEL: {level}</Title>
         </View>
 
-        <View
-          style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}
-        >
-          <Title style={{ color: user.theme.fontColor }}>
-            HEARTS: {user.heartcoin}
-          </Title>
+        <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
+          <Title style={{ color: _fontColor }}>HEARTS: {user.heartcoin}</Title>
         </View>
       </View>
 
       <LoginGoal dates={user.login} streak={user.streak} />
 
-      <Title style={{ textAlign: 'center', color: user.theme.cardColor }}>
+      <Title style={{ textAlign: 'center', color: _cardColor }}>
         FAVORITE SETS
       </Title>
 
@@ -150,6 +137,12 @@ const styles = StyleSheet.create({
     margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  infoCardContainer: {
+    flexDirection: 'row',
+    marginTop: 15,
+    marginHorizontal: 10,
+    justifyContent: 'space-around',
   },
 });
 

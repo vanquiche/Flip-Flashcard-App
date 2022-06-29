@@ -137,7 +137,7 @@ const TitleCard: React.FC<Props> = ({
           <IconButton
             icon='close-thick'
             color={checked ? 'white' : 'transparent'}
-            style={{ position: 'absolute', left: 0, top: 0 }}
+            style={{ position: 'absolute', right: 0, top: 0 }}
           />
         )}
 

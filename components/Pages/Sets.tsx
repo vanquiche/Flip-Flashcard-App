@@ -285,8 +285,8 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
         <TextInput
           mode='outlined'
           label='SET NAME'
-          outlineColor='lightgrey'
-          activeOutlineColor={user.theme.headerColor}
+          outlineColor='grey'
+          activeOutlineColor='black'
           maxLength={32}
           style={{ height: 40, margin: 0 }}
           value={cardSet.name}

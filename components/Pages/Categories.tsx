@@ -230,8 +230,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
           <TextInput
             mode='outlined'
             label='CATEGORY NAME'
-            outlineColor='lightgrey'
-            activeOutlineColor={user.theme.headerColor}
+            outlineColor='grey'
+            activeOutlineColor='black'
             maxLength={32}
             value={category.name}
             onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}

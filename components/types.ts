@@ -75,6 +75,7 @@ export interface Theme {
   bgColor: string;
   iconColor: string;
   actionIconColor: string;
+  accentColor: string
 }
 
 interface CardDesign {
@@ -122,7 +123,8 @@ export const defaultTheme: Theme = {
   headerColor: '#ffa69e',
   bgColor: '#fff0f3',
   iconColor: '#ffccd5',
-  actionIconColor: 'white'
+  actionIconColor: 'white',
+  accentColor: 'hotpink'
 };
 
 export interface User {

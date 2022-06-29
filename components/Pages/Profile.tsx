@@ -36,14 +36,18 @@ const Profile: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={s.screenWrapper}>
       <Button
-        mode='contained'
+        mode='text'
         color={_color}
-        style={[s.cardActionButton]}
-        labelStyle={{ color: user.theme.fontColor }}
+        style={[
+          // s.cardActionButton,
+          styles.themeButton
+        ]}
+        labelStyle={{ color: _color }}
         onPress={() => navigation.navigate('Themes')}
       >
         themes
       </Button>
+      {/*
       <Text>Hello {user.username}</Text>
       <Text>Last Login: {lastLoginDate}</Text>
       <Text>Login Streak: {user.streak}</Text>
@@ -56,10 +60,11 @@ const Profile: React.FC<Props> = ({ navigation }) => {
         onPress={deleteCurrentUser}
       >
         Delete User
-      </Button>
+      </Button> */}
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>
+        <Title style={{color: _color}}>{user.username.toUpperCase()}</Title>
         <Image
           source={profileImg}
           style={[styles.image, { tintColor: _color }]}
@@ -81,8 +86,8 @@ const Profile: React.FC<Props> = ({ navigation }) => {
               key={c._id}
               title={c.name}
               points={c.points}
-              total={100}
               progressColor={_color}
+              total={100}
             />
           );
         })}
@@ -102,7 +107,13 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     paddingHorizontal: 10,
+    marginTop: 30,
+    marginBottom: 15,
   },
+  themeButton: {
+    position: 'absolute',
+    right: 5
+  }
 });
 
 export default Profile;

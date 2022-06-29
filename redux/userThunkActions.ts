@@ -53,7 +53,7 @@ export const updateUser = createAsyncThunk(
 
 export const checkLogin = createAsyncThunk(
   'store/checkLogin',
-  (payload: { lastLogin: string[]; streak: number; xp: number }) => {
+  (payload: { lastLogin: string[]; streak: number; heartcoins: number }) => {
     return new Promise<void | string[]>((resolve, reject) => {
       const dt = DateTime;
       const today = dt.now();
@@ -70,7 +70,7 @@ export const checkLogin = createAsyncThunk(
           resolve();
         } else if (hours > 24) {
           const inStreak = loginStreak(loggedInLast);
-          const xp = inStreak ? payload.xp + 25 : payload.xp;
+          const coins = inStreak ? payload.heartcoins + 5 : payload.heartcoins;
           const streak = inStreak
             ? payload.streak + 1
             : !inStreak
@@ -81,8 +81,8 @@ export const checkLogin = createAsyncThunk(
             { type: 'user' },
             {
               $set: {
-                xp: xp,
                 streak: streak,
+                heartcoints: coins,
                 completedQuiz: [],
                 login: updatedWeek,
               },

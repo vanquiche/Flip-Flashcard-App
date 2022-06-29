@@ -10,7 +10,8 @@ const themes: Theme[] = [
     headerColor: '#0ead69',
     bgColor: '#ebf5df',
     iconColor: '#8acb88',
-    actionIconColor: '#e4fde1'
+    actionIconColor: '#e4fde1',
+    accentColor: '#76c893'
   },
   {
     name: 'Sea Side',
@@ -20,7 +21,8 @@ const themes: Theme[] = [
     headerColor: '#0077b6',
     bgColor: '#e2eafc',
     iconColor: '#5fa8d3',
-    actionIconColor: 'white'
+    actionIconColor: 'white',
+    accentColor: '#82c0cc'
   },
 ];
 

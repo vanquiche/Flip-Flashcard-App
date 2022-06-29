@@ -40,7 +40,7 @@ const Popup: React.FC<Props> = ({
         onDismiss={dismiss}
         style={[
           styles.dialog,
-          { position: 'absolute', top: layout.y - 110, left: layout.x },
+          { position: 'absolute', top: layout.y - 125, left: layout.x },
         ]}
       >
         <View style={styles.buttonContainer}>
