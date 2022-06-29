@@ -72,21 +72,14 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
 
   // notify user if login is in-streak
   useEffect(() => {
-    // const lastLogin = DateTime.fromISO(
-    //   user.login[user.login.length - 1]
-    // ).toFormat('ff');
-
-    const inStreak = loginStreak(user.login[user.login.length - 1]);
-
-    if (inStreak) {
-      dispatch(
-        showNotification(`logged in ${user.streak} days consecutively!`)
-      );
-    } else return;
-    // console.log(lastLogin);
-    // console.log(inStreak);
-    // console.log(user.login)
-  }, [user.login]);
+    dispatch(
+      checkLogin({
+        lastLogin: user.login,
+        streak: user.streak,
+        xp: user.xp,
+      })
+    );
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -98,11 +91,15 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
           justifyContent: 'space-around',
         }}
       >
-        <View style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}>
+        <View
+          style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}
+        >
           <Title style={{ color: user.theme.fontColor }}>LEVEL: {level}</Title>
         </View>
 
-        <View style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}>
+        <View
+          style={[styles.infoCard, { backgroundColor: user.theme.cardColor }]}
+        >
           <Title style={{ color: user.theme.fontColor }}>
             HEARTS: {user.heartcoin}
           </Title>

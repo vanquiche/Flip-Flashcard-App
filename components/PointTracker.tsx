@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
-import { Colors, IconButton, Title, useTheme } from 'react-native-paper';
+import { Title } from 'react-native-paper';
 
 interface Props {
   total: number;
   points: number;
-  title: string;
+  title?: string;
   progressColor?: string;
 }
 
@@ -15,7 +15,6 @@ const PointTracker: React.FC<Props> = ({
   title,
   progressColor,
 }) => {
-  const { colors } = useTheme();
   const level = Math.floor(points / total);
   const progress =
     points < total
@@ -26,17 +25,27 @@ const PointTracker: React.FC<Props> = ({
 
   return (
     <View style={styles.container}>
+      {title && (
+        <View>
+          <Title
+            style={{ color: progressColor, width: 65, flex: 1 }}
+            numberOfLines={1}
+          >
+            {title.toUpperCase()}
+          </Title>
+        </View>
+      )}
 
-      <View>
-        <Title style={{ color: colors.secondary, width: 75, flex: 1 }} numberOfLines={1}>{title.toUpperCase()}</Title>
-      </View>
-
-      <Title style={{ color: colors.secondary, marginRight: -10 }}>
-        {level}
-      </Title>
+      <Title style={{ color: progressColor, marginRight: 0 }}>{level}</Title>
       {/* </View> */}
 
-      <View style={[styles.progressBar, { borderColor: colors.secondary }]}>
+      <View
+        style={[
+          styles.progressBar,
+          { borderColor: progressColor },
+          title ? { width: '70%' } : { width: '85%' },
+        ]}
+      >
         <View
           style={[
             styles.progress,
@@ -45,9 +54,7 @@ const PointTracker: React.FC<Props> = ({
         />
       </View>
 
-      <Title style={{ color: colors.secondary, marginLeft: -10 }}>
-        {level + 1}
-      </Title>
+      <Title style={{ color: progressColor, marginLeft: 0 }}>{level + 1}</Title>
     </View>
   );
 };
@@ -57,13 +64,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    // marginHorizontal: 20,
     marginVertical: 5,
     width: '95%',
   },
   progressBar: {
     height: 14,
-    width: '60%',
     borderWidth: 2,
     overflow: 'hidden',
     borderRadius: 10,

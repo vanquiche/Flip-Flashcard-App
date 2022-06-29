@@ -4,7 +4,7 @@ const themes: Theme[] = [
   defaultTheme,
   {
     name: 'Sprout',
-    cardColor: 'lightgreen',
+    cardColor: '#43aa8b',
     fontColor: 'white',
     tabColor: '#0ead69',
     headerColor: '#0ead69',

@@ -1,22 +1,27 @@
-import { View, Text, ScrollView } from 'react-native';
-import React, { useEffect } from 'react';
-import { Button, Title, useTheme } from 'react-native-paper';
+import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
+import React from 'react';
+import { Button, Title } from 'react-native-paper';
 
 import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { deleteUser } from '../../redux/userThunkActions';
-import { getCards } from '../../redux/cardThunkActions';
+
 import PointTracker from '../PointTracker';
+import s from '../styles/styles';
+
 import { StackNavigationTypes } from '../types';
 
 interface Props extends StackNavigationTypes {}
 
-const Profile:React.FC<Props> = ({navigation}) => {
-  const { user, loading, cards } = useSelector(
+const Profile: React.FC<Props> = ({ navigation }) => {
+  const { user, cards, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
-  const { colors } = useTheme();
+
+  const _color = user.theme.cardColor;
+
+  const profileImg = require('../../assets/images/profile-user.png');
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -28,10 +33,17 @@ const Profile:React.FC<Props> = ({navigation}) => {
     dispatch(deleteUser());
   };
 
-  // create button that goes to themes screen
   return (
-    <View>
-      <Button onPress={() => navigation.navigate('Themes')}>Theme</Button>
+    <View style={s.screenWrapper}>
+      <Button
+        mode='contained'
+        color={_color}
+        style={[s.cardActionButton]}
+        labelStyle={{ color: user.theme.fontColor }}
+        onPress={() => navigation.navigate('Themes')}
+      >
+        themes
+      </Button>
       <Text>Hello {user.username}</Text>
       <Text>Last Login: {lastLoginDate}</Text>
       <Text>Login Streak: {user.streak}</Text>
@@ -45,8 +57,24 @@ const Profile:React.FC<Props> = ({navigation}) => {
       >
         Delete User
       </Button>
-      <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
-        <Title style={{ color: colors.secondary }}>CATEGORIES</Title>
+
+      {/* USER PROFILE INFO */}
+      <View style={styles.profileContainer}>
+        <Image
+          source={profileImg}
+          style={[styles.image, { tintColor: _color }]}
+        />
+        <PointTracker
+          // title={user.username}
+          points={user.xp}
+          total={levelUpCondition}
+          progressColor={_color}
+        />
+      </View>
+
+      {/* CATEGORY POINT CONTAINER */}
+      <ScrollView contentContainerStyle={styles.categoryContainer}>
+        <Title style={{ color: _color }}>CATEGORIES</Title>
         {cards.category.map((c) => {
           return (
             <PointTracker
@@ -54,7 +82,7 @@ const Profile:React.FC<Props> = ({navigation}) => {
               title={c.name}
               points={c.points}
               total={100}
-              progressColor={colors.secondary}
+              progressColor={_color}
             />
           );
         })}
@@ -62,5 +90,19 @@ const Profile:React.FC<Props> = ({navigation}) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  image: {
+    width: 72,
+    height: 72,
+  },
+  categoryContainer: {
+    alignItems: 'center',
+  },
+  profileContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+});
 
 export default Profile;

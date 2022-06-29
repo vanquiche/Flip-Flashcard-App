@@ -3,7 +3,8 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   screenWrapper: {
     flex: 1,
-    paddingTop: 20,
+    paddingHorizontal: 10
+    // paddingTop: 20,
   },
   cardButtonWrapper: {
     flexDirection: 'row',
@@ -14,6 +15,8 @@ export default StyleSheet.create({
   cardActionButton: {
     marginVertical: 10,
     height: 50,
+    minWidth: 50,
+    maxWidth: 100,
     elevation: 0,
     justifyContent: 'center',
   },

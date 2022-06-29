@@ -29,7 +29,6 @@ const Themes = () => {
 
   return (
     <View style={[s.screenWrapper]}>
-      <Text>{user.theme.name}</Text>
       <ScrollView
         horizontal
         scrollEnabled

@@ -41,15 +41,7 @@ const IndexScreen = () => {
     dispatch(getCards({ type: 'category', query: { type: 'category' } }));
   }, []);
 
-  useEffect(() => {
-    dispatch(
-      checkLogin({
-        lastLogin: user.login,
-        streak: user.streak,
-        xp: user.xp,
-      })
-    );
-  }, []);
+
 
   return (
     <>

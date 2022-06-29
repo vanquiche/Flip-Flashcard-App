@@ -194,8 +194,8 @@ export const storeSlice = createSlice({
 
           // if in streak add bonus xp and notify user
           if (inStreak) {
-            // state.notification.show = true;
-            // state.notification.message = 'logged in consecutively';
+            state.notification.show = true;
+            state.notification.message = 'logged in consecutively';
             state.user.xp = state.user.xp + 25;
           }
         }
