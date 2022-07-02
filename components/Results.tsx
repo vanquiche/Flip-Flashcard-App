@@ -61,7 +61,7 @@ const Results: React.FC<Props> = ({
     return {
       width: withTiming(
         `${progressBarStart.value}%`,
-        { duration: 1100 },
+        { duration: 700 },
         () => (progressBarStart.value = progressEnd)
       ),
     };
@@ -98,7 +98,7 @@ const Results: React.FC<Props> = ({
             <CountUp
               start={progressStart}
               end={progressEnd}
-              duration={1.75}
+              duration={1.25}
               isCounting
             />
             / 100

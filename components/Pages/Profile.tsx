@@ -47,9 +47,9 @@ const Profile: React.FC<Props> = ({ navigation }) => {
       >
         themes
       </Button>
+      <Text>Last Login: {lastLoginDate}</Text>
       {/*
       <Text>Hello {user.username}</Text>
-      <Text>Last Login: {lastLoginDate}</Text>
       <Text>Login Streak: {user.streak}</Text>
       <Text>XP: {user.xp}</Text>
       <Button

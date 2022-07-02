@@ -8,11 +8,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../components/Pages/Home';
 
 import StackNavigator from '../components/StackNavigator';
-const Stack = createStackNavigator();
+const screen = [{ name: 'Home', component: Home }];
 
 const HomeScreen = () => {
-  const screen = [{ name: 'Home', component: Home }];
-
   return <StackNavigator screens={screen} />;
 };
 

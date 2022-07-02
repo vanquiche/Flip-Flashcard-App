@@ -262,7 +262,7 @@ const Quiz: React.FC<Props> = ({
 
   return (
     <Portal>
-      <QuizContainer>
+      <QuizContainer color={user.theme.bgColor}>
         <View style={styles.container}>
           <AlertDialog
             message='Are you sure you want to quit?'

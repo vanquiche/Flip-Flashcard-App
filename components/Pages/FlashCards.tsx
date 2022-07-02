@@ -274,8 +274,8 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
           <TextInput
             mode='outlined'
             label='PROMPT'
-            outlineColor='lightgrey'
-            activeOutlineColor={colors.secondary}
+            outlineColor='grey'
+            activeOutlineColor='black'
             maxLength={32}
             value={flashcard.prompt}
             onChangeText={(prompt) =>
@@ -287,8 +287,8 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
           <TextInput
             mode='outlined'
             label='SOLUTION'
-            outlineColor='lightgrey'
-            activeOutlineColor={colors.secondary}
+            outlineColor='grey'
+            activeOutlineColor='black'
             maxLength={32}
             value={flashcard.solution}
             onChangeText={(solution) =>

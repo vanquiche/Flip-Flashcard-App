@@ -12,14 +12,15 @@ const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 interface Props {
   children: any;
+  color?: string;
 }
 
-const QuizContainer: React.FC<Props> = ({ children }) => {
+const QuizContainer: React.FC<Props> = ({ children, color }) => {
   return (
     <Animated.View
       entering={StretchInY}
       exiting={StretchOutY}
-      style={styles.container}
+      style={[styles.container, {backgroundColor: color}]}
     >
       {children}
     </Animated.View>
