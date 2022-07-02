@@ -10,22 +10,15 @@ import {
   ImageBackground,
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
 import Pattern from './Pattern';
-import Images, {PATTERN_LIST} from '../assets/patterns/images'
+import Images, { PATTERN_LIST } from '../assets/patterns/images';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
-
-
 
 interface Props {
   pattern: string;
@@ -68,7 +61,6 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
       });
     }
   };
-
 
   // shift swatch selector when keyboard shows/hide
   useEffect(() => {
@@ -146,11 +138,13 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
         onPress={openSwatchDialog}
         onLayout={measureSwatch}
       >
-        <ImageBackground
-          source={Images[pattern]}
-          imageStyle={styles.image}
-          resizeMode='cover'
-        />
+        {Images[pattern] && (
+          <ImageBackground
+            source={Images[pattern]}
+            imageStyle={styles.image}
+            resizeMode='cover'
+          />
+        )}
       </Pressable>
     </>
   );
@@ -165,7 +159,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: 'white'
+    borderColor: 'white',
   },
   dialog: {
     height: 150,
@@ -187,8 +181,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     tintColor: 'white',
     opacity: 0.75,
   },
