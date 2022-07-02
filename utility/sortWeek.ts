@@ -6,7 +6,7 @@ const sortWeek = (week: string[]) => {
   const diff = today.diff(latestLogin, 'days').toObject();
 
   if (diff.days) {
-    if (diff.days >= 7 || week.length >= 7) {
+    if (diff.days >= 7 || week.length > 6) {
       // if last login is more than 7 days old, return new array with today's date
       // to ensure that dates are always within same week
       const updated = [today.toISO()];

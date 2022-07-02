@@ -18,6 +18,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
   const { user, cards, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
+  // console.log(user.login)
 
   const _color = user.theme.cardColor;
 
