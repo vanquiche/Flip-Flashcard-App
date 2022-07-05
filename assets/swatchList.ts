@@ -1,24 +1,26 @@
-const SWATCH_LIST = [
-  '#C0392B',
+const DEFAULT_SWATCH_LIST = [
   '#E74C3C',
-  '#9B59B6',
   '#8E44AD',
-  '#2980B9',
   '#3498DB',
-  '#1ABC9C',
   '#16A085',
-  '#27AE60',
   '#2ECC71',
-  '#F1C40F',
   '#F39C12',
-  '#E67E22',
   '#D35400',
-  '#FFFFFF',
-  '#BDC3C7',
   '#95A5A6',
-  '#7F8C8D',
   '#34495E',
-  '#2C3E50',
-]
+];
 
-export default SWATCH_LIST
+export const STORE_SWATCH_LIST = [
+  '#E67E22',
+  '#9B59B6',
+  '#C0392B',
+  '#2980B9',
+  '#2C3E50',
+  '#1ABC9C',
+  '#27AE60',
+  '#7F8C8D',
+  '#BDC3C7',
+  '#F1C40F',
+];
+
+export default DEFAULT_SWATCH_LIST;

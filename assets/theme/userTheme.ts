@@ -1,6 +1,6 @@
 import {Theme} from '../../components/types'
 import { defaultTheme } from '../../components/types';
-const themes: Theme[] = [
+const DEFAULT_THEMES: Theme[] = [
   defaultTheme,
   {
     name: 'Sprout',
@@ -26,4 +26,8 @@ const themes: Theme[] = [
   },
 ];
 
-export default themes;
+export const STORE_THEMES: Theme[] = [
+
+]
+
+export default DEFAULT_THEMES;
