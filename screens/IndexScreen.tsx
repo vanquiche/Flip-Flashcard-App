@@ -22,13 +22,18 @@ import { getUserData, checkLogin } from '../redux/userThunkActions';
 import { getFavoriteSets } from '../redux/cardThunkActions';
 import { getCards } from '../redux/cardThunkActions';
 
+import swatchContext from '../contexts/swatchContext';
+import DEFAULT_SWATCH_LIST from '../assets/swatchList';
+import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
+
 const Tab = createBottomTabNavigator();
 
 const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  const { colors } = useTheme();
+  const colors = DEFAULT_SWATCH_LIST.concat(user.collection.colors);
+  const patterns = { ...DEFAULT_PATTERNS, ...user.collection.patterns };
 
   const clearNotification = () => {
     dispatch(dismissNotification());
@@ -41,10 +46,8 @@ const IndexScreen = () => {
     dispatch(getCards({ type: 'category', query: { type: 'category' } }));
   }, []);
 
-
-
   return (
-    <>
+    <swatchContext.Provider value={{ colors, patterns }}>
       <AlertNotification
         dismiss={clearNotification}
         visible={notification.show}
@@ -68,7 +71,10 @@ const IndexScreen = () => {
           <Tab.Screen
             name='SignUp'
             component={SignUp}
-            options={{ tabBarIconStyle: { display: 'none' } }}
+            options={{
+              tabBarIconStyle: { display: 'none' },
+              tabBarStyle: { display: 'none' },
+            }}
           />
         ) : (
           <>
@@ -139,7 +145,7 @@ const IndexScreen = () => {
           </>
         )}
       </Tab.Navigator>
-    </>
+    </swatchContext.Provider>
   );
 };
 

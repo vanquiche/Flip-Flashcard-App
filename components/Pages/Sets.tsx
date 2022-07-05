@@ -13,6 +13,7 @@ import React, {
   Suspense,
   useReducer,
   useCallback,
+  useContext,
 } from 'react';
 
 import Animated from 'react-native-reanimated';
@@ -43,7 +44,8 @@ import {
   updateCard,
 } from '../../redux/cardThunkActions';
 
-import s from '../styles/styles'
+import s from '../styles/styles';
+import swatchContext from '../../contexts/swatchContext';
 
 const INITIAL_STATE: {
   id: string;
@@ -74,13 +76,13 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { categoryRef } = route.params;
-  const { colors } = useTheme();
 
   const { user, cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  // console.log(categoryRef)
+  const { colors, patterns } = useContext(swatchContext);
 
+  // console.log(patterns)
   // // CRUD functions
   const closeDialog = () => {
     setShowDialog(false);
@@ -246,9 +248,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
-          <View
-            style={s.cardListContainer}
-          >
+          <View style={s.cardListContainer}>
             {cards.set.map((set: Set) => {
               return (
                 <TitleCard
@@ -292,11 +292,13 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
           value={cardSet.name}
           onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
         />
-        <View
-          style={[s.actionDialogChildrenContainer, {marginTop: 15}]}
-        >
+        <View style={[s.actionDialogChildrenContainer, { marginTop: 15 }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <SwatchSelector color={cardSet.color} setColor={selectColor} />
+            <SwatchSelector
+              color={cardSet.color}
+              setColor={selectColor}
+              swatches={colors}
+            />
             <Title style={{ color: user.theme.fontColor, marginLeft: 10 }}>
               COLOR
             </Title>
@@ -310,6 +312,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
               setPattern={selectPattern}
               pattern={cardSet.design}
               color={cardSet.color}
+              patternList={patterns}
             />
           </View>
         </View>
@@ -334,8 +337,6 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 
 export default Sets;

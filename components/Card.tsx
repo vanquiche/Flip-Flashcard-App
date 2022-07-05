@@ -23,7 +23,6 @@ import { Flashcard } from './types';
 
 import AlertDialog from './AlertDialog';
 
-import Images from '../assets/patterns/images';
 import Popup from './Popup';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -36,6 +35,7 @@ interface Props {
   card: Flashcard;
   color?: string;
   pattern?: any;
+  patternList: Record<string, any>;
   multiSelect: boolean;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
@@ -49,6 +49,7 @@ const Card: React.FC<Props> = React.memo(
     card,
     color,
     pattern,
+    patternList,
     handleEdit,
     handleDelete,
     multiSelect,
@@ -190,7 +191,7 @@ const Card: React.FC<Props> = React.memo(
               resizeMode='repeat'
               imageStyle={[styles.image]}
               style={styles.cardPattern}
-              source={Images[pattern]}
+              source={patternList[pattern]}
             />
 
             <Title style={[styles.cardTitle, { top: 0, left: 5 }]}>Q .</Title>

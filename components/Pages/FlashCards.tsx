@@ -5,6 +5,7 @@ import React, {
   Suspense,
   useReducer,
   useRef,
+  useContext,
 } from 'react';
 import {
   IconButton,
@@ -37,6 +38,7 @@ import {
   updateCard,
 } from '../../redux/cardThunkActions';
 import s from '../styles/styles'
+import swatchContext from '../../contexts/swatchContext';
 
 const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
   id: '',
@@ -58,13 +60,13 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const categoryXP = useRef<number>(0);
-  const { colors } = useTheme();
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const { user, cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
   const { setRef, categoryRef, color, design } = route.params;
 
+  const { patterns} = useContext(swatchContext)
   const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {
@@ -255,6 +257,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
                   handleEdit={editCard}
                   multiSelect={multiSelectMode}
                   markForDelete={selectItem}
+                  patternList={patterns}
                 />
               );
             })}

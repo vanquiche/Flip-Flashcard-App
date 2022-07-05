@@ -1,12 +1,13 @@
-import React, { createContext, SetStateAction } from "react";
+import React, { createContext } from "react";
+
 interface Context {
-  color:string;
-  setColor: React.Dispatch<SetStateAction<string>>
+  colors: string[];
+  patterns: Record<string, any>
 }
 
 const initialValue: Context = {
-  color: '',
-  setColor: () => {}
+  colors: [],
+  patterns: {}
 }
 const swatchContext = createContext(initialValue)
 

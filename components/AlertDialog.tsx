@@ -14,6 +14,7 @@ import { RootState } from '../redux/store';
 interface Props {
   visible: boolean;
   message: string;
+  disable?: boolean;
   onDismiss: () => void;
   onConfirm: () => void;
 }
@@ -21,6 +22,7 @@ interface Props {
 const AlertDialog: React.FC<Props> = ({
   message,
   visible,
+  disable,
   onDismiss,
   onConfirm,
 }) => {
@@ -77,6 +79,7 @@ const AlertDialog: React.FC<Props> = ({
             size={50}
             color={user.theme.fontColor}
             onPress={onConfirm}
+            disabled={disable}
           />
         </View>
       </Dialog>

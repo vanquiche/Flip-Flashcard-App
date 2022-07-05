@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Text, useTheme, IconButton } from 'react-native-paper';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -19,8 +19,8 @@ import Animated, {
 
 import AlertDialog from './AlertDialog';
 
-import Images from '../assets/patterns/images';
 import Popup from './Popup';
+import swatchContext from '../contexts/swatchContext';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -57,6 +57,9 @@ const TitleCard: React.FC<Props> = ({
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  const {patterns} = useContext(swatchContext)
+  // console.log(plist)
+
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
   const cardScaleAnimatedStyle = useAnimatedStyle(() => {
@@ -65,7 +68,6 @@ const TitleCard: React.FC<Props> = ({
     };
   });
 
-  const { colors } = useTheme();
   const cardRef = useRef<View>(null);
   const popupX = useRef(0);
   const popupY = useRef(0);
@@ -146,7 +148,7 @@ const TitleCard: React.FC<Props> = ({
         </Text>
         {card.design && (
           <ImageBackground
-            source={Images[card.design] || null}
+            source={patterns[card.design] || null}
             imageStyle={styles.pattern}
             style={styles.patternWrapper}
             resizeMode='cover'

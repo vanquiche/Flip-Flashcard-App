@@ -10,23 +10,30 @@ import {
   ImageBackground,
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useContext } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
 import Pattern from './Pattern';
-import Images, { PATTERN_LIST } from '../assets/patterns/images';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
 interface Props {
   pattern: string;
   color: string;
+  patternList: Record<string, any>;
   setPattern: (d: string) => void;
 }
 
-const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
+const PatternSelector: React.FC<Props> = ({
+  setPattern,
+  pattern,
+  color,
+  patternList,
+}) => {
   const [showPalette, setShowPalette] = useState(false);
 
   const swatchRef = useRef<View>(null);
@@ -110,14 +117,17 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {useMemo(() => {
-                  return PATTERN_LIST.map((p) => (
+                  const PATTERNS = Object.keys(patternList);
+
+                  return PATTERNS.map((p) => (
                     <Pattern
                       key={uuid.v4().toString()}
                       name={p}
                       select={setPattern}
+                      patternList={patternList}
                     />
                   ));
-                }, [PATTERN_LIST])}
+                }, [])}
               </View>
             </ScrollView>
           </View>
@@ -138,9 +148,9 @@ const PatternSelector: React.FC<Props> = ({ setPattern, pattern, color }) => {
         onPress={openSwatchDialog}
         onLayout={measureSwatch}
       >
-        {Images[pattern] && (
+        {patternList[pattern] && (
           <ImageBackground
-            source={Images[pattern]}
+            source={patternList[pattern]}
             imageStyle={styles.image}
             resizeMode='cover'
           />

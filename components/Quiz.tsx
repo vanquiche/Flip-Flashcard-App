@@ -8,7 +8,7 @@ import {
   ProgressBar,
   Button,
 } from 'react-native-paper';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useContext } from 'react';
 
 import QuizContainer from './QuizContainer';
 import QuizCard from './QuizCard';
@@ -24,6 +24,7 @@ import { updateUser } from '../redux/userThunkActions';
 import { updateCard } from '../redux/cardThunkActions';
 import { showNotification } from '../redux/storeSlice';
 import checkForLevelUp from '../utility/checkForLevelUp';
+import swatchContext from '../contexts/swatchContext';
 
 interface Props {
   navigation: any;
@@ -62,21 +63,13 @@ const Quiz: React.FC<Props> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { user, cards: quiz, levelUpCondition } = useSelector((state: RootState) => state.store);
 
-  // const originalHeaderStyle = {
-  //   backgroundColor: user.theme.headerColor,
-  //   height: 70,
-  // }
-
-  // const originalTabBarStyle = {
-  //   backgroundColor: user.theme.tabColor,
-  //   height: 70,
-  // }
-
   const selectedQuizSet = useMemo(() => {
     return quiz.set.find((c) => c._id === setRef);
   }, []);
 
-  const { colors } = useTheme();
+  const {patterns} = useContext(swatchContext)
+
+  const { colors: themeColors } = useTheme();
   const score = useRef(0);
 
   const lastSlide = cardCount === flashcards.length - 1;
@@ -136,36 +129,8 @@ const Quiz: React.FC<Props> = ({
   };
 
   // ANIMATION VALUES
-  // const headerAnimate = useRef<any>(new Animated.Value(0)).current;
   const inputAnimate = useRef<any>(new Animated.Value(0)).current;
-  // const tabAnimate = useRef<any>(new Animated.Value(0)).current;
 
-  // const resetTab = () => {
-  //   Animated.spring(tabAnimate, {
-  //     toValue: 0,
-  //     useNativeDriver: true,
-  //   }).start();
-  // };
-  // const slideTabDown = () => {
-  //   Animated.spring(tabAnimate, {
-  //     toValue: 70,
-  //     useNativeDriver: true,
-  //   }).start();
-  // };
-
-  // const slideHeaderUp = () => {
-  //   Animated.spring(headerAnimate, {
-  //     toValue: -70,
-  //     useNativeDriver: true,
-  //   }).start();
-  // };
-
-  // const resetHeader = () => {
-  //   Animated.spring(headerAnimate, {
-  //     toValue: 0,
-  //     useNativeDriver: true,
-  //   }).start();
-  // };
 
   const slideDialogUp = () => {
     Animated.spring(inputAnimate, {
@@ -181,54 +146,6 @@ const Quiz: React.FC<Props> = ({
     }).start();
   };
 
-  // // start animation to hide header and tabbar when quiz begins
-  // useEffect(() => {
-  //   // slide header and tab out of view
-  //   slideHeaderUp();
-  //   slideTabDown();
-  //   // slide header up
-  //   navigation.setOptions({
-  //     headerStyle: {
-  //       transform: [{ translateY: headerAnimate }],
-  //       // backgroundColor: user.theme.headerColor,
-  //       // height: 70,
-  //       ...originalHeaderStyle
-  //     },
-  //   });
-  //   // slide tab down
-  //   navigation.getParent()?.setOptions({
-  //     tabBarStyle: {
-  //       transform: [{ translateY: tabAnimate }],
-  //       backgroundColor: user.theme.tabColor,
-  //       height: 70,
-  //       // ...originalTabBarStyle
-  //     },
-  //   });
-
-  //   return () => {
-  //     // return header and tab to original position
-  //     resetHeader();
-  //     resetTab();
-  //     // slide header down
-  //     navigation.setOptions({
-  //       headerStyle: {
-  //         transform: [{ translateY: headerAnimate }],
-  //         // backgroundColor: colors.primary,
-  //         // height: 70,
-  //         ...originalHeaderStyle
-  //       },
-  //     });
-  //     // slide tab up
-  //     navigation.getParent()?.setOptions({
-  //       tabBarStyle: {
-  //         transform: [{ translateY: tabAnimate }],
-  //         backgroundColor: user.theme.tabColor,
-  //         height: 70,
-  //         // ...originalTabBarStyle
-  //       },
-  //     });
-  //   };
-  // }, [navigation]);
 
   // shuffle cards in random order
   useEffect(() => {
@@ -329,11 +246,12 @@ const Quiz: React.FC<Props> = ({
                     nextCard={goToNextSlide}
                     slideRemaining={lastSlide}
                     card={flashcards[cardCount]}
+                    patternList={patterns}
                   />
                   <TextInput
                     mode='outlined'
                     style={styles.input}
-                    activeOutlineColor={colors.secondary}
+                    activeOutlineColor={themeColors.secondary}
                     outlineColor='lightgrey'
                     label='ANSWER'
                     maxLength={42}
@@ -351,7 +269,7 @@ const Quiz: React.FC<Props> = ({
                   >
                     <Button
                       mode='text'
-                      color={colors.secondary}
+                      color={themeColors.secondary}
                       labelStyle={{ fontSize: 16 }}
                       onPress={() => setAnswer('')}
                       disabled={!answer ? true : submitted ? true : false}
@@ -362,7 +280,7 @@ const Quiz: React.FC<Props> = ({
                     {lastSlide && submitted && (
                       <Button
                         mode='text'
-                        color={colors.secondary}
+                        color={themeColors.secondary}
                         labelStyle={{ fontSize: 16 }}
                         onPress={submitResults}
                       >
@@ -372,7 +290,7 @@ const Quiz: React.FC<Props> = ({
 
                     <Button
                       mode='text'
-                      color={colors.secondary}
+                      color={themeColors.secondary}
                       labelStyle={{ fontSize: 16 }}
                       disabled={!answer ? true : submitted ? true : false}
                       onPress={checkAnswer}

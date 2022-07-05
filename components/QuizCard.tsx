@@ -24,8 +24,6 @@ import Animated, {
   SlideInRight,
 } from 'react-native-reanimated';
 
-import Images from '../assets/patterns/images';
-
 import { Flashcard } from './types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -36,6 +34,7 @@ interface PropTypes {
   card: Flashcard;
   color: string;
   pattern: string;
+  patternList: Record<string, any>;
   canFlip: boolean;
   next?: boolean;
   slideRemaining?: boolean;
@@ -49,6 +48,7 @@ const Card: React.FC<PropTypes> = ({
   next,
   color,
   pattern,
+  patternList,
   result,
   canFlip,
   nextCard,
@@ -125,7 +125,7 @@ const Card: React.FC<PropTypes> = ({
             resizeMode='repeat'
             imageStyle={[styles.image]}
             style={styles.cardPattern}
-            source={Images[pattern]}
+            source={patternList[pattern]}
           />
           <Title style={styles.cardTitle}>Q .</Title>
           <Text style={styles.text}>{card.prompt}</Text>

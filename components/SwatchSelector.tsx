@@ -20,17 +20,17 @@ import uuid from 'react-native-uuid';
 
 import Swatch from './Swatch';
 import { useSharedValue } from 'react-native-reanimated';
-import SWATCH_LIST from '../assets/swatchList';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
-
 interface Props {
   color: string;
+  swatches: string[];
   setColor: (color: string) => void;
 }
 
-const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
+const SwatchSelector: React.FC<Props> = ({ color, setColor, swatches }) => {
   const [showPalette, setShowPalette] = useState(false);
 
   const swatchRef = useRef<View>(null);
@@ -114,14 +114,16 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor }) => {
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {useMemo(() => {
-                  return SWATCH_LIST.map((swatch) => (
+
+
+                  return swatches.map((swatch) => (
                     <Swatch
                       key={uuid.v4().toString()}
                       color={swatch}
                       onChange={setColor}
                     />
                   ));
-                }, [SWATCH_LIST])}
+                }, [])}
               </View>
             </ScrollView>
           </View>

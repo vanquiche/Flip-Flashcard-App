@@ -13,6 +13,7 @@ import React, {
   Suspense,
   useCallback,
   useMemo,
+  useContext,
 } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
@@ -43,6 +44,7 @@ import {
 import { checkLogin } from '../../redux/userThunkActions';
 import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
+import swatchContext from '../../contexts/swatchContext';
 
 const INITIAL_STATE: { id: string; name: string; color: string } = {
   id: '',
@@ -62,7 +64,8 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
-  const { colors } = useTheme();
+  const {colors} = useContext(swatchContext)
+
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const { user, cards } = useSelector((state: RootState) => state.store);
@@ -238,7 +241,7 @@ const Categories: React.FC<Props> = ({ navigation, route }) => {
             style={styles.textInput}
           />
 
-          <SwatchSelector color={category.color} setColor={selectColor} />
+          <SwatchSelector color={category.color} setColor={selectColor} swatches={colors} />
         </View>
       </ActionDialog>
     </View>

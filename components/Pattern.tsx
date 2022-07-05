@@ -1,14 +1,19 @@
-import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ImageBackground,
+} from 'react-native';
 import React from 'react';
 
-import Images from '../assets/patterns/images'
 
 interface Props {
   name: string;
   select: any;
+  patternList: Record<string, any>;
 }
-const Pattern: React.FC<Props> = ({ select, name }) => {
-
+const Pattern: React.FC<Props> = ({ select, name, patternList }) => {
   const handlePress = () => {
     select(name);
   };
@@ -21,7 +26,7 @@ const Pattern: React.FC<Props> = ({ select, name }) => {
     >
       <ImageBackground
         resizeMode='center'
-        source={Images[name]}
+        source={patternList[name]}
         imageStyle={styles.image}
       />
     </Pressable>
@@ -38,7 +43,7 @@ const styles = StyleSheet.create({
   image: {
     height: 45,
     width: 45,
-    tintColor: 'white'
+    tintColor: 'white',
   },
 });
 export default React.memo(Pattern);
