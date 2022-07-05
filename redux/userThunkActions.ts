@@ -51,10 +51,17 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+interface LoginObject {
+  login: string[];
+  streak: number;
+  heartcoin: number;
+  completedQuiz: [];
+}
+
 export const checkLogin = createAsyncThunk(
   'store/checkLogin',
   (payload: { lastLogin: string[]; streak: number; heartcoins: number }) => {
-    return new Promise<void | string[]>((resolve, reject) => {
+    return new Promise<void | LoginObject>((resolve, reject) => {
       const dt = DateTime;
       const today = dt.now();
       const loggedInLast = payload.lastLogin[payload.lastLogin.length - 1];
@@ -62,39 +69,40 @@ export const checkLogin = createAsyncThunk(
         .diff(dt.fromISO(loggedInLast), 'hours')
         .toObject();
 
-      const updatedWeek = sortWeek(payload.lastLogin);
-
       if (hours) {
-        // if checkin is no older than 24h then do nothing
         if (hours < 24) {
+          // if checkin is no older than 24h then do nothing
           resolve();
         } else if (hours > 24) {
+          // return an updated array of logins
+          const updatedWeek = sortWeek(payload.lastLogin);
+          // check if user is in streak
           const inStreak = loginStreak(loggedInLast);
+          // if user is in streak then increment
+          // coins and streak count
           const coins = inStreak ? payload.heartcoins + 5 : payload.heartcoins;
-          const streak = inStreak
-            ? payload.streak + 1
-            : !inStreak
-            ? 0
-            : payload.streak;
+          const streak = inStreak ? payload.streak + 1 : 0;
+
+          const updateData: LoginObject = {
+            streak: streak,
+            heartcoin: coins,
+            completedQuiz: [],
+            login: updatedWeek,
+          };
 
           db.update(
             { type: 'user' },
             {
-              $set: {
-                streak: streak,
-                heartcoints: coins,
-                completedQuiz: [],
-                login: updatedWeek,
-              },
+              $set: updateData,
             },
             (err: Error, numReplaced: number) => {
               if (err) reject(err);
               // if (err) console.log(err)
-              resolve(updatedWeek);
+              resolve(updateData);
             }
           );
         }
-      }
+      } else resolve()
     });
   }
 );

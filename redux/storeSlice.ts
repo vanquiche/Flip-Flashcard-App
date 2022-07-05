@@ -168,35 +168,15 @@ export const storeSlice = createSlice({
         } else return state;
       })
       .addCase(checkLogin.fulfilled, (state, action) => {
-        // if no payload was return then checkin
-        // is younger than 24h
+        // if no payload was return then
+        // check-in is younger than 24h
         if (action.payload) {
-          // check last login if streak
-          // requirement is met, if so increase streak
+          Object.assign(state.user, action.payload)
 
-          // function compares lastlogin with
-          // today's date and will return
-          // true if inStreak
-          const inStreak = loginStreak(
-            state.user.login[state.user.login.length - 1]
-          );
-          // if in streak then increment user streak
-          // if not then reset to 0
-          const streak = inStreak
-            ? state.user.streak + 1
-            : !inStreak
-            ? 0
-            : state.user.streak;
-
-          // update streak and add today's date to login array
-          state.user.streak = streak;
-          state.user.login = action.payload;
-
-          // if in streak add bonus xp and notify user
-          if (inStreak) {
-            state.notification.show = true;
-            state.notification.message = 'you recieved 5 heartcoins for logging in consecutively';
-            state.user.heartcoin = state.user.heartcoin + 5;
+          // if streak was incremented then notify user of award
+          if (action.payload.streak > state.user.streak) {
+            state.notification.show = true
+            state.notification.message = `you earned 5 heartcoins for logging in ${action.payload.streak} days in a row!`
           }
         }
         // don't mutate state if nothing is returned

@@ -16,7 +16,7 @@ const sortWeek = (week: string[]) => {
       const updated = week.concat(today.toISO());
       return updated;
     }
-  }
+  } else return week
 };
 
 export default sortWeek;

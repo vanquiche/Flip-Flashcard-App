@@ -32,6 +32,8 @@ const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
+  // swatch colors and patterns for swatch selector
+  // passed through context
   const colors = DEFAULT_SWATCH_LIST.concat(user.collection.colors);
   const patterns = { ...DEFAULT_PATTERNS, ...user.collection.patterns };
 
@@ -58,8 +60,6 @@ const IndexScreen = () => {
         screenOptions={{
           tabBarStyle: {
             backgroundColor: user.theme.tabColor,
-            // disable tabbar if no user exist
-            // display: !user._id ? 'none' : 'flex',
             height: 70,
           },
           tabBarShowLabel: false,

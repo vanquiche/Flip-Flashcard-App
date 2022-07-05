@@ -54,7 +54,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
       <Text>Login Streak: {user.streak}</Text>
       <Text>XP: {user.xp}</Text>
     */}
-    <Button
+    {/* <Button
       mode='contained'
       color='tomato'
       style={{ margin: 25, elevation: 0 }}
@@ -62,7 +62,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
       onPress={deleteCurrentUser}
     >
       Delete User
-    </Button>
+    </Button> */}
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>
