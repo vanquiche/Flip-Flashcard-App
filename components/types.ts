@@ -1,6 +1,9 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ParamListBase } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
+import DEFAULT_SWATCH_LIST from '../assets/swatchList';
+import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
+import DEFAULT_THEMES from '../assets/theme/userTheme';
 
 export interface StackNavigationTypes {
   navigation: StackNavigationProp<ParamListBase>;
@@ -19,11 +22,11 @@ export interface StackNavigationTypes {
   >;
 }
 
-export type CardType = 'category' | 'set' | 'flashcard'
+export type CardType = 'category' | 'set' | 'flashcard';
 
 export interface Collection {
   _id: string;
-  type: CardType
+  type: CardType;
   name?: string;
   color?: string;
   design?: string;
@@ -75,7 +78,7 @@ export interface Theme {
   bgColor: string;
   iconColor: string;
   actionIconColor: string;
-  accentColor: string
+  accentColor: string;
 }
 
 interface CardDesign {
@@ -93,7 +96,6 @@ interface Achievement {
   description: string;
   points: number;
 }
-
 
 export interface Login {
   _id: string;
@@ -124,7 +126,7 @@ export const defaultTheme: Theme = {
   bgColor: '#fff0f3',
   iconColor: '#ffccd5',
   actionIconColor: 'white',
-  accentColor: 'hotpink'
+  accentColor: 'hotpink',
 };
 
 export interface User {
@@ -137,7 +139,12 @@ export interface User {
   completedQuiz: string[];
   login: string[];
   streak: number;
-  theme: Theme
+  theme: Theme;
+  collection: {
+    themes: Theme[];
+    colors: string[];
+    patterns: Record<string, any>;
+  };
 }
 
 type Datatype = 'user';
@@ -152,6 +159,10 @@ export const initUser: User = {
   completedQuiz: [],
   login: [],
   streak: 0,
-  theme: defaultTheme
+  theme: defaultTheme,
+  collection: {
+    themes: [],
+    colors: [],
+    patterns: {},
+  },
 };
-

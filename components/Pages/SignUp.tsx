@@ -19,7 +19,7 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
 
   const dispatch = useDispatch<AppDispatch>();
   // const { user, userDispatch } = useContext(UserContext);
-  const dt = DateTime
+  const dt = DateTime;
 
   const { colors } = useTheme();
 
@@ -33,7 +33,12 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
       completedQuiz: [],
       login: [dt.now().toISO()],
       streak: 0,
-      theme: defaultTheme
+      theme: defaultTheme,
+      collection: {
+        themes: [],
+        colors: [],
+        patterns: {},
+      },
     };
     dispatch(createNewUser(createUser));
   };

@@ -18,7 +18,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
   const { user, cards, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
-  // console.log(user.login)
+  // console.log(user)
 
   const _color = user.theme.cardColor;
 
@@ -53,15 +53,16 @@ const Profile: React.FC<Props> = ({ navigation }) => {
       <Text>Hello {user.username}</Text>
       <Text>Login Streak: {user.streak}</Text>
       <Text>XP: {user.xp}</Text>
-      <Button
-        mode='contained'
-        color='tomato'
-        style={{ margin: 25, elevation: 0 }}
-        labelStyle={{ color: 'white' }}
-        onPress={deleteCurrentUser}
-      >
-        Delete User
-      </Button> */}
+    */}
+    <Button
+      mode='contained'
+      color='tomato'
+      style={{ margin: 25, elevation: 0 }}
+      labelStyle={{ color: 'white' }}
+      onPress={deleteCurrentUser}
+    >
+      Delete User
+    </Button>
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>

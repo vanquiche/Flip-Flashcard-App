@@ -118,6 +118,7 @@ const Results: React.FC<Props> = ({
               styles.pointBar,
               {
                   width: `${getXPpercent - score}%`,
+                  backgroundColor: _xpBarColor
                 },
 
               progressBarAnim,
@@ -130,7 +131,7 @@ const Results: React.FC<Props> = ({
               styles.pointBar,
               {
                 width: `${getXPpercent}%`,
-                borderColor: _xpBarColor
+                backgroundColor: _xpBarColor
               }
             ]}
           />

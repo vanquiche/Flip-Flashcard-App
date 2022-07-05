@@ -18,7 +18,7 @@ const PointTracker: React.FC<Props> = ({
   const level = Math.floor(points / total);
   const progress =
     points < total
-      ? points / total
+      ? (points / total) * 100
       : points.toString().split('').splice(1).join('');
 
   return (
