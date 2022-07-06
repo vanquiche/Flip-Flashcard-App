@@ -3,24 +3,16 @@ import React, {
   useState,
   useEffect,
   Suspense,
-  useReducer,
   useRef,
   useContext,
 } from 'react';
-import {
-  IconButton,
-  useTheme,
-  Text,
-  TextInput,
-  Button,
-} from 'react-native-paper';
+import { TextInput, Button } from 'react-native-paper';
 import { DateTime } from 'luxon';
 
 import uuid from 'react-native-uuid';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 import checkDuplicate from '../../utility/checkDuplicate';
-import getData from '../../utility/getData';
 
 import ActionDialog from '../ActionDialog';
 import Card from '../Card';
@@ -37,7 +29,7 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import s from '../styles/styles'
+import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 
 const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
@@ -48,7 +40,7 @@ const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
 
 interface Props extends StackNavigationTypes {}
 
-const FlashCards: React.FC<Props> = ({ navigation, route }) => {
+const FlashCards = ({ navigation, route }: Props) => {
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
   const [showDialog, setShowDialog] = useState(false);
   const [setName, setSetName] = useState('');
@@ -60,13 +52,14 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const categoryXP = useRef<number>(0);
+  const { setRef, categoryRef, color, design } = route.params;
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
   const { user, cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
-  const { setRef, categoryRef, color, design } = route.params;
 
-  const { patterns} = useContext(swatchContext)
+  const { patterns } = useContext(swatchContext);
+
   const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {
@@ -147,6 +140,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   }, [setRef]);
 
   useEffect(() => {
+    // set title
     db.find({ _id: setRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
@@ -155,6 +149,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
       setSetName(docs[0].name);
     });
 
+    // get points of category to calculate xp progress
     db.find({ _id: categoryRef }, (err: Error, docs: any[]) => {
       if (docs.length > 0) {
         categoryXP.current = docs[0].points;
@@ -165,9 +160,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
   return (
     <View>
       {/* CONTROL BUTTONS  */}
-      <View
-        style={s.cardButtonWrapper}
-      >
+      <View style={s.cardButtonWrapper}>
         {!multiSelectMode ? (
           <>
             <Button
@@ -240,12 +233,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
         <ScrollView>
-          <View
-            style={{
-              paddingBottom: 150,
-              alignItems: 'center',
-            }}
-          >
+          <View style={styles.cardContainer}>
             {cards.flashcard.map((card: Flashcard) => {
               return (
                 <Card
@@ -253,11 +241,11 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
                   card={card}
                   color={color}
                   pattern={design}
-                  handleDelete={deleteCard}
-                  handleEdit={editCard}
-                  multiSelect={multiSelectMode}
-                  markForDelete={selectItem}
                   patternList={patterns}
+                  multiSelect={multiSelectMode}
+                  handleEdit={editCard}
+                  handleDelete={deleteCard}
+                  markForDelete={selectItem}
                 />
               );
             })}
@@ -273,7 +261,7 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
         onSubmit={editMode ? submitEdit : addNewCard}
         disableSubmit={flashcard.prompt && flashcard.solution ? false : true}
       >
-        <View style={{}}>
+        <View>
           <TextInput
             mode='outlined'
             label='PROMPT'
@@ -306,7 +294,10 @@ const FlashCards: React.FC<Props> = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-
+  cardContainer: {
+    paddingBottom: 150,
+    alignItems: 'center',
+  },
 });
 
 export default FlashCards;

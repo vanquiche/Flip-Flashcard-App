@@ -38,7 +38,7 @@ interface Props {
   onDismiss: () => void;
 }
 
-const Quiz: React.FC<Props> = ({
+const Quiz = ({
   navigation,
   categoryRef,
   setRef,
@@ -48,7 +48,7 @@ const Quiz: React.FC<Props> = ({
   pattern,
   color,
   set,
-}) => {
+}: Props) => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [cardCount, setCardCount] = useState(0);
   const [answer, setAnswer] = useState('');
@@ -61,23 +61,28 @@ const Quiz: React.FC<Props> = ({
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user, cards: quiz, levelUpCondition } = useSelector((state: RootState) => state.store);
+  const {
+    user,
+    cards: quiz,
+    levelUpCondition,
+  } = useSelector((state: RootState) => state.store);
 
   const selectedQuizSet = useMemo(() => {
     return quiz.set.find((c) => c._id === setRef);
   }, []);
 
-  const {patterns} = useContext(swatchContext)
-
+  const { patterns } = useContext(swatchContext);
   const { colors: themeColors } = useTheme();
+
+  // track questions that were correct
   const score = useRef(0);
 
+  // whether user has reached last card of quiz
   const lastSlide = cardCount === flashcards.length - 1;
 
   const checkAnswer = () => {
     if (submitted) return;
-
-    // check and remove trailing space and set to lowercase
+    // check and remove trailing space and case sensitivity
     const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
     const solution = flashcards[cardCount].solution.toLowerCase();
     if (userInput === solution) {
@@ -89,6 +94,7 @@ const Quiz: React.FC<Props> = ({
     setSubmitted(true);
   };
 
+  // reset and move to next slide
   const goToNextSlide = () => {
     setAnswer('');
     setSubmitted(false);
@@ -114,9 +120,9 @@ const Quiz: React.FC<Props> = ({
           type: 'category',
           query: { points: awardPoints + categoryXP },
         })
-        );
-        // add points to user
-        // add set to reference
+      );
+      // add points to user
+      // add set to reference
       // can only earn points once/day
       dispatch(
         updateUser({
@@ -130,22 +136,6 @@ const Quiz: React.FC<Props> = ({
 
   // ANIMATION VALUES
   const inputAnimate = useRef<any>(new Animated.Value(0)).current;
-
-
-  const slideDialogUp = () => {
-    Animated.spring(inputAnimate, {
-      toValue: -100,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const slideDialogDown = () => {
-    Animated.spring(inputAnimate, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start();
-  };
-
 
   // shuffle cards in random order
   useEffect(() => {
@@ -162,6 +152,19 @@ const Quiz: React.FC<Props> = ({
 
   // shift component out of keyboard view
   useEffect(() => {
+    const slideDialogUp = () => {
+      Animated.spring(inputAnimate, {
+        toValue: -100,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const slideDialogDown = () => {
+      Animated.spring(inputAnimate, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+    };
     const slideInputUp = Keyboard.addListener(
       'keyboardWillShow',
       slideDialogUp
@@ -251,7 +254,7 @@ const Quiz: React.FC<Props> = ({
                   <TextInput
                     mode='outlined'
                     style={styles.input}
-                    activeOutlineColor={themeColors.secondary}
+                    activeOutlineColor='black'
                     outlineColor='lightgrey'
                     label='ANSWER'
                     maxLength={42}

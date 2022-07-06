@@ -1,21 +1,16 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect, useReducer, Suspense } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import {
   ActivityIndicator,
-  Button,
-  Text,
   Title,
-  useTheme,
 } from 'react-native-paper';
 
-import { CommonActions, useIsFocused } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 
-import getData from '../../utility/getData';
 import FavoriteCard from '../FavoriteCard';
 
-import { Set, StackNavigationTypes, User } from '../types';
-import loginStreak from '../../utility/loginStreak';
-import sortWeek from '../../utility/sortWeek';
+import { Set, StackNavigationTypes } from '../types';
+
 import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -24,7 +19,7 @@ import s from '../styles/styles'
 
 interface Props extends StackNavigationTypes {}
 
-const Home: React.FC<Props> = ({ navigation, route }) => {
+const Home = ({ navigation, route }: Props) => {
   const { user, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
@@ -70,7 +65,7 @@ const Home: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
-  // notify user if login is in-streak
+  // check users login
   useEffect(() => {
     dispatch(
       checkLogin({

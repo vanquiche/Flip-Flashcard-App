@@ -2,12 +2,10 @@ import { View, StyleSheet, Animated } from 'react-native';
 import {
   Dialog,
   Portal,
-  Text,
   Title,
   IconButton,
-  useTheme,
 } from 'react-native-paper';
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -19,14 +17,13 @@ interface Props {
   onConfirm: () => void;
 }
 
-const AlertDialog: React.FC<Props> = ({
+const AlertDialog = ({
   message,
   visible,
   disable,
   onDismiss,
   onConfirm,
-}) => {
-  const { colors } = useTheme();
+}: Props) => {
   const {user} = useSelector((state: RootState) => state.store)
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 

@@ -3,10 +3,10 @@ import { DateTime } from 'luxon';
 const sortWeek = (week: string[]) => {
   const latestLogin = DateTime.fromISO(week[week.length - 1]);
   const today = DateTime.now();
-  const diff = today.diff(latestLogin, 'days').toObject();
+  const { days } = today.diff(latestLogin, 'days').toObject();
 
-  if (diff.days) {
-    if (diff.days >= 7 || week.length > 6) {
+  if (days) {
+    if (days >= 7 || week.length > 6) {
       // if last login is more than 7 days old, return new array with today's date
       // to ensure that dates are always within same week
       const updated = [today.toISO()];
@@ -16,7 +16,7 @@ const sortWeek = (week: string[]) => {
       const updated = week.concat(today.toISO());
       return updated;
     }
-  } else return week
+  } else return week;
 };
 
 export default sortWeek;

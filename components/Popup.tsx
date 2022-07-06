@@ -16,13 +16,13 @@ interface Props {
   onEditPress: () => void;
 }
 
-const Popup: React.FC<Props> = ({
+const Popup = ({
   visible,
   layout,
   dismiss,
   onDeletePress,
   onEditPress,
-}) => {
+}: Props) => {
   const { colors } = useTheme();
 
   const handleEdit = () => {

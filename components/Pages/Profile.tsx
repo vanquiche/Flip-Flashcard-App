@@ -11,20 +11,17 @@ import PointTracker from '../PointTracker';
 import s from '../styles/styles';
 
 import { StackNavigationTypes } from '../types';
+const profileImg = require('../../assets/images/profile-user.png');
 
 interface Props extends StackNavigationTypes {}
 
-const Profile: React.FC<Props> = ({ navigation }) => {
+const Profile = ({ navigation }: Props) => {
   const { user, cards, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
-  // console.log(user)
+  const dispatch = useDispatch<AppDispatch>();
 
   const _color = user.theme.cardColor;
-
-  const profileImg = require('../../assets/images/profile-user.png');
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const lastLoginDate = DateTime.fromISO(
     user.login[user.login.length - 1]

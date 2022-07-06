@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import React from 'react';
 import { Theme } from './types';
 import { IconButton, Title } from 'react-native-paper';
-import { onChange } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -10,8 +9,8 @@ interface Props {
   theme: Theme;
 }
 
-const ThemeDisplay: React.FC<Props> = ({ theme }) => {
-  const icons = ['home', 'card', 'cart', 'heart'];
+const ThemeDisplay= ({ theme }: Props) => {
+  const exampleIcons = ['home', 'card', 'cart', 'heart'];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.bgColor }]}>
@@ -24,7 +23,7 @@ const ThemeDisplay: React.FC<Props> = ({ theme }) => {
       <View style={[styles.card2, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.tab, { backgroundColor: theme.tabColor }]}>
-        {icons.map((icon, index) => (
+        {exampleIcons.map((icon, index) => (
           <IconButton
             icon={icon}
             key={icon}

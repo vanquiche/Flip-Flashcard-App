@@ -1,18 +1,12 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import {
   Button,
-  IconButton,
-  Text,
   TextInput,
-  useTheme,
 } from 'react-native-paper';
 import React, {
   useState,
-  useReducer,
-  useEffect,
   Suspense,
   useCallback,
-  useMemo,
   useContext,
 } from 'react';
 import uuid from 'react-native-uuid';
@@ -21,8 +15,6 @@ import { DateTime } from 'luxon';
 // UTILITIES
 import checkDuplicate from '../../utility/checkDuplicate';
 import useMarkSelection from '../../hooks/useMarkSelection';
-import getData from '../../utility/getData';
-import * as Haptics from 'expo-haptics';
 
 // COMPONENTS
 import ActionDialog from '../ActionDialog';
@@ -37,11 +29,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
   addCategoryCard,
-  getCards,
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import { checkLogin } from '../../redux/userThunkActions';
 import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
@@ -54,7 +44,7 @@ const INITIAL_STATE: { id: string; name: string; color: string } = {
 
 interface Props extends StackNavigationTypes {}
 
-const Categories: React.FC<Props> = ({ navigation, route }) => {
+const Categories = ({ navigation, route }: Props) => {
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);

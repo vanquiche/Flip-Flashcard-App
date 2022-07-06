@@ -1,24 +1,17 @@
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { Title, Text, TextInput, useTheme, Button } from 'react-native-paper';
-import db from '../../db-services';
-// import { UserContext } from '../../context/userContext';
-import { User, StackNavigationTypes, initUser, defaultTheme } from '../types';
+import { StackNavigationTypes, defaultTheme } from '../types';
 import { DateTime } from 'luxon';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { createNewUser } from '../../redux/userThunkActions';
 
-interface Props extends StackNavigationTypes {}
-
-const SignUp: React.FC<Props> = ({ navigation }) => {
-  const [newUser, setNewUser] = useState({
-    username: '',
-  });
+const SignUp = () => {
+  const [newUser, setNewUser] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
-  // const { user, userDispatch } = useContext(UserContext);
   const dt = DateTime;
 
   const { colors } = useTheme();
@@ -26,7 +19,7 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
   const createUser = () => {
     const createUser = {
       type: 'user',
-      username: newUser.username,
+      username: newUser,
       xp: 0,
       heartcoin: 0,
       achievements: [],
@@ -57,15 +50,6 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
         <View
           style={[styles.icon, { backgroundColor: colors.secondary }]}
         ></View>
-        {/* <TextInput
-        label='NAME'
-        mode='outlined'
-        style={styles.input}
-        outlineColor='transparent'
-        activeOutlineColor={colors.secondary}
-        value={newUser.name}
-        onChangeText={(name) => setNewUser((prev) => ({ ...prev, name }))}
-      /> */}
 
         <TextInput
           label='USER NAME'
@@ -74,9 +58,9 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
           outlineColor='transparent'
           activeOutlineColor={colors.secondary}
           maxLength={32}
-          value={newUser.username}
-          onChangeText={(username) =>
-            setNewUser((prev) => ({ ...prev, username }))
+          value={newUser}
+          onChangeText={(text) =>
+            setNewUser(text)
           }
         />
 
@@ -87,7 +71,7 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
           labelStyle={{ color: 'white', fontSize: 16 }}
           onPress={createUser}
           disabled={
-            !newUser.username && newUser.username.length > 3 ? true : false
+            !newUser && newUser.length > 3 ? true : false
           }
         >
           CREATE

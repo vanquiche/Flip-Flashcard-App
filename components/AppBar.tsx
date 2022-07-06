@@ -6,7 +6,10 @@ const AppBar = ({ navigation, route, back, title }: any) => {
   return (
     <Appbar.Header style={{ elevation: 0 }}>
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-      <Appbar.Content title={title || (route.name).toUpperCase()} titleStyle={{ fontSize: 20, color: colors.secondary }} />
+      <Appbar.Content
+        title={title || route.name.toUpperCase()}
+        titleStyle={{ fontSize: 20, color: colors.secondary }}
+      />
     </Appbar.Header>
   );
 };

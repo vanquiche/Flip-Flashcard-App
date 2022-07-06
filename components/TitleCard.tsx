@@ -45,20 +45,19 @@ interface Props {
   markForDelete: (id: any, state: boolean) => void;
 }
 
-const TitleCard: React.FC<Props> = ({
+const TitleCard = ({
   card,
   multiSelect,
   handleEdit,
   handleDelete,
   onPress,
   markForDelete,
-}) => {
+}: Props) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
 
   const {patterns} = useContext(swatchContext)
-  // console.log(plist)
 
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
@@ -68,16 +67,18 @@ const TitleCard: React.FC<Props> = ({
     };
   });
 
+  // popup tooltip position coordinates
   const cardRef = useRef<View>(null);
   const popupX = useRef(0);
   const popupY = useRef(0);
 
-  const handleLongPress = () => {
+  const showTooltip = () => {
     setShowPopup(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
-  const toggleCheck = () => {
+  // highlights and selects card for deletion
+  const toggleSelection = () => {
     if (!checked) {
       cardOpacity.value = 0.5;
     } else {
@@ -87,12 +88,11 @@ const TitleCard: React.FC<Props> = ({
     markForDelete(card._id, !checked);
   };
 
+  // determine where to position tooltip
   const measureCard = () => {
     setTimeout(() => {
       if (cardRef.current) {
         cardRef.current.measure((width, height, px, py, fx, fy) => {
-          // const measurements = { width, height, px, py, fx, fy };
-          // console.log(measurements)
           popupY.current = fy;
           popupX.current = fx;
         });
@@ -128,8 +128,8 @@ const TitleCard: React.FC<Props> = ({
           cardScaleAnimatedStyle,
         ]}
         // disable navigation when canMark is true
-        onPress={multiSelect ? toggleCheck : onPress}
-        onLongPress={handleLongPress}
+        onPress={multiSelect ? toggleSelection : onPress}
+        onLongPress={showTooltip}
         exiting={ZoomOut}
         entering={SlideInLeft.delay(200).duration(350)}
         layout={Layout.springify().damping(15).delay(200)}

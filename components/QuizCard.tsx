@@ -19,7 +19,6 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
-
   SlideOutLeft,
   SlideInRight,
 } from 'react-native-reanimated';
@@ -30,7 +29,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const FRONT_CARD_POSITION_DEFAULT = 0;
 const BACK_CARD_POSITION_DEFAULT = 180;
 
-interface PropTypes {
+interface Props {
   card: Flashcard;
   color: string;
   pattern: string;
@@ -43,7 +42,7 @@ interface PropTypes {
   result: string;
 }
 
-const Card: React.FC<PropTypes> = ({
+const Card = ({
   card,
   next,
   color,
@@ -54,7 +53,7 @@ const Card: React.FC<PropTypes> = ({
   nextCard,
   showSolution,
   slideRemaining,
-}) => {
+}: Props) => {
   const [cardFacingFront, setCardFacingFront] = useState(true);
 
   const { colors } = useTheme();
@@ -63,6 +62,7 @@ const Card: React.FC<PropTypes> = ({
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
   const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
 
+  // card flip animation
   const rStyles_card_container = useAnimatedStyle(() => {
     return {
       transform: [
@@ -72,12 +72,14 @@ const Card: React.FC<PropTypes> = ({
     };
   });
 
+  // animation reveals back of card
   const rStyles_card_back = useAnimatedStyle(() => {
     return {
       transform: [{ rotateX: backCardPosition.value + 'deg' }],
     };
   });
 
+  // animation reveals front of card
   const rStyles_card_front = useAnimatedStyle(() => {
     return {
       transform: [{ rotateX: frontCardPosition.value + 'deg' }],
@@ -97,11 +99,12 @@ const Card: React.FC<PropTypes> = ({
     setCardFacingFront((prev) => !prev);
   };
 
+  // flip card when solution is submitted
   useEffect(() => {
     if (showSolution)
       setTimeout(() => {
         flipCard();
-      }, 250);
+      }, 275);
     else return;
   }, [showSolution]);
 

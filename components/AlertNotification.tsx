@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { Portal, Modal, Text, Title, useTheme } from 'react-native-paper';
+import { Portal, Modal, Title, useTheme } from 'react-native-paper';
 import React from 'react';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
   visible: boolean;
   dismiss: () => void;
 }
-const AlertNotification: React.FC<Props> = ({ message, visible, dismiss }) => {
+const AlertNotification = ({ message, visible, dismiss }: Props) => {
   const { colors } = useTheme();
 
   return (

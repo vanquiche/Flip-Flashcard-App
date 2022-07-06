@@ -55,7 +55,7 @@ const initialState: StoreInit = {
     set: [],
     flashcard: [],
   },
-  levelUpCondition: 100
+  levelUpCondition: 100,
 };
 
 export const storeSlice = createSlice({
@@ -71,18 +71,34 @@ export const storeSlice = createSlice({
       state.notification.message = action.payload;
     },
     removeFavorite: (state, action: PayloadAction<string>) => {
-      state.favoriteSets = state.favoriteSets.filter(f => f.categoryRef !== action.payload)
-    }
+      state.favoriteSets = state.favoriteSets.filter(
+        (f) => f.categoryRef !== action.payload
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createNewUser.fulfilled, (state, action) => {
         state.user = action.payload;
-        // console.log(action.payload)
+      })
+      .addCase(createNewUser.rejected, (state, action) => {
+        state.notification.show = true;
+        if (typeof action.payload === 'string') {
+          state.notification.message = action.payload;
+        } else
+          state.notification.message =
+            'something went wrong, could not create user account';
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.user = action.payload;
-        // console.log(action.payload)
+      })
+      .addCase(getUserData.rejected, (state, action) => {
+        state.notification.show = true;
+        if (typeof action.payload === 'string') {
+          state.notification.message = action.payload;
+        } else
+          state.notification.message =
+            'something went wrong, could not retrieve user data';
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         Object.assign(state.user, action.payload);
@@ -171,15 +187,15 @@ export const storeSlice = createSlice({
         // if no payload was return then
         // check-in is younger than 24h
         if (action.payload) {
-          Object.assign(state.user, action.payload)
+          Object.assign(state.user, action.payload);
 
-          // if streak was incremented then notify user of award
+          // if streak was incremented then notify user of award and update local state
           if (action.payload.streak > state.user.streak) {
-            state.notification.show = true
-            state.notification.message = `you earned 5 heartcoins for logging in ${action.payload.streak} days in a row!`
+            state.notification.show = true;
+            state.notification.message = `you earned 5 heartcoins for logging in ${action.payload.streak} days in a row!`;
           }
         }
-        // don't mutate state if nothing is returned
+        // return original state if no payload recieved
         else return state;
       })
       .addCase(checkLogin.rejected, (state, action) => {
@@ -191,6 +207,7 @@ export const storeSlice = createSlice({
   },
 });
 
-export const { dismissNotification, showNotification, removeFavorite } = storeSlice.actions;
+export const { dismissNotification, showNotification, removeFavorite } =
+  storeSlice.actions;
 
 export default storeSlice.reducer;

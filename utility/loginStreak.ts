@@ -10,15 +10,15 @@ const loginStreak = (login: string) => {
     const lastLogin = dt.fromISO(login);
     const today = dt.now();
 
-    const diff = today.diff(lastLogin, 'hours').toObject();
+    const { hours } = today.diff(lastLogin, 'hours').toObject();
 
     // last login date is less than one day or past two days
-    if (diff.hours) {
-      if (diff.hours < 24) return null;
+    if (hours) {
+      if (hours < 24) return null;
       // last login in is at least 2 days old and past streak
-      else if (diff.hours > 48) return false;
+      else if (hours > 48) return false;
       // last login date is greater than one day but less than two days
-      else if (diff.hours > 24 && diff.hours < 48) return true;
+      else if (hours > 24 && hours < 48) return true;
     }
   }
 };

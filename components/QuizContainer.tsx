@@ -1,12 +1,6 @@
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import React from 'react';
-import Animated, {
-  StretchInY,
-  StretchOutX,
-  StretchOutY,
-  ZoomIn,
-  ZoomOut,
-} from 'react-native-reanimated';
+import Animated, { StretchInY, StretchOutY } from 'react-native-reanimated';
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
@@ -15,12 +9,12 @@ interface Props {
   color?: string;
 }
 
-const QuizContainer: React.FC<Props> = ({ children, color }) => {
+const QuizContainer = ({ children, color }: Props) => {
   return (
     <Animated.View
       entering={StretchInY}
       exiting={StretchOutY}
-      style={[styles.container, {backgroundColor: color}]}
+      style={[styles.container, { backgroundColor: color }]}
     >
       {children}
     </Animated.View>
@@ -29,13 +23,13 @@ const QuizContainer: React.FC<Props> = ({ children, color }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    height: SCREEN_HEIGHT,
+    zIndex: 100,
     width: '100%',
+    height: SCREEN_HEIGHT,
     paddingVertical: 10,
     paddingHorizontal: 25,
-    zIndex: 100,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'white',
   },
 });
 

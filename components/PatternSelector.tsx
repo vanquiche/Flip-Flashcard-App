@@ -10,14 +10,12 @@ import {
   ImageBackground,
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, { useEffect, useState, useRef, useMemo, useContext } from 'react';
+import React, { useEffect, useState, useRef, useMemo  } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import { useSharedValue } from 'react-native-reanimated';
 import Pattern from './Pattern';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -28,14 +26,15 @@ interface Props {
   setPattern: (d: string) => void;
 }
 
-const PatternSelector: React.FC<Props> = ({
+const PatternSelector = ({
   setPattern,
   pattern,
   color,
   patternList,
-}) => {
+}: Props) => {
   const [showPalette, setShowPalette] = useState(false);
 
+  // popup tooltip coordinates
   const swatchRef = useRef<View>(null);
   const swatchLayoutY = useRef<number>(0);
   const swatchLayoutX = useRef<number>(0);
@@ -48,6 +47,8 @@ const PatternSelector: React.FC<Props> = ({
     setShowPalette(true);
   };
 
+  // measures swatch position to render
+  // tooltip above swatch
   const measureSwatch = () => {
     if (swatchRef.current) {
       swatchRef.current.measure((width, height, px, py, fx, fy) => {
@@ -59,9 +60,11 @@ const PatternSelector: React.FC<Props> = ({
         swatchLayoutX.current = fx + py - dialogWidth;
         // if swatch is on left side of screen then position left and vica versa
         if (SCREEN_WIDTH / 2 < fx) {
+          // render popup on right side
           swatchPosition.value = { right: 0 };
           caretPosition.value = { right: -5 };
         } else {
+          // render popup on left side
           swatchPosition.value = { left: 0 };
           caretPosition.value = { left: -5 };
         }
@@ -69,7 +72,7 @@ const PatternSelector: React.FC<Props> = ({
     }
   };
 
-  // shift swatch selector when keyboard shows/hide
+  // move popup along keyboard opening/closing
   useEffect(() => {
     const keyboardDownSubscription = Keyboard.addListener(
       'keyboardWillHide',
@@ -100,6 +103,7 @@ const PatternSelector: React.FC<Props> = ({
   return (
     <>
       <Portal theme={{ colors: { backdrop: 'transparent' } }}>
+
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
@@ -117,6 +121,7 @@ const PatternSelector: React.FC<Props> = ({
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {useMemo(() => {
+                  // extract and map keys as pattern names
                   const PATTERNS = Object.keys(patternList);
 
                   return PATTERNS.map((p) => (
@@ -127,10 +132,12 @@ const PatternSelector: React.FC<Props> = ({
                       patternList={patternList}
                     />
                   ));
-                }, [])}
+                }, [patternList])}
               </View>
             </ScrollView>
           </View>
+
+          {/* popup tooltip caret */}
           <IconButton
             icon='menu-down'
             size={50}
@@ -140,8 +147,11 @@ const PatternSelector: React.FC<Props> = ({
               { ...caretPosition.value },
             ]}
           />
+
         </Dialog>
       </Portal>
+
+      {/* swatch */}
       <Pressable
         ref={swatchRef}
         style={[styles.swatch, { backgroundColor: color }]}

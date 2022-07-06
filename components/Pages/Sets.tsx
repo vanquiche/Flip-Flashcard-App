@@ -63,7 +63,7 @@ const INITIAL_STATE: {
 
 interface Props extends StackNavigationTypes {}
 
-const Sets: React.FC<Props> = ({ navigation, route }) => {
+const Sets = ({ navigation, route }: Props) => {
   // data state
 
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
@@ -82,8 +82,7 @@ const Sets: React.FC<Props> = ({ navigation, route }) => {
 
   const { colors, patterns } = useContext(swatchContext);
 
-  // console.log(patterns)
-  // // CRUD functions
+  // CRUD functions
   const closeDialog = () => {
     setShowDialog(false);
     setTimeout(() => {

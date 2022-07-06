@@ -1,57 +1,54 @@
 import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+
+const displayWeek = [
+  { name: 'S', date: 7 },
+  { name: 'M', date: 1 },
+  { name: 'T', date: 2 },
+  { name: 'W', date: 3 },
+  { name: 'T', date: 4 },
+  { name: 'F', date: 5 },
+  { name: 'S', date: 6 },
+];
 
 interface Props {
   dates: string[];
   streak: number;
 }
 
-const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
+const LoginGoal = ({ dates, streak }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const dt = DateTime;
-  const { colors } = useTheme();
-
-  const displayWeek = [
-    { name: 'S', date: 7 },
-    { name: 'M', date: 1 },
-    { name: 'T', date: 2 },
-    { name: 'W', date: 3 },
-    { name: 'T', date: 4 },
-    { name: 'F', date: 5 },
-    { name: 'S', date: 6 },
-  ];
-
-  // convert prop dates into day number i.e sunday === 0
 
   // create an object corresponding for each day of the week
-  const days = displayWeek.map((w) => {
-    const convertDateToNumber = dates.map((date) => dt.fromISO(date).weekday);
+  const days = useMemo(() => {
+    return displayWeek.map((w) => {
+      // convert prop dates into day number i.e sunday === 0
+      const convertDateToNumber = dates.map((date) => dt.fromISO(date).weekday);
 
-    const exist = convertDateToNumber.includes(w.date as WeekdayNumbers);
-    // console.log(exist)
-    if (exist) {
-      const date = {
-        name: w.name,
-        date: w.date,
-        loggedIn: true,
-      };
-      return date;
-    } else {
-      const date = {
-        name: w.name,
-        date: w.date,
-        loggedIn: false,
-      };
-      return date;
-    }
-  });
-
-  // console.log(days)
-  // console.log(dt.now().weekday)
+      // check to see if any day matches user login
+      const exist = convertDateToNumber.includes(w.date as WeekdayNumbers);
+      if (exist) {
+        const date = {
+          name: w.name,
+          date: w.date,
+          loggedIn: true,
+        };
+        return date;
+      } else {
+        const date = {
+          name: w.name,
+          date: w.date,
+          loggedIn: false,
+        };
+        return date;
+      }
+    });
+  }, [dates]);
 
   const checkDates = (day: number) => {
     return days.find((d) => {
@@ -62,19 +59,10 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: user.theme.cardColor,
-        marginHorizontal: 15,
-        marginVertical: 15,
-        height: 185,
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
-        borderRadius: 15,
-      }}
-    >
+    <View style={[styles.container, { backgroundColor: user.theme.cardColor }]}>
       <Title style={{ color: user.theme.fontColor }}>DAYS LOGGED IN</Title>
-      <View style={styles.container}>
+
+      <View style={styles.weekContainer}>
         {displayWeek.map((d, index) => {
           const loggedInDay = checkDates(d.date);
           return (
@@ -110,17 +98,26 @@ const LoginGoal: React.FC<Props> = ({ dates, streak }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    height: 185,
+    borderRadius: 15,
+    marginVertical: 15,
+    marginHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  weekContainer: {
     width: '100%',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
   dayCard: {
-    height: 35,
     margin: 5,
+    height: 35,
     aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
+
 export default LoginGoal;

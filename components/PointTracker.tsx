@@ -9,41 +9,42 @@ interface Props {
   progressColor?: string;
 }
 
-const PointTracker: React.FC<Props> = ({
-  total,
-  points,
-  title,
-  progressColor,
-}) => {
+const PointTracker = ({ total, points, title, progressColor }: Props) => {
   const level = Math.floor(points / total);
+
+  // calculate percentage of width for progress bar
   const progress =
     points < total
       ? (points / total) * 100
-      : points.toString().split('').splice(1).join('');
+      : // remove first digit from points to
+        // get percentage, when greater than total
+        points.toString().split('').splice(1).join('');
 
   return (
     <View style={styles.container}>
-      {title && (
-        <View>
+      <View>
+        {title && (
           <Title
             style={{ color: progressColor, width: 65, flex: 1 }}
             numberOfLines={1}
           >
             {title.toUpperCase()}
           </Title>
-        </View>
-      )}
+        )}
+      </View>
 
+      {/* current level */}
       <Title style={{ color: progressColor, marginRight: 0 }}>{level}</Title>
-      {/* </View> */}
 
+      {/* progress bar container */}
       <View
         style={[
           styles.progressBar,
           { borderColor: progressColor },
-          title ? { width: '70%' } : { width: '85%' },
+          title ? { width: '60%' } : { width: '85%' },
         ]}
       >
+        {/* progress bar */}
         <View
           style={[
             styles.progress,
@@ -52,6 +53,7 @@ const PointTracker: React.FC<Props> = ({
         />
       </View>
 
+      {/* next level */}
       <Title style={{ color: progressColor, marginLeft: 0 }}>{level + 1}</Title>
     </View>
   );

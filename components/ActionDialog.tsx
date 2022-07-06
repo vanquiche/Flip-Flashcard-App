@@ -1,11 +1,5 @@
-import { View, StyleSheet, Keyboard, Animated, ScrollView } from 'react-native';
-import {
-  Portal,
-  Dialog,
-  Button,
-  IconButton,
-  useTheme,
-} from 'react-native-paper';
+import { View, StyleSheet, Keyboard, Animated } from 'react-native';
+import { Portal, Dialog, IconButton } from 'react-native-paper';
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -19,7 +13,7 @@ interface Props {
   onSubmit?: () => void;
 }
 
-const ActionDialog: React.FC<Props> = ({
+const ActionDialog = ({
   title,
   children,
   visible,
@@ -27,10 +21,11 @@ const ActionDialog: React.FC<Props> = ({
   dismiss,
   onCancel,
   onSubmit,
-}) => {
-  const {user} = useSelector((state: RootState) => state.store)
-  const { colors } = useTheme();
+}: Props) => {
+  const { user } = useSelector((state: RootState) => state.store);
   const slideAnimation = useRef<any>(new Animated.Value(0)).current;
+
+  // slide and reset dialog when keyboard opens and closes
   useEffect(() => {
     const slideDialogUp = () => {
       Animated.spring(slideAnimation, {
@@ -59,6 +54,7 @@ const ActionDialog: React.FC<Props> = ({
       hideSubscription.remove();
     };
   }, []);
+
   return (
     <Portal>
       <Dialog
@@ -73,38 +69,35 @@ const ActionDialog: React.FC<Props> = ({
         ]}
         dismissable={false}
       >
-        {/* scrollview to prevent taps outside of keyboard to register when open */}
-        {/* <ScrollView> */}
-          <Dialog.Title
-            style={[
-              styles.title,
-              {
-                color: user.theme.fontColor,
-              },
-            ]}
-          >
-            {title}
-          </Dialog.Title>
-          {children}
-          <View style={styles.buttonContainer}>
-            <IconButton
-              style={styles.button}
-              icon='close-circle-outline'
-              size={50}
-              color={user.theme.fontColor}
-              onPress={onCancel}
-            />
+        <Dialog.Title
+          style={[
+            styles.title,
+            {
+              color: user.theme.fontColor,
+            },
+          ]}
+        >
+          {title}
+        </Dialog.Title>
+        {children}
+        <View style={styles.buttonContainer}>
+          <IconButton
+            style={styles.button}
+            icon='close-circle-outline'
+            size={50}
+            color={user.theme.fontColor}
+            onPress={onCancel}
+          />
 
-            <IconButton
-              style={styles.button}
-              icon='check-circle-outline'
-              size={50}
-              color={user.theme.fontColor}
-              onPress={onSubmit}
-              disabled={disableSubmit}
-            />
-          </View>
-        {/* </ScrollView> */}
+          <IconButton
+            style={styles.button}
+            icon='check-circle-outline'
+            size={50}
+            color={user.theme.fontColor}
+            onPress={onSubmit}
+            disabled={disableSubmit}
+          />
+        </View>
       </Dialog>
     </Portal>
   );

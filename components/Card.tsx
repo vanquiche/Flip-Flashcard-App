@@ -44,198 +44,178 @@ interface Props {
   markForDelete: (id: any, state: boolean) => void;
 }
 
-const Card: React.FC<Props> = React.memo(
-  ({
-    card,
-    color,
-    pattern,
-    patternList,
-    handleEdit,
-    handleDelete,
-    multiSelect,
-    markForDelete,
-  }) => {
-    const [showPopup, setShowPopup] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
-    const [cardFacingFront, setCardFacingFront] = useState(true);
-    const [checked, setChecked] = useState(false);
+const Card = ({
+  card,
+  color,
+  pattern,
+  patternList,
+  handleEdit,
+  handleDelete,
+  multiSelect,
+  markForDelete,
+}: Props) => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [cardFacingFront, setCardFacingFront] = useState(true);
+  const [checked, setChecked] = useState(false);
 
-    const { colors } = useTheme();
+  const cardRef = useRef<View>(null);
+  // popup tooltip coordinates
+  const popupX = useRef(0);
+  const popupY = useRef(0);
 
-    const cardRef = useRef<View>(null);
-    // hold popup coordinates
-    const popupX = useRef(0);
-    const popupY = useRef(0);
+  // animation values for card flip
+  const cardFlip = useSharedValue(0);
+  const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
+  const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
+  const cardOpacity = useSharedValue(1);
+  const cardOpacityAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withSpring(cardOpacity.value),
+    };
+  });
 
-    // animation values for card flip
-    const cardFlip = useSharedValue(0);
-    const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
-    const backCardPosition = useSharedValue(BACK_CARD_POSITION_DEFAULT);
-    const cardOpacity = useSharedValue(1);
-    const cardOpacityAnimatedStyle = useAnimatedStyle(() => {
-      return {
-        opacity: withSpring(cardOpacity.value),
-      };
-    });
+  const rStyles_card_container = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { perspective: SCREEN_HEIGHT },
+        { rotateX: cardFlip.value + 'deg' },
+      ],
+    };
+  });
 
-    const rStyles_card_container = useAnimatedStyle(() => {
-      return {
-        transform: [
-          { perspective: SCREEN_HEIGHT },
-          { rotateX: cardFlip.value + 'deg' },
-        ],
-      };
-    });
+  const rStyles_card_back = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotateX: backCardPosition.value + 'deg' }],
+    };
+  });
 
-    const rStyles_card_back = useAnimatedStyle(() => {
-      return {
-        transform: [{ rotateX: backCardPosition.value + 'deg' }],
-      };
-    });
+  const rStyles_card_front = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotateX: frontCardPosition.value + 'deg' }],
+    };
+  });
 
-    const rStyles_card_front = useAnimatedStyle(() => {
-      return {
-        transform: [{ rotateX: frontCardPosition.value + 'deg' }],
-      };
-    });
+  const flipCard = () => {
+    if (cardFacingFront === true) {
+      cardFlip.value = withSpring(180, { damping: 20 });
+      frontCardPosition.value = withTiming(180);
+      backCardPosition.value = withTiming(0);
+    } else {
+      cardFlip.value = withSpring(0, { damping: 20 });
+      frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
+      backCardPosition.value = withTiming(BACK_CARD_POSITION_DEFAULT);
+    }
+    setCardFacingFront((prev) => !prev);
+  };
 
-    const flipCard = () => {
-      if (cardFacingFront === true) {
-        cardFlip.value = withSpring(180, { damping: 20 });
-        frontCardPosition.value = withTiming(180);
-        backCardPosition.value = withTiming(0);
-      } else {
-        cardFlip.value = withSpring(0, { damping: 20 });
-        frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
-        backCardPosition.value = withTiming(BACK_CARD_POSITION_DEFAULT);
+  const handleLongPress = () => {
+    // console.log('long press')
+    setShowPopup(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  };
+
+  const toggleCheck = () => {
+    if (!checked) {
+      cardOpacity.value = 0.5;
+    } else {
+      cardOpacity.value = 1;
+    }
+    setChecked((check) => !check);
+    markForDelete(card._id, !checked);
+  };
+
+  const measureCard = () => {
+    // wait for entering animation to end before measuring card
+    setTimeout(() => {
+      if (cardRef.current) {
+        cardRef.current.measure((width, height, px, py, fx, fy) => {
+          popupY.current = fy + 25;
+          popupX.current = fx + 40;
+        });
       }
-      setCardFacingFront((prev) => !prev);
-    };
+    }, 600);
+  };
 
-    const handleLongPress = () => {
-      // console.log('long press')
-      setShowPopup(true);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    };
+  return (
+    <>
+      <AlertDialog
+        message={`Are you sure you want to delete this card?`}
+        visible={showAlert}
+        onDismiss={() => setShowAlert(false)}
+        onConfirm={() => handleDelete(card._id)}
+      />
 
-    const toggleCheck = () => {
-      if (!checked) {
-        cardOpacity.value = 0.5;
-      } else {
-        cardOpacity.value = 1;
-      }
-      setChecked((check) => !check);
-      markForDelete(card._id, !checked);
-    };
+      <Popup
+        visible={showPopup}
+        layout={{ x: popupX.current, y: popupY.current }}
+        dismiss={() => setShowPopup(false)}
+        onEditPress={() => handleEdit(card, card._id)}
+        onDeletePress={() => setShowAlert(true)}
+      />
 
-    const measureCard = () => {
-      // wait for entering animation to end before measuring card
-      setTimeout(() => {
-        if (cardRef.current) {
-          cardRef.current.measure((width, height, px, py, fx, fy) => {
-            // const measurements = { width, height, px, py, fx, fy };
-            // console.log(measurements)
-            popupY.current = fy + 25;
-            popupX.current = fx + 40;
-          });
-        }
-      }, 600);
-    };
+      {/* Card */}
+      <AnimatedPressable
+        style={[
+          styles.card,
+          { backgroundColor: color },
+          rStyles_card_container,
+          cardOpacityAnimatedStyle,
+        ]}
+        // onPress={onPress}
+        onPress={multiSelect ? toggleCheck : flipCard}
+        onLongPress={handleLongPress}
+        exiting={ZoomOut}
+        entering={SlideInLeft.delay(300)}
+        layout={Layout.springify().damping(15).delay(200)}
+        onLayout={measureCard}
+        ref={cardRef}
+      >
+        {/* indicator of card selection */}
+        {multiSelect && (
+          <IconButton
+            icon='close-thick'
+            color={checked ? 'white' : 'transparent'}
+            style={{ position: 'absolute', right: 0, top: 0 }}
+          />
+        )}
+        {/* FRONT OF CARD */}
+        <Animated.View style={[styles.textContainer, rStyles_card_front]}>
+          {/* CARD DESIGN */}
+          <ImageBackground
+            resizeMode='repeat'
+            imageStyle={[styles.image]}
+            style={styles.cardPattern}
+            source={patternList[pattern]}
+          />
 
-    return (
-      <>
-        <AlertDialog
-          message={`Are you sure you want to delete this card?`}
-          visible={showAlert}
-          onDismiss={() => setShowAlert(false)}
-          onConfirm={() => handleDelete(card._id)}
-        />
+          <Title style={[styles.cardTitle, { top: 0, left: 5 }]}>Q .</Title>
+          <View style={[styles.textBG, { backgroundColor: color }]}>
+            <Text style={[styles.textContent]} numberOfLines={3}>
+              {card.prompt}
+            </Text>
+          </View>
+        </Animated.View>
 
-        <Popup
-          visible={showPopup}
-          layout={{ x: popupX.current, y: popupY.current }}
-          dismiss={() => setShowPopup(false)}
-          onEditPress={() => handleEdit(card, card._id)}
-          onDeletePress={() => setShowAlert(true)}
-        />
-
-        {/* Card */}
-        <AnimatedPressable
-          style={[
-            styles.card,
-            { backgroundColor: color },
-            rStyles_card_container,
-            cardOpacityAnimatedStyle,
-          ]}
-          // onPress={onPress}
-          onPress={multiSelect ? toggleCheck : flipCard}
-          onLongPress={handleLongPress}
-          exiting={ZoomOut}
-          entering={SlideInLeft.delay(300)}
-          layout={Layout.springify().damping(15).delay(200)}
-          onLayout={measureCard}
-          ref={cardRef}
-        >
-          {/* indicator of card selection */}
-          {multiSelect && (
-            <IconButton
-              icon='close-thick'
-              color={checked ? 'white' : 'transparent'}
-              style={{ position: 'absolute', right: 0, top: 0 }}
-            />
-          )}
-          {/* FRONT OF CARD */}
-          <Animated.View style={[styles.textContainer, rStyles_card_front]}>
-            {/* CARD DESIGN */}
-            <ImageBackground
-              resizeMode='repeat'
-              imageStyle={[styles.image]}
-              style={styles.cardPattern}
-              source={patternList[pattern]}
-            />
-
-            <Title style={[styles.cardTitle, { top: 0, left: 5 }]}>Q .</Title>
-            <View style={[styles.textBG, { backgroundColor: color }]}>
-              <Text style={[styles.textContent]} numberOfLines={3}>
-                {card.prompt}
-              </Text>
-            </View>
-          </Animated.View>
-
-          {/* BACK OF CARD */}
-          <Animated.View
+        {/* BACK OF CARD */}
+        <Animated.View style={[styles.textContainer, rStyles_card_back]}>
+          <Text style={[styles.textContent, styles.cardBackText]}>
+            {card.solution}
+          </Text>
+          <Title
             style={[
-              styles.textContainer,
-              rStyles_card_back,
+              styles.cardBackText,
+              styles.cardTitle,
+              { bottom: 0, left: 5 },
             ]}
           >
-            <Text style={[styles.textContent, styles.cardBackText]}>
-              {card.solution}
-            </Text>
-            <Title
-              style={[
-                styles.cardBackText,
-                styles.cardTitle,
-                { bottom: 0, left: 5 },
-              ]}
-            >
-              A .
-            </Title>
-          </Animated.View>
-        </AnimatedPressable>
-      </>
-    );
-  },
-  (prevProps, nextProps) => {
-    if (
-      prevProps.card.prompt === nextProps.card.prompt &&
-      prevProps.card.solution === nextProps.card.solution &&
-      prevProps.multiSelect === nextProps.multiSelect
-    )
-      return true;
-    return false;
-  }
-);
+            A .
+          </Title>
+        </Animated.View>
+      </AnimatedPressable>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -298,4 +278,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-export default Card;
+export default React.memo(Card, (prevProps, nextProps) => {
+  if (
+    prevProps.card.prompt === nextProps.card.prompt &&
+    prevProps.card.solution === nextProps.card.solution &&
+    prevProps.multiSelect === nextProps.multiSelect
+  )
+    return true;
+  return false;
+});

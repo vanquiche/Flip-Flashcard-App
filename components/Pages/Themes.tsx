@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   Dimensions,
@@ -10,17 +9,19 @@ import React, { useCallback } from 'react';
 import s from '../styles/styles';
 import THEMES from '../../assets/theme/userTheme';
 import ThemeDisplay from '../ThemeDisplay';
-import { IconButton, Title } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { Theme } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { updateUser } from '../../redux/userThunkActions';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
+
 const Themes = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
+  // set content offset based on selection
   const userThemeIndex = THEMES.findIndex((t) => t.name === user.theme.name);
 
   const changeTheme = useCallback((t: Theme) => {

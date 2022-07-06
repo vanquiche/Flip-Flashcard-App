@@ -9,41 +9,21 @@ import ShopCatalogue from '../ShopCatalogue';
 import ShopSwatchColor from '../ShopSwatchColor';
 
 import { STORE_SWATCH_LIST } from '../../assets/swatchList';
-import DEFAULT_PATTERNS, {
+import {
   STORE_PATTERNS,
 } from '../../assets/patterns/defaultPatterns';
 
 import ShopSwatchPattern from '../ShopSwatchPattern';
 
-const DATA = [
-  {
-    name: 'color1',
-    color: 'red',
-    price: 50,
-  },
-  {
-    name: 'color2',
-    color: 'blue',
-    price: 50,
-  },
-  {
-    name: 'color3',
-    color: 'green',
-    price: 50,
-  },
-];
 
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
-
   // console.log(user)
 
   const purchaseColor = useCallback(
     (c: string, p: number) => {
-      // console.log(c);
       const updateColors = user.collection.colors.concat(c);
-
       const updateCoins = user.heartcoin - p;
 
       // console.log(updated)
@@ -90,9 +70,6 @@ const Shop = () => {
   const addCoins = () => {
     dispatch(updateUser({ heartcoin: user.heartcoin + 50 }));
   };
-
-  // console.log(STORE_PATTERNS);
-  // console.log(user.collection.patterns)
 
   return (
     <>

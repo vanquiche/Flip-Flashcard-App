@@ -1,6 +1,4 @@
 import {
-  View,
-  Text,
   StyleSheet,
   Pressable,
   ImageBackground,
@@ -13,7 +11,7 @@ interface Props {
   select: any;
   patternList: Record<string, any>;
 }
-const Pattern: React.FC<Props> = ({ select, name, patternList }) => {
+const Pattern = ({ select, name, patternList }: Props) => {
   const handlePress = () => {
     select(name);
   };

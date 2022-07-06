@@ -4,20 +4,20 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
-interface SwatchProps {
+
+interface Props {
   pattern: any[];
   onPress: (c: Object, p: number) => void;
 }
 
-const ShopSwatchPattern = ({ pattern, onPress }: SwatchProps) => {
+const ShopSwatchPattern = ({ pattern, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const [showAlert, setShowAlert] = useState(false);
   const price = 50;
-  
+
   const alreadyPurchased = user.collection.patterns
     ? Object.keys(user.collection.patterns).includes(pattern[0])
     : false;
-  // const alreadyPurchased = false
 
   const canAfford = user.heartcoin >= price;
 
@@ -28,9 +28,6 @@ const ShopSwatchPattern = ({ pattern, onPress }: SwatchProps) => {
     setShowAlert(false);
     onPress(doc, price);
   };
-
-  // console.log(uri)
-  // console.log(name)
 
   return (
     <>

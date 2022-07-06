@@ -30,9 +30,10 @@ interface Props {
   setColor: (color: string) => void;
 }
 
-const SwatchSelector: React.FC<Props> = ({ color, setColor, swatches }) => {
+const SwatchSelector = ({ color, setColor, swatches }: Props) => {
   const [showPalette, setShowPalette] = useState(false);
 
+  // popup position coordinates
   const swatchRef = useRef<View>(null);
   const swatchLayoutY = useRef<number>(0);
   const swatchLayoutX = useRef<number>(0);
@@ -45,6 +46,8 @@ const SwatchSelector: React.FC<Props> = ({ color, setColor, swatches }) => {
     setShowPalette(true);
   };
 
+  // measure layout of swatch to
+  // position tooltip above swatch display
   const measureSwatch = () => {
     if (swatchRef.current) {
       swatchRef.current.measure((width, height, px, py, fx, fy) => {

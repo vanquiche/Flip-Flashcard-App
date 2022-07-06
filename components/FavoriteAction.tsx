@@ -7,7 +7,7 @@ interface Props {
   setFavorite: () => void;
 }
 
-const FavoriteAction: React.FC<Props> = ({ favorite, setFavorite }) => {
+const FavoriteAction = ({ favorite, setFavorite }: Props) => {
   return (
     <View style={styles.wrapper}>
       <Text style={{fontSize: 20}}>FAVORITE</Text>
