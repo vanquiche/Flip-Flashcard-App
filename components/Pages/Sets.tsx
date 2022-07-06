@@ -24,7 +24,6 @@ import { DateTime } from 'luxon';
 import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 import checkDuplicate from '../../utility/checkDuplicate';
-import getData from '../../utility/getData';
 // REDUCER
 
 // COMPONENTS
@@ -188,7 +187,7 @@ const Sets = ({ navigation, route }: Props) => {
     db.find({ _id: categoryRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
-        title: docs[0].name.toUpperCase(),
+        title: docs[0].name,
       });
     });
   }, [categoryRef]);

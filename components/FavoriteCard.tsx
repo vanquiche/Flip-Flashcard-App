@@ -11,6 +11,7 @@ interface Collection {
   favorite?: boolean;
   createdAt: string | Date;
   categoryRef?: string;
+  design?: string;
 }
 
 interface Props {
@@ -24,7 +25,7 @@ const FavoriteCard = ({ card, onPress }: Props) => {
 
   return (
     <Pressable
-      style={[styles.card, { backgroundColor: user.theme.cardColor }]}
+      style={[styles.card, { backgroundColor: card.color }]}
       onPress={onPress}
     >
       <Title style={[styles.textContent, { color: user.theme.fontColor }]}>
@@ -60,7 +61,9 @@ const styles = StyleSheet.create({
 export default React.memo(FavoriteCard, (prevProps, nextProps) => {
   if (
     prevProps.card.name === nextProps.card.name &&
-    prevProps.card?.favorite === nextProps.card?.favorite
+    prevProps.card.favorite === nextProps.card.favorite &&
+    prevProps.card.color === nextProps.card.color &&
+    prevProps.card.design === nextProps.card.design
   )
     return true;
   return false;

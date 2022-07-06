@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Text, useTheme, IconButton } from 'react-native-paper';
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -16,6 +16,7 @@ import Animated, {
   ZoomOut,
   withSpring,
 } from 'react-native-reanimated';
+import { useIsFocused } from '@react-navigation/native';
 
 import AlertDialog from './AlertDialog';
 
@@ -58,6 +59,7 @@ const TitleCard = ({
   const [checked, setChecked] = useState(false);
 
   const {patterns} = useContext(swatchContext)
+  // const isFocused = useIsFocused()
 
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
@@ -89,16 +91,17 @@ const TitleCard = ({
   };
 
   // determine where to position tooltip
-  const measureCard = () => {
+  const measureCard = useCallback(() => {
     setTimeout(() => {
       if (cardRef.current) {
         cardRef.current.measure((width, height, px, py, fx, fy) => {
+          // console.log(fy, fx)
           popupY.current = fy;
           popupX.current = fx;
         });
       }
     }, 550);
-  };
+  },[])
 
   return (
     <>
@@ -118,6 +121,7 @@ const TitleCard = ({
       />
 
       <AnimatedPressable
+        key={card._id}
         ref={cardRef}
         onLayout={measureCard}
         style={[
