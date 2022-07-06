@@ -1,5 +1,5 @@
 import { View, Pressable, StyleSheet } from 'react-native';
-import { IconButton, Text } from 'react-native-paper';
+import { IconButton, Text, Title } from 'react-native-paper';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -7,13 +7,14 @@ import AlertDialog from './AlertDialog';
 
 interface Props {
   color: string;
+  price: number;
   onPress: (c: string, p: number) => void;
 }
 
-const ShopSwatchColor = ({ color, onPress }: Props) => {
+const ShopSwatchColor = ({ color, price, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const [showAlert, setShowAlert] = useState(false);
-  const price = 50;
+
   const alreadyPurchased = user.collection.colors?.includes(color); // const alreadyPurchased = false
 
   const canAfford = user.heartcoin >= price;
@@ -54,7 +55,7 @@ const ShopSwatchColor = ({ color, onPress }: Props) => {
             size={75}
           />
         ) : (
-          <Text style={styles.price}>{price}</Text>
+          <Title style={styles.price}>{price}</Title>
         )}
       </Pressable>
     </>
@@ -73,11 +74,11 @@ const styles = StyleSheet.create({
   },
   price: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
   },
   name: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
   },
   icon: {
     position: 'absolute',

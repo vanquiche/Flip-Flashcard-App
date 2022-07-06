@@ -21,8 +21,10 @@ const Themes = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
+  const ALL_THEMES = THEMES.concat(user.collection.themes)
+
   // set content offset based on selection
-  const userThemeIndex = THEMES.findIndex((t) => t.name === user.theme.name);
+  const userThemeIndex = ALL_THEMES.findIndex((t) => t.name === user.theme.name);
 
   const changeTheme = useCallback((t: Theme) => {
     dispatch(updateUser({ theme: t }));
@@ -46,7 +48,7 @@ const Themes = () => {
             justifyContent: 'center',
           }}
         >
-          {THEMES.map((t, i) => (
+          {ALL_THEMES.map((t, i) => (
             <Pressable
               key={i}
               style={{ marginHorizontal: SCREEN_WIDTH * 0.2 }}

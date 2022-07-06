@@ -7,13 +7,14 @@ import AlertDialog from './AlertDialog';
 
 interface Props {
   pattern: any[];
+  price: number;
   onPress: (c: Object, p: number) => void;
 }
 
-const ShopSwatchPattern = ({ pattern, onPress }: Props) => {
+const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const [showAlert, setShowAlert] = useState(false);
-  const price = 50;
+
 
   const alreadyPurchased = user.collection.patterns
     ? Object.keys(user.collection.patterns).includes(pattern[0])
@@ -76,11 +77,11 @@ const styles = StyleSheet.create({
   },
   price: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
   },
   name: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
   },
   icon: {
     position: 'absolute',

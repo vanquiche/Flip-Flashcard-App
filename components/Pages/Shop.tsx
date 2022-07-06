@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import React, { useCallback } from 'react';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,12 +9,14 @@ import ShopCatalogue from '../ShopCatalogue';
 import ShopSwatchColor from '../ShopSwatchColor';
 
 import { STORE_SWATCH_LIST } from '../../assets/swatchList';
-import {
-  STORE_PATTERNS,
-} from '../../assets/patterns/defaultPatterns';
+import { STORE_PATTERNS } from '../../assets/patterns/defaultPatterns';
+import { STORE_THEMES } from '../../assets/theme/userTheme';
 
 import ShopSwatchPattern from '../ShopSwatchPattern';
+import ThemeDisplay from '../ThemeDisplay';
+import ShopTheme from '../ShopTheme';
 
+import { Theme } from '../types';
 
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
@@ -61,6 +63,26 @@ const Shop = () => {
     [user.collection.patterns, user.heartcoin]
   );
 
+  const purchaseTheme = useCallback(
+    (t: Theme, p: number) => {
+      const updateCoins = user.heartcoin - p;
+      const updateThemes = user.collection.themes
+        ? user.collection.themes.concat(t)
+        : t;
+
+      dispatch(
+        updateUser({
+          heartcoin: updateCoins,
+          collection: {
+            ...user.collection,
+            themes: updateThemes,
+          },
+        })
+      );
+    },
+    [user.collection.themes, user.heartcoin]
+  );
+
   const resetPurchase = () => {
     dispatch(
       updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
@@ -78,7 +100,12 @@ const Shop = () => {
         {/* SWATCH COLORS */}
         <ShopCatalogue title='CARD COLORS' titleColor={user.theme.cardColor}>
           {STORE_SWATCH_LIST.map((d, i) => (
-            <ShopSwatchColor key={i} onPress={purchaseColor} color={d} />
+            <ShopSwatchColor
+              key={i}
+              color={d}
+              price={50}
+              onPress={purchaseColor}
+            />
           ))}
         </ShopCatalogue>
 
@@ -88,8 +115,22 @@ const Shop = () => {
             return (
               <ShopSwatchPattern
                 key={i}
-                onPress={purchasePattern}
+                price={50}
                 pattern={p}
+                onPress={purchasePattern}
+              />
+            );
+          })}
+        </ShopCatalogue>
+
+        <ShopCatalogue title='THEMES' titleColor={user.theme.cardColor}>
+          {STORE_THEMES.map((t, i) => {
+            return (
+              <ShopTheme
+                key={i}
+                theme={t}
+                price={150}
+                onPress={purchaseTheme}
               />
             );
           })}

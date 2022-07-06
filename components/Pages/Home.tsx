@@ -1,9 +1,6 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
 import React, { useEffect, Suspense } from 'react';
-import {
-  ActivityIndicator,
-  Title,
-} from 'react-native-paper';
+import { ActivityIndicator, Text, Title } from 'react-native-paper';
 
 import { CommonActions } from '@react-navigation/native';
 
@@ -15,7 +12,7 @@ import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
-import s from '../styles/styles'
+import s from '../styles/styles';
 
 interface Props extends StackNavigationTypes {}
 
@@ -95,6 +92,16 @@ const Home = ({ navigation, route }: Props) => {
       </Title>
 
       <Suspense fallback={<ActivityIndicator />}>
+        {favoriteSets.length === 0 && (
+          <Text
+            style={{
+              color: user.theme.cardColor,
+              ...styles.favoriteMessage,
+            }}
+          >
+            NO FAVORITES
+          </Text>
+        )}
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -138,6 +145,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginHorizontal: 10,
     justifyContent: 'space-around',
+  },
+  favoriteMessage: {
+    textAlign: 'center',
+    paddingTop: 50,
   },
 });
 

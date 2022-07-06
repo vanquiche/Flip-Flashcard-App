@@ -7,13 +7,14 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 interface Props {
   theme: Theme;
+  style?: Object
 }
 
-const ThemeDisplay= ({ theme }: Props) => {
+const ThemeDisplay= ({ theme, style }: Props) => {
   const exampleIcons = ['home', 'card', 'cart', 'heart'];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.bgColor }]}>
+    <View style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}>
       <Title style={[styles.title, { color: theme.fontColor }]}>
         {theme.name.toUpperCase()}
       </Title>
