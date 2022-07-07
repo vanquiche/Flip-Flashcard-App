@@ -1,11 +1,12 @@
-import {
-  View,
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
-import { Text, useTheme, IconButton } from 'react-native-paper';
-import React, { useState, useRef, useContext, useCallback } from 'react';
+import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import { Text, IconButton } from 'react-native-paper';
+import React, {
+  useState,
+  useRef,
+  useContext,
+  useCallback,
+
+} from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -22,6 +23,7 @@ import AlertDialog from './AlertDialog';
 
 import Popup from './Popup';
 import swatchContext from '../contexts/swatchContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -58,8 +60,7 @@ const TitleCard = ({
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
 
-  const {patterns} = useContext(swatchContext)
-  // const isFocused = useIsFocused()
+  const { patterns } = useContext(swatchContext);
 
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
@@ -91,17 +92,27 @@ const TitleCard = ({
   };
 
   // determine where to position tooltip
-  const measureCard = useCallback(() => {
+  const measureCardPosition = (delay: number) => {
     setTimeout(() => {
       if (cardRef.current) {
         cardRef.current.measure((width, height, px, py, fx, fy) => {
-          // console.log(fy, fx)
           popupY.current = fy;
           popupX.current = fx;
         });
       }
-    }, 550);
-  },[])
+    }, delay);
+  };
+
+  // remeasure when screen is focused
+  // used when user presses on shortcut
+  // to favorite set. Sets and Categories screen
+  // gets mounted and measurement is incorrect
+  // requiring remeasure on-focus
+  useFocusEffect(
+    useCallback(() => {
+      measureCardPosition(150);
+    }, [])
+  );
 
   return (
     <>
@@ -113,7 +124,7 @@ const TitleCard = ({
       />
 
       <Popup
-        layout={{ x: popupX.current, y: popupY.current }}
+        layout={{x: popupX.current, y: popupY.current}}
         visible={showPopup}
         dismiss={() => setShowPopup(false)}
         onEditPress={() => handleEdit(card)}
@@ -123,7 +134,7 @@ const TitleCard = ({
       <AnimatedPressable
         key={card._id}
         ref={cardRef}
-        onLayout={measureCard}
+        onLayout={() => measureCardPosition(550)}
         style={[
           styles.card,
           {
