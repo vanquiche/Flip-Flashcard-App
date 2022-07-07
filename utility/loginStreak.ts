@@ -5,21 +5,18 @@ const loginStreak = (login: string) => {
   if (!login) {
     return null;
   } else {
-    // convert date to miliseconds
     const dt = DateTime;
     const lastLogin = dt.fromISO(login);
     const today = dt.now();
 
-    const { hours } = today.diff(lastLogin, 'hours').toObject();
+    const sameday = lastLogin.weekday == today.weekday;
+    const inStreak = today.weekday - 1 === lastLogin.weekday;
 
-    // last login date is less than one day or past two days
-    if (hours) {
-      if (hours < 24) return null;
-      // last login in is at least 2 days old and past streak
-      else if (hours > 48) return false;
-      // last login date is greater than one day but less than two days
-      else if (hours > 24 && hours < 48) return true;
-    }
+    const outOfStreak = today.diff(lastLogin, 'days').days > 2;
+
+    if (sameday) return null;
+    else if (outOfStreak) return false;
+    else if (inStreak) return true;
   }
 };
 

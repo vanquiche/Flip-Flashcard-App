@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 
 const dt = DateTime
 
-const sevendaysAgo = dt.now().minus({days: 7}).toISO()
+const sevendaysAgo = dt.now().minus({days: 8}).toISO()
 const sixdaysAgo = dt.now().minus({days: 6}).toISO()
 const fivedaysAgo = dt.now().minus({days: 5}).toISO()
 
@@ -36,7 +36,7 @@ xdescribe('sortWeek fuction test', () => {
     expect(date7.length).toBe(1);
   });
 
-  test('return new array when last day is seven days old', () => {
+  test('return new array when last day is older than seven days', () => {
     expect(dateOld.length).toBe(1)
   })
 });

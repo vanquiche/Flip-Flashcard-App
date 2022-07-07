@@ -2,22 +2,24 @@ import { DateTime } from 'luxon';
 import loginStreak from '../loginStreak';
 
 const dt = DateTime
-const yesterday = dt.now().minus({hours: 25}).toISO();
-const twoDaysLater = dt.now().minus({days: 2}).toISO();
-const before24 = dt.now().minus({hours: 23}).toISO();
+
+// represent logins
+const sameDay = dt.now().minus({hours: 16}).toISO();
+const loggedInYesterday = dt.now().minus({days: 1}).toISO();
+const loggedInTwoDaysAgo = dt.now().minus({days: 2}).toISO();
 
 
 xdescribe('loginStreak function test', () => {
   test('last login: yesterday', () => {
-    expect(loginStreak(yesterday)).toBe(true);
+    expect(loginStreak(loggedInYesterday)).toBe(true);
   });
 
   test('last login: two days ago', () => {
-    expect(loginStreak(twoDaysLater)).toBe(false);
+    expect(loginStreak(loggedInTwoDaysAgo)).toBe(false);
   });
 
   test('login before 24 hours', () => {
-    expect(loginStreak(before24)).toBe(null);
+    expect(loginStreak(sameDay)).toBe(null);
   });
 
   test('parameter is null', () => {

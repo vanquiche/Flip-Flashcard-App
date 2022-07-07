@@ -67,7 +67,7 @@ const Home = ({ navigation, route }: Props) => {
     dispatch(
       checkLogin({
         streak: user.streak,
-        lastLogin: user.login,
+        logins: user.login,
         heartcoins: user.heartcoin,
       })
     );

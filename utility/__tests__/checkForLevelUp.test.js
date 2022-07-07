@@ -1,6 +1,6 @@
 import checkForLevelUp from '../checkForLevelUp';
 
-describe('checkForLevelUp function test', () => {
+xdescribe('checkForLevelUp function test', () => {
   test('does not meet requirement to level up', () => {
     expect(checkForLevelUp(125, 10, 100)).toBe(0);
   });
