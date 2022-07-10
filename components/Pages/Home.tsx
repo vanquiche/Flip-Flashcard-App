@@ -1,6 +1,6 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
 import React, { useEffect, Suspense } from 'react';
-import { ActivityIndicator, Text, Title } from 'react-native-paper';
+import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
 
 import { CommonActions } from '@react-navigation/native';
 
@@ -13,6 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
 import s from '../styles/styles';
+import useCheckDate from '../../hooks/useCheckDate';
+import loginStreak from '../../utility/loginStreak';
+import { showNotification } from '../../redux/storeSlice';
 
 interface Props extends StackNavigationTypes {}
 
@@ -62,8 +65,10 @@ const Home = ({ navigation, route }: Props) => {
     });
   };
 
-  // check users login
-  useEffect(() => {
+  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+
+  if (!isSameDay) {
+    // console.log('checking login')
     dispatch(
       checkLogin({
         streak: user.streak,
@@ -71,10 +76,19 @@ const Home = ({ navigation, route }: Props) => {
         heartcoins: user.heartcoin,
       })
     );
-  }, [checkLogin]);
+    const inStreak = loginStreak(user.login[user.login.length - 1]);
+    if (inStreak) {
+      dispatch(showNotification('logged in consecutively'));
+    }
+  }
 
   return (
     <View style={s.screenWrapper}>
+      
+      <Button color='black' onPress={() => navigation.navigate('Stats')}>
+        STATS
+      </Button>
+
       <View style={styles.infoCardContainer}>
         <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
           <Title style={{ color: user.theme.fontColor }}>LEVEL: {level}</Title>
@@ -92,7 +106,7 @@ const Home = ({ navigation, route }: Props) => {
       </Title>
 
       <Suspense fallback={<ActivityIndicator />}>
-        {favoriteSets.length === 0 && (
+        {favoriteSets.filter((f) => f.favorite === true).length === 0 && (
           <Text
             style={{
               color: user.theme.cardColor,
