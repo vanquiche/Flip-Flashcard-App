@@ -129,6 +129,13 @@ export const defaultTheme: Theme = {
   accentColor: 'hotpink',
 };
 
+interface Stats {
+  date: string;
+  set: string;
+  score: number;
+  questions: number;
+}
+
 export interface User {
   _id: string;
   type: 'user';
@@ -140,6 +147,7 @@ export interface User {
   login: string[];
   streak: number;
   theme: Theme;
+  stats: Stats[],
   collection: {
     themes: Theme[];
     colors: string[];
@@ -160,6 +168,7 @@ export const initUser: User = {
   login: [],
   streak: 0,
   theme: defaultTheme,
+  stats: [],
   collection: {
     themes: [],
     colors: [],

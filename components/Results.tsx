@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import React, { useMemo } from 'react';
 import { Text, Title, Button } from 'react-native-paper';
 
-import Animated, { SlideInRight } from 'react-native-reanimated';
+import Animated, { SlideInRight, withDelay } from 'react-native-reanimated';
 import { RootState } from '../redux/store';
 
 import { useSelector } from 'react-redux';
@@ -64,7 +64,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
     return {
       width: withTiming(
         `${progressBarStart.value}%`,
-        { duration: 600 },
+        { duration: 1500 },
         () => (progressBarStart.value = xpEnd)
       ),
     };
@@ -109,7 +109,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
             <CountUp
               start={xpStart}
               end={xpEnd}
-              duration={1.1}
+              duration={1.5}
               isCounting
             />
             / 100
@@ -122,6 +122,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
       {/* XP BAR */}
 
       <View style={[styles.progressBar, { borderColor: user.theme.fontColor }]}>
+
         {!setCompleted ? (
           // animated progress bar
           // if test has not been completed yet

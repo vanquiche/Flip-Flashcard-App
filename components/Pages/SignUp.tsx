@@ -27,6 +27,7 @@ const SignUp = () => {
       login: [dt.now().toISO()],
       streak: 0,
       theme: defaultTheme,
+      stats: [],
       collection: {
         themes: [],
         colors: [],

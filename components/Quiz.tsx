@@ -25,6 +25,7 @@ import { updateCard } from '../redux/cardThunkActions';
 import { showNotification } from '../redux/storeSlice';
 import checkForLevelUp from '../utility/checkForLevelUp';
 import swatchContext from '../contexts/swatchContext';
+import { DateTime } from 'luxon';
 
 interface Props {
   navigation: any;
@@ -34,7 +35,7 @@ interface Props {
   categoryXP: number;
   pattern: string;
   color: string;
-  set?: string;
+  set: string;
   onDismiss: () => void;
 }
 
@@ -59,6 +60,8 @@ const Quiz = ({
   const [submitted, setSubmitted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [completeQuiz, setCompleteQuiz] = useState(false);
+
+  const dt = DateTime;
 
   const dispatch = useDispatch<AppDispatch>();
   const {
@@ -103,6 +106,21 @@ const Quiz = ({
 
   const submitResults = () => {
     setCompleteQuiz(true);
+
+    const stats = {
+      date: dt.now().toISO(),
+      set: setRef,
+      score: score.current,
+      questions: flashcards.length,
+    };
+
+    const updateStats = user.stats.concat(stats);
+
+    dispatch(
+      updateUser({
+        stats: updateStats,
+      })
+    );
     // if quiz has not been taken today then award points
     if (!user.completedQuiz.includes(setRef)) {
       let awardHeartCoin = 0;

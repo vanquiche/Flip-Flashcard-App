@@ -188,12 +188,6 @@ export const storeSlice = createSlice({
         // check-in is younger than 24h
         if (action.payload) {
           Object.assign(state.user, action.payload);
-
-          // if streak was incremented then notify user of award and update local state
-          if (action.payload.streak > state.user.streak) {
-            state.notification.show = true;
-            state.notification.message = `you earned 5 heartcoins for logging in ${action.payload.streak} days in a row!`;
-          }
         }
         // return original state if no payload recieved
         else return state;
