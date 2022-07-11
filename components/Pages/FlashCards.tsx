@@ -195,7 +195,7 @@ const FlashCards = ({ navigation, route }: Props) => {
               }}
               disabled={cards.flashcard.length === 0}
             >
-              DELETE
+              SELECT
             </Button>
           </>
         ) : (
@@ -205,7 +205,7 @@ const FlashCards = ({ navigation, route }: Props) => {
             onPress={confirmAlert}
             style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
           >
-            REMOVE
+            DELETE
           </Button>
         )}
       </View>

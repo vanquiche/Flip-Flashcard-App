@@ -64,7 +64,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
     return {
       width: withTiming(
         `${progressBarStart.value}%`,
-        { duration: 1500 },
+        { duration: 700 },
         () => (progressBarStart.value = xpEnd)
       ),
     };
@@ -104,17 +104,13 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
         <Title style={{ color: _fontColor }}>
           {category?.name.toUpperCase()} XP:
         </Title>
-        {!setCompleted ? (
+        {!setCompleted && (
           <Title style={{ color: _fontColor }}>
-            <CountUp
-              start={xpStart}
-              end={xpEnd}
-              duration={1.5}
-              isCounting
-            />
-            / 100
+            <CountUp start={xpStart} end={xpEnd} duration={1.6} isCounting />/
+            100
           </Title>
-        ) : (
+        )}
+        {setCompleted && (
           <Title style={{ color: _fontColor }}>{getXPpercent} / 100</Title>
         )}
       </View>
@@ -122,10 +118,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
       {/* XP BAR */}
 
       <View style={[styles.progressBar, { borderColor: user.theme.fontColor }]}>
-
-        {!setCompleted ? (
-          // animated progress bar
-          // if test has not been completed yet
+        {!setCompleted && (
           <Animated.View
             style={[
               styles.pointBar,
@@ -136,9 +129,9 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
               progressBarAnim,
             ]}
           />
-        ) : (
-          // static progress bar if
-          // test has been completed
+        )}
+
+        {setCompleted && (
           <View
             style={[
               styles.pointBar,

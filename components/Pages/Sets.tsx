@@ -221,7 +221,7 @@ const Sets = ({ navigation, route }: Props) => {
               }}
               disabled={cards.set.length === 0}
             >
-              DELETE
+              SELECT
             </Button>
           </>
         ) : (
@@ -231,7 +231,7 @@ const Sets = ({ navigation, route }: Props) => {
             onPress={confirmAlert}
             style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
           >
-            REMOVE
+            DELETE
           </Button>
         )}
       </View>

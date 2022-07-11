@@ -87,7 +87,7 @@ const Quiz = ({
     if (submitted) return;
     // check and remove trailing space and case sensitivity
     const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
-    const solution = flashcards[cardCount].solution.toLowerCase();
+    const solution = flashcards[cardCount].solution.replace(/[ \t]+$/gm, '').toLowerCase();
     if (userInput === solution) {
       setResult('Correct!');
       score.current++;

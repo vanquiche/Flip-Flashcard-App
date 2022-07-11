@@ -164,7 +164,7 @@ const Categories = ({ navigation, route }: Props) => {
               }}
               disabled={cards.category.length === 0}
             >
-              DELETE
+              SELECT
             </Button>
           </>
         ) : (
@@ -174,7 +174,7 @@ const Categories = ({ navigation, route }: Props) => {
             color='tomato'
             onPress={confirmAlert}
           >
-            REMOVE
+            DELETE
           </Button>
         )}
       </View>
