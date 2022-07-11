@@ -1,12 +1,6 @@
 import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import React, {
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-
-} from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -91,28 +85,28 @@ const TitleCard = ({
     markForDelete(card._id, !checked);
   };
 
-  // determine where to position tooltip
-  const measureCardPosition = (delay: number) => {
-    setTimeout(() => {
-      if (cardRef.current) {
-        cardRef.current.measure((width, height, px, py, fx, fy) => {
-          popupY.current = fy;
-          popupX.current = fx;
-        });
-      }
-    }, delay);
-  };
+  // // determine where to position tooltip
+  // const measureCardPosition = (delay: number) => {
+  //   setTimeout(() => {
+  //     if (cardRef.current) {
+  //       cardRef.current.measure((width, height, px, py, fx, fy) => {
+  //         popupY.current = fy;
+  //         popupX.current = fx;
+  //       });
+  //     }
+  //   }, delay);
+  // };
 
   // remeasure when screen is focused
   // used when user presses on shortcut
   // to favorite set. Sets and Categories screen
   // gets mounted and measurement is incorrect
   // requiring remeasure on-focus
-  useFocusEffect(
-    useCallback(() => {
-      measureCardPosition(150);
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     measureCardPosition(150);
+  //   }, [])
+  // );
 
   return (
     <>
@@ -124,17 +118,19 @@ const TitleCard = ({
       />
 
       <Popup
-        layout={{x: popupX.current, y: popupY.current}}
         visible={showPopup}
         dismiss={() => setShowPopup(false)}
         onEditPress={() => handleEdit(card)}
         onDeletePress={() => setShowAlert(true)}
+        popoverStyle={{
+          transform: [{ translateY: 50 }, { translateX: 90 }],
+        }}
       />
 
       <AnimatedPressable
         key={card._id}
         ref={cardRef}
-        onLayout={() => measureCardPosition(550)}
+        // onLayout={() => measureCardPosition(550)}
         style={[
           styles.card,
           {

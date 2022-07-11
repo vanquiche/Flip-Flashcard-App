@@ -7,10 +7,19 @@ import {
   IconButton,
 } from 'react-native-paper';
 import React from 'react';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+  renderers,
+} from 'react-native-popup-menu';
+
+const { Popover } = renderers;
 
 interface Props {
   visible: boolean;
-  layout: { x: number; y: number };
+  popoverStyle?: Object;
   dismiss: () => void;
   onDeletePress: () => void;
   onEditPress: () => void;
@@ -18,7 +27,7 @@ interface Props {
 
 const Popup = ({
   visible,
-  layout,
+  popoverStyle,
   dismiss,
   onDeletePress,
   onEditPress,
@@ -34,16 +43,20 @@ const Popup = ({
     dismiss();
   };
   return (
-    <Portal>
-      <Dialog
-        visible={visible}
-        onDismiss={dismiss}
-        style={[
-          styles.dialog,
-          { position: 'absolute', top: layout.y - 125, left: layout.x },
-        ]}
-      >
-        <View style={styles.buttonContainer}>
+    <Menu
+      renderer={Popover}
+      opened={visible}
+      onBackdropPress={dismiss}
+      rendererProps={{
+        placement: 'top',
+        // anchorStyle: { display: 'none' },
+      }}
+      style={[popoverStyle, styles.popover]}
+    >
+      <MenuTrigger />
+
+      <MenuOptions optionsContainerStyle={styles.menuOptions}>
+        <MenuOption>
           <Button
             mode='contained'
             color={colors.secondary}
@@ -53,6 +66,8 @@ const Popup = ({
           >
             DELETE
           </Button>
+        </MenuOption>
+        <MenuOption>
           <Button
             mode='contained'
             color={colors.secondary}
@@ -62,19 +77,21 @@ const Popup = ({
           >
             EDIT
           </Button>
-        </View>
-        <IconButton
-          icon='menu-down'
-          color='white'
-          size={50}
-          style={[styles.caret]}
-        />
-      </Dialog>
-    </Portal>
+        </MenuOption>
+      </MenuOptions>
+    </Menu>
   );
 };
 
 const styles = StyleSheet.create({
+  popover: {
+    // position: 'absolute'
+  },
+  menuOptions: {
+    padding: 15, borderRadius: 10,
+    elevation: 0,
+    shadowOpacity: 0
+  },
   buttonContainer: {
     height: 115,
     justifyContent: 'space-evenly',

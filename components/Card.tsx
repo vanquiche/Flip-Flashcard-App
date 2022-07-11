@@ -24,6 +24,7 @@ import { Flashcard } from './types';
 import AlertDialog from './AlertDialog';
 
 import Popup from './Popup';
+import { transform } from '@babel/core';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -148,10 +149,10 @@ const Card = ({
 
       <Popup
         visible={showPopup}
-        layout={{ x: popupX.current, y: popupY.current }}
         dismiss={() => setShowPopup(false)}
         onEditPress={() => handleEdit(card, card._id)}
         onDeletePress={() => setShowAlert(true)}
+        popoverStyle={{ transform: [{ translateY: 80 }] }}
       />
 
       {/* Card */}
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   textContent: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 24,
+    fontSize: 20,
     // marginVertical: 10,
     backfaceVisibility: 'hidden',
     lineHeight: 30,
