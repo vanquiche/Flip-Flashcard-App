@@ -76,16 +76,15 @@ const Home = ({ navigation, route }: Props) => {
         heartcoins: user.heartcoin,
       })
     );
-    const inStreak = loginStreak(user.login[user.login.length - 1]);
-    if (inStreak) {
-      dispatch(showNotification('logged in consecutively'));
-    }
   }
 
   return (
     <View style={s.screenWrapper}>
-      
-      <Button color='black' onPress={() => navigation.navigate('Stats')}>
+      <Button
+        color='black'
+        onPress={() => navigation.navigate('Stats')}
+        style={{ margin: 0 }}
+      >
         STATS
       </Button>
 
