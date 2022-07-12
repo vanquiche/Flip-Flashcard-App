@@ -18,7 +18,7 @@ import { AppDispatch, RootState } from '../redux/store';
 // UTILITIES
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { dismissNotification } from '../redux/storeSlice';
-import { getUserData, checkLogin } from '../redux/userThunkActions';
+import { hydrateData } from '../redux/userThunkActions';
 import { getFavoriteSets } from '../redux/cardThunkActions';
 import { getCards } from '../redux/cardThunkActions';
 
@@ -45,9 +45,10 @@ const IndexScreen = () => {
 
   // HYDRATE DATA
   useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getFavoriteSets());
-    dispatch(getCards({ type: 'category', query: { type: 'category' } }));
+    // dispatch(getUserData());
+    // dispatch(getFavoriteSets());
+    // dispatch(getCards({ type: 'category', query: { type: 'category' } }));
+    dispatch(hydrateData())
   }, []);
 
   return (

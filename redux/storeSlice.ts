@@ -24,6 +24,7 @@ import {
   updateUser,
   checkLogin,
   completeQuiz,
+  hydrateData,
 } from './userThunkActions';
 
 interface StoreInit {
@@ -197,7 +198,17 @@ export const storeSlice = createSlice({
       })
       .addCase(completeQuiz.fulfilled, (state, action) => {
         state.user.completedQuiz.push(action.payload);
-      });
+      })
+      .addCase(hydrateData.fulfilled, (state, action) => {
+        // console.log(action.payload)
+        state.user = action.payload.user;
+        state.favoriteSets = action.payload.favorites;
+        state.cards.category = action.payload.categoryCards;
+      })
+      .addCase(hydrateData.rejected, (state, action) => {
+        console.log(action.payload)
+        return initialState
+      })
   },
 });
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { User } from '../components/types';
+import { Category, Set, User } from '../components/types';
 import db from '../db-services';
 import { DateTime } from 'luxon';
 import loginStreak from '../utility/loginStreak';
@@ -119,3 +119,27 @@ export const completeQuiz = createAsyncThunk(
     });
   }
 );
+
+export const hydrateData = createAsyncThunk('store/hydrateData', () => {
+  return new Promise<{user: User, favorites: Set[], categoryCards: Category[]}>(async (resolve, reject) => {
+    let data: any = {};
+    try {
+      await db.findOne({ type: 'user' }, (err: Error, doc: any) => {
+        if (doc) data.user = doc;
+      });
+      await db.find(
+        { type: 'set', favorite: true },
+        (err: Error, docs: any[]) => {
+          if (docs) data.favorites = docs;
+        }
+      );
+      await db.find({ type: 'category' }, (err: Error, docs: any[]) => {
+        if (docs) data.categoryCards = docs;
+      });
+    } catch(err: any) {
+      reject(err)
+    } finally {
+      resolve(data)
+    }
+  });
+});
