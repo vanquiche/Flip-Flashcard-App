@@ -69,14 +69,14 @@ export const removeCard = createAsyncThunk(
 
 export const updateCard = createAsyncThunk(
   'store/updateCard',
-  (payload: { id: string; type: CardType; query: Object }) => {
-    return new Promise<{ id: string; type: CardType; query: Object }>(
+  (payload: { card: Collection; query: Object }) => {
+    return new Promise<{ card: Collection; query: Object }>(
       (resolve, reject) => {
         db.update(
-          { _id: payload.id },
+          { _id: payload.card._id },
           { $set: payload.query },
           (err: Error, numRemoved: number) => {
-            if (err) reject(err);
+            if (err) reject(err.message);
             resolve(payload);
           }
         );

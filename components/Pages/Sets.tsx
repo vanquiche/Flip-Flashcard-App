@@ -46,18 +46,15 @@ import {
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 
-const INITIAL_STATE: {
-  id: string;
-  name: string;
-  color: string;
-  design: string;
-  favorite: boolean;
-} = {
-  id: '',
+const INITIAL_STATE: Set = {
+  _id: '',
   name: '',
   color: 'tomato',
   design: 'default',
   favorite: false,
+  type: 'set',
+  createdAt: '',
+  categoryRef: ''
 };
 
 interface Props extends StackNavigationTypes {}
@@ -119,11 +116,7 @@ const Sets = ({ navigation, route }: Props) => {
   const editSet = (set: Set) => {
     // place selected card into current state of set
     setCardSet({
-      id: set._id,
-      name: set.name,
-      color: set.color,
-      design: set.design,
-      favorite: set.favorite,
+      ...set
     });
     // turn on edit mode to switch function of action dialog
     setEditMode(true);
@@ -138,7 +131,7 @@ const Sets = ({ navigation, route }: Props) => {
       design: cardSet.design,
       favorite: cardSet.favorite,
     };
-    dispatch(updateCard({ id: cardSet.id, type: 'set', query: docQuery }));
+    dispatch(updateCard({ card: cardSet, query: docQuery }));
 
     closeDialog();
   };

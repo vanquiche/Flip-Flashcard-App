@@ -32,10 +32,14 @@ import {
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 
-const INITIAL_STATE: { id: string; prompt: string; solution: string } = {
-  id: '',
+const INITIAL_STATE: Flashcard = {
+  _id: '',
   prompt: '',
+  setRef: '',
   solution: '',
+  createdAt: '',
+  categoryRef: '',
+  type: 'flashcard'
 };
 
 interface Props extends StackNavigationTypes {}
@@ -92,9 +96,7 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   const editCard = (card: Flashcard) => {
     setFlashcard({
-      id: card._id,
-      prompt: card.prompt,
-      solution: card.solution,
+      ...card
     });
     setEditMode(true);
     setShowDialog(true);
@@ -103,7 +105,7 @@ const FlashCards = ({ navigation, route }: Props) => {
   const submitEdit = () => {
     const docQuery = { prompt: flashcard.prompt, solution: flashcard.solution };
     dispatch(
-      updateCard({ id: flashcard.id, type: 'flashcard', query: docQuery })
+      updateCard({ card: flashcard, query: docQuery })
     );
     closeDialog();
   };

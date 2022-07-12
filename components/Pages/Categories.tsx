@@ -1,14 +1,6 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import {
-  Button,
-  TextInput,
-} from 'react-native-paper';
-import React, {
-  useState,
-  Suspense,
-  useCallback,
-  useContext,
-} from 'react';
+import { Button, TextInput } from 'react-native-paper';
+import React, { useState, Suspense, useCallback, useContext } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
 
@@ -36,10 +28,13 @@ import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 
-const INITIAL_STATE: { id: string; name: string; color: string } = {
-  id: '',
+const INITIAL_STATE: Category = {
+  _id: '',
   name: '',
   color: 'tomato',
+  createdAt: '',
+  type: 'category',
+  points: 0
 };
 
 interface Props extends StackNavigationTypes {}
@@ -54,7 +49,7 @@ const Categories = ({ navigation, route }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
-  const {colors} = useContext(swatchContext)
+  const { colors } = useContext(swatchContext);
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
@@ -88,11 +83,9 @@ const Categories = ({ navigation, route }: Props) => {
     closeDialog();
   };
 
-  const editCategory = (category: Category | Set) => {
+  const editCategory = (category: Category) => {
     setCategory({
-      id: category._id,
-      name: category.name,
-      color: category.color,
+      ...category,
     });
     setEditMode(true);
     setShowDialog(true);
@@ -100,9 +93,7 @@ const Categories = ({ navigation, route }: Props) => {
 
   const submitEdit = () => {
     const docQuery = { name: category.name, color: category.color };
-    dispatch(
-      updateCard({ id: category.id, type: 'category', query: docQuery })
-    );
+    dispatch(updateCard({ card: category, query: docQuery }));
     closeDialog();
   };
 
@@ -231,7 +222,11 @@ const Categories = ({ navigation, route }: Props) => {
             style={styles.textInput}
           />
 
-          <SwatchSelector color={category.color} setColor={selectColor} swatches={colors} />
+          <SwatchSelector
+            color={category.color}
+            setColor={selectColor}
+            swatches={colors}
+          />
         </View>
       </ActionDialog>
     </View>

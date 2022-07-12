@@ -137,13 +137,14 @@ export const storeSlice = createSlice({
         };
       })
       .addCase(updateCard.fulfilled, (state, action) => {
-        if (action.payload.type) {
-          const key = action.payload.type;
+        // console.log(action.payload)
+        if (action.payload.card.type) {
+          const key = action.payload.card.type;
           let updateFavs;
 
           // update cards by card type i.e. 'category', 'set', 'flashcard'
           const updatedCards = state.cards[key].map((c: Collection) => {
-            if (c._id === action.payload.id) {
+            if (c._id === action.payload.card._id) {
               return { ...c, ...action.payload.query };
             }
             return c;
@@ -151,12 +152,27 @@ export const storeSlice = createSlice({
 
           // update favorite section
           if (key === 'set') {
-            updateFavs = state.favoriteSets.map((f) => {
-              if (f._id === action.payload.id) {
-                return { ...f, ...action.payload.query };
-              }
-              return f;
-            });
+            // return boolean if set is in favorite
+            const exist = state.favoriteSets.some(
+              (f) => f._id === action.payload.card._id
+            );
+
+            if (exist) {
+              // update change in favorites
+              updateFavs = state.favoriteSets.map((f) => {
+                if (f._id === action.payload.card._id) {
+                  return { ...f, ...action.payload.query };
+                }
+                return f;
+              });
+            } else {
+              // if not in favorites then add to array
+              const newFavorite = Object.assign(
+                action.payload.card,
+                action.payload.query
+              );
+              updateFavs = state.favoriteSets.concat(newFavorite as Set);
+            }
           } else updateFavs = state.favoriteSets;
 
           return {
@@ -168,6 +184,11 @@ export const storeSlice = createSlice({
             favoriteSets: updateFavs as Set[],
           };
         } else return state;
+      })
+      .addCase(updateCard.rejected, (state, action) => {
+        state.notification.show = true;
+        state.notification.message =
+          'oops, sorry something went wrong with updating a card';
       })
       .addCase(getCards.fulfilled, (state, action) => {
         const key = action.payload.type;
@@ -194,7 +215,9 @@ export const storeSlice = createSlice({
         else return state;
       })
       .addCase(checkLogin.rejected, (state, action) => {
-        console.log(action.payload);
+        state.notification.show = true;
+        state.notification.message =
+          'oops, something went wrong trying to check-in';
       })
       .addCase(completeQuiz.fulfilled, (state, action) => {
         state.user.completedQuiz.push(action.payload);
@@ -206,9 +229,11 @@ export const storeSlice = createSlice({
         state.cards.category = action.payload.categoryCards;
       })
       .addCase(hydrateData.rejected, (state, action) => {
-        console.log(action.payload)
-        return initialState
-      })
+        state.notification.show = true;
+        state.notification.message =
+          'oops, something went wrong trying to hydrate data';
+        return initialState;
+      });
   },
 });
 

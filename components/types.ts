@@ -31,7 +31,7 @@ export interface Collection {
   color?: string;
   design?: string;
   favorite?: boolean;
-  createdAt: string | Date;
+  createdAt: string;
   categoryRef?: string;
   setRef?: string;
   prompt?: string;
@@ -44,7 +44,7 @@ export interface Category {
   type: 'category';
   name: string;
   color: string;
-  createdAt: Date | string;
+  createdAt: string;
   points: number;
 }
 
@@ -55,7 +55,7 @@ export interface Set {
   color: string;
   design: string;
   favorite: boolean;
-  createdAt: Date | string;
+  createdAt: string;
   categoryRef: string;
 }
 
@@ -64,7 +64,7 @@ export interface Flashcard {
   type: 'flashcard';
   prompt: string;
   solution: string;
-  createdAt: Date | string;
+  createdAt: string;
   setRef: string;
   categoryRef: string;
 }
