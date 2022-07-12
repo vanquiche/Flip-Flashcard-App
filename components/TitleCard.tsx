@@ -1,23 +1,23 @@
-import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import {
+  View,
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import React, { useState, useRef, useContext, useCallback } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withTiming,
   Layout,
   SlideInLeft,
   ZoomOut,
   withSpring,
 } from 'react-native-reanimated';
-import { useIsFocused } from '@react-navigation/native';
 
 import AlertDialog from './AlertDialog';
-
-import Popup from './Popup';
 import swatchContext from '../contexts/swatchContext';
-import { useFocusEffect } from '@react-navigation/native';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -50,7 +50,6 @@ const TitleCard = ({
   onPress,
   markForDelete,
 }: Props) => {
-  const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -64,15 +63,6 @@ const TitleCard = ({
     };
   });
 
-  // popup tooltip position coordinates
-  const cardRef = useRef<View>(null);
-  const popupX = useRef(0);
-  const popupY = useRef(0);
-
-  const showTooltip = () => {
-    setShowPopup(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  };
 
   // highlights and selects card for deletion
   const toggleSelection = () => {
@@ -85,28 +75,6 @@ const TitleCard = ({
     markForDelete(card._id, !checked);
   };
 
-  // // determine where to position tooltip
-  // const measureCardPosition = (delay: number) => {
-  //   setTimeout(() => {
-  //     if (cardRef.current) {
-  //       cardRef.current.measure((width, height, px, py, fx, fy) => {
-  //         popupY.current = fy;
-  //         popupX.current = fx;
-  //       });
-  //     }
-  //   }, delay);
-  // };
-
-  // remeasure when screen is focused
-  // used when user presses on shortcut
-  // to favorite set. Sets and Categories screen
-  // gets mounted and measurement is incorrect
-  // requiring remeasure on-focus
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     measureCardPosition(150);
-  //   }, [])
-  // );
 
   return (
     <>
@@ -117,20 +85,8 @@ const TitleCard = ({
         onConfirm={() => handleDelete(card._id)}
       />
 
-      <Popup
-        visible={showPopup}
-        dismiss={() => setShowPopup(false)}
-        onEditPress={() => handleEdit(card)}
-        onDeletePress={() => setShowAlert(true)}
-        popoverStyle={{
-          transform: [{ translateY: 50 }, { translateX: 90 }],
-        }}
-      />
-
       <AnimatedPressable
         key={card._id}
-        ref={cardRef}
-        // onLayout={() => measureCardPosition(550)}
         style={[
           styles.card,
           {
@@ -140,7 +96,6 @@ const TitleCard = ({
         ]}
         // disable navigation when canMark is true
         onPress={multiSelect ? toggleSelection : onPress}
-        onLongPress={showTooltip}
         exiting={ZoomOut}
         entering={SlideInLeft.delay(200).duration(350)}
         layout={Layout.springify().damping(15).delay(200)}
@@ -149,14 +104,31 @@ const TitleCard = ({
         {multiSelect && (
           <IconButton
             icon='close-thick'
+            size={42}
             color={checked ? 'white' : 'transparent'}
-            style={{ position: 'absolute', right: 0, top: 0 }}
+            style={{ position: 'absolute', zIndex: 100}}
           />
         )}
 
         <Text style={[styles.textContent, { backgroundColor: card.color }]}>
           {card.name}
         </Text>
+        <IconButton
+          icon='close'
+          color='white'
+          size={17}
+          style={styles.deleteBtn}
+          onPress={() => setShowAlert(true)}
+          disabled={multiSelect}
+        />
+        <IconButton
+          icon='dots-horizontal'
+          color='white'
+          size={20}
+          style={styles.editBtn}
+          onPress={() => handleEdit(card)}
+          disabled={multiSelect}
+        />
         {card.design && (
           <ImageBackground
             source={patterns[card.design] || null}
@@ -166,7 +138,7 @@ const TitleCard = ({
           />
         )}
         {card.favorite && (
-          <IconButton icon='star' color='yellow' style={styles.favicon} />
+          <IconButton icon='heart' color='white' style={styles.favicon} />
         )}
       </AnimatedPressable>
     </>
@@ -210,12 +182,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontSize: 20,
-    zIndex: 100,
+    zIndex: 80,
     // width: '80%',
   },
   popup: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  deleteBtn: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 80
+  },
+  editBtn: {
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 80
+    // right: 0,
   },
 });
 

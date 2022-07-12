@@ -317,7 +317,7 @@ const Sets = ({ navigation, route }: Props) => {
 
         <IconButton
           size={30}
-          color='yellow'
+          color='white'
           style={{
             margin: 0,
             position: 'absolute',
@@ -325,7 +325,7 @@ const Sets = ({ navigation, route }: Props) => {
             right: 0,
             zIndex: 10,
           }}
-          icon={cardSet.favorite ? 'star' : 'star-outline'}
+          icon={cardSet.favorite ? 'heart' : 'heart-outline'}
           onPress={() =>
             setCardSet((prev) => ({ ...prev, favorite: !prev.favorite }))
           }

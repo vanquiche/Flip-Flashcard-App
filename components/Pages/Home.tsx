@@ -80,31 +80,35 @@ const Home = ({ navigation, route }: Props) => {
 
   return (
     <View style={s.screenWrapper}>
-      <Button
-        color='black'
-        onPress={() => navigation.navigate('Stats')}
-        style={{ margin: 0 }}
-      >
-        STATS
-      </Button>
-
-      <View style={styles.infoCardContainer}>
-        <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
-          <Title style={{ color: user.theme.fontColor }}>LEVEL: {level}</Title>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
-          <Title style={{ color: _fontColor }}>HEARTS: {user.heartcoin}</Title>
-        </View>
-      </View>
-
-      <LoginGoal dates={user.login} streak={user.streak} />
-
-      <Title style={{ textAlign: 'center', color: _cardColor }}>
-        FAVORITE SETS
-      </Title>
-
       <Suspense fallback={<ActivityIndicator />}>
+        <Button
+          color='black'
+          onPress={() => navigation.navigate('Stats')}
+          style={{ margin: 0 }}
+        >
+          STATS
+        </Button>
+
+        <View style={styles.infoCardContainer}>
+          <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
+            <Title style={{ color: user.theme.fontColor }}>
+              LEVEL: {level}
+            </Title>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
+            <Title style={{ color: _fontColor }}>
+              HEARTS: {user.heartcoin}
+            </Title>
+          </View>
+        </View>
+
+        <LoginGoal dates={user.login} streak={user.streak} />
+
+        <Title style={{ textAlign: 'center', color: _cardColor }}>
+          FAVORITE SETS
+        </Title>
+
         {favoriteSets.filter((f) => f.favorite === true).length === 0 && (
           <Text
             style={{

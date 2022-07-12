@@ -5,8 +5,8 @@ import {
   Dimensions,
   ImageBackground,
 } from 'react-native';
-import { Text, useTheme, Title } from 'react-native-paper';
-import React, { useState, useRef } from 'react';
+import { Text, Title } from 'react-native-paper';
+import React, { useState } from 'react';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
@@ -16,6 +16,7 @@ import Animated, {
   SlideInLeft,
   ZoomOut,
   withSpring,
+  FadeIn,
 } from 'react-native-reanimated';
 import { IconButton } from 'react-native-paper';
 
@@ -23,8 +24,6 @@ import { Flashcard } from './types';
 
 import AlertDialog from './AlertDialog';
 
-import Popup from './Popup';
-import { transform } from '@babel/core';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -55,15 +54,9 @@ const Card = ({
   multiSelect,
   markForDelete,
 }: Props) => {
-  const [showPopup, setShowPopup] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
   const [checked, setChecked] = useState(false);
-
-  const cardRef = useRef<View>(null);
-  // popup tooltip coordinates
-  const popupX = useRef(0);
-  const popupY = useRef(0);
 
   // animation values for card flip
   const cardFlip = useSharedValue(0);
@@ -110,12 +103,6 @@ const Card = ({
     setCardFacingFront((prev) => !prev);
   };
 
-  const handleLongPress = () => {
-    // console.log('long press')
-    setShowPopup(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  };
-
   const toggleCheck = () => {
     if (!checked) {
       cardOpacity.value = 0.5;
@@ -126,33 +113,13 @@ const Card = ({
     markForDelete(card._id, !checked);
   };
 
-  const measureCard = () => {
-    // wait for entering animation to end before measuring card
-    setTimeout(() => {
-      if (cardRef.current) {
-        cardRef.current.measure((width, height, px, py, fx, fy) => {
-          popupY.current = fy + 25;
-          popupX.current = fx + 40;
-        });
-      }
-    }, 600);
-  };
-
   return (
     <>
       <AlertDialog
-        message={`Are you sure you want to delete this card?`}
+        message='Are you sure you want to delete this card?'
         visible={showAlert}
         onDismiss={() => setShowAlert(false)}
         onConfirm={() => handleDelete(card._id)}
-      />
-
-      <Popup
-        visible={showPopup}
-        dismiss={() => setShowPopup(false)}
-        onEditPress={() => handleEdit(card, card._id)}
-        onDeletePress={() => setShowAlert(true)}
-        popoverStyle={{ transform: [{ translateY: 80 }] }}
       />
 
       {/* Card */}
@@ -165,12 +132,9 @@ const Card = ({
         ]}
         // onPress={onPress}
         onPress={multiSelect ? toggleCheck : flipCard}
-        onLongPress={handleLongPress}
         exiting={ZoomOut}
         entering={SlideInLeft.delay(300)}
         layout={Layout.springify().damping(15).delay(200)}
-        onLayout={measureCard}
-        ref={cardRef}
       >
         {/* indicator of card selection */}
         {multiSelect && (
@@ -180,6 +144,25 @@ const Card = ({
             style={{ position: 'absolute', right: 0, top: 0 }}
           />
         )}
+        {cardFacingFront && (
+          <Animated.View style={styles.btnContainer} entering={FadeIn}>
+            <IconButton
+              icon='close'
+              color='white'
+              size={25}
+              style={[styles.deleteBtn]}
+              onPress={() => setShowAlert(true)}
+            />
+            <IconButton
+              icon='dots-horizontal'
+              color='white'
+              size={25}
+              style={[styles.editBtn]}
+              onPress={() => handleEdit(card, card._id)}
+            />
+          </Animated.View>
+        )}
+
         {/* FRONT OF CARD */}
         <Animated.View style={[styles.textContainer, rStyles_card_front]}>
           {/* CARD DESIGN */}
@@ -233,6 +216,23 @@ const styles = StyleSheet.create({
     // position: 'relative'
     overflow: 'hidden',
   },
+  btnContainer: {
+    width: '100%',
+    height: '100%',
+    zIndex: 70,
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    zIndex: 80,
+  },
+  editBtn: {
+    position: 'absolute',
+    bottom: -10,
+    left: '40%',
+    zIndex: 80,
+  },
   textContent: {
     textAlign: 'center',
     color: 'white',
@@ -272,6 +272,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
+    zIndex: 20,
   },
   image: {
     tintColor: 'white',
