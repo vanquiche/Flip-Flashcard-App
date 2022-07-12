@@ -26,7 +26,6 @@ import swatchContext from '../contexts/swatchContext';
 import DEFAULT_SWATCH_LIST from '../assets/swatchList';
 import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
 
-import { MenuProvider } from 'react-native-popup-menu';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,7 +51,6 @@ const IndexScreen = () => {
   }, []);
 
   return (
-    <MenuProvider>
       <swatchContext.Provider value={{ colors, patterns }}>
         <AlertNotification
           dismiss={clearNotification}
@@ -150,7 +148,6 @@ const IndexScreen = () => {
           )}
         </Tab.Navigator>
       </swatchContext.Provider>
-    </MenuProvider>
   );
 };
 
