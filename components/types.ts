@@ -129,7 +129,7 @@ export const defaultTheme: Theme = {
   accentColor: 'hotpink',
 };
 
-interface Stats {
+export interface Stats {
   date: string;
   set: string;
   score: number;

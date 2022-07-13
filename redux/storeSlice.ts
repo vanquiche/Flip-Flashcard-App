@@ -7,7 +7,6 @@ import {
   Flashcard,
   Collection,
 } from '../components/types';
-import loginStreak from '../utility/loginStreak';
 import {
   addCategoryCard,
   addFlashCard,
@@ -137,7 +136,6 @@ export const storeSlice = createSlice({
         };
       })
       .addCase(updateCard.fulfilled, (state, action) => {
-        // console.log(action.payload)
         if (action.payload.card.type) {
           const key = action.payload.card.type;
           let updateFavs;
@@ -158,15 +156,21 @@ export const storeSlice = createSlice({
             );
 
             if (exist) {
-              // update change in favorites
-              updateFavs = state.favoriteSets.map((f) => {
-                if (f._id === action.payload.card._id) {
-                  return { ...f, ...action.payload.query };
-                }
-                return f;
-              });
+              // if updated favorite to false then remove from favorites
+              // otherwise update card changes
+              updateFavs =
+                action.payload.query?.favorite === false
+                  ? state.favoriteSets.filter(
+                      (f) => f._id !== action.payload.card._id
+                    )
+                  : state.favoriteSets.map((f) => {
+                      if (f._id === action.payload.card._id) {
+                        return { ...f, ...action.payload.query };
+                      }
+                      return f;
+                    });
             } else {
-              // if not in favorites then add to array
+              // if not in favorites then add new entry to favorites
               const newFavorite = Object.assign(
                 action.payload.card,
                 action.payload.query
@@ -188,7 +192,7 @@ export const storeSlice = createSlice({
       .addCase(updateCard.rejected, (state, action) => {
         state.notification.show = true;
         state.notification.message =
-          'oops, sorry something went wrong with updating a card';
+          'oops, sorry something went wrong trying to update a card';
       })
       .addCase(getCards.fulfilled, (state, action) => {
         const key = action.payload.type;

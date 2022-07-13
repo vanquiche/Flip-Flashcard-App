@@ -52,7 +52,7 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
           <Title style={styles.price}>{price}</Title>
         )}
 
-        <ThemeDisplay theme={theme} style={{ marginHorizontal: 20 }} />
+        <ThemeDisplay theme={theme} style={{ marginHorizontal: 10 }} />
       </Pressable>
     </>
   );

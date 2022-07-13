@@ -28,6 +28,7 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 10,
+    paddingHorizontal: 10,
     marginBottom: 30
   },
   title: {

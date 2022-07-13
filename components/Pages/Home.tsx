@@ -65,17 +65,18 @@ const Home = ({ navigation, route }: Props) => {
     });
   };
 
-  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+  if (user.login) {
+    const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
 
-  if (!isSameDay) {
-    // console.log('checking login')
-    dispatch(
-      checkLogin({
-        streak: user.streak,
-        logins: user.login,
-        heartcoins: user.heartcoin,
-      })
-    );
+    if (!isSameDay) {
+      dispatch(
+        checkLogin({
+          streak: user.streak,
+          logins: user.login,
+          heartcoins: user.heartcoin,
+        })
+      );
+    }
   }
 
   return (
@@ -109,7 +110,7 @@ const Home = ({ navigation, route }: Props) => {
           FAVORITE SETS
         </Title>
 
-        {favoriteSets.filter((f) => f.favorite === true).length === 0 && (
+        {favoriteSets.length === 0 && (
           <Text
             style={{
               color: user.theme.cardColor,

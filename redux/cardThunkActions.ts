@@ -69,8 +69,8 @@ export const removeCard = createAsyncThunk(
 
 export const updateCard = createAsyncThunk(
   'store/updateCard',
-  (payload: { card: Collection; query: Object }) => {
-    return new Promise<{ card: Collection; query: Object }>(
+  (payload: { card: Collection; query: Record<string, unknown> }) => {
+    return new Promise<{ card: Collection; query: Record<string, unknown> }>(
       (resolve, reject) => {
         db.update(
           { _id: payload.card._id },
