@@ -25,7 +25,7 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
       <View>
         {title && (
           <Title
-            style={{ color: progressColor, width: 65, flex: 1 }}
+            style={{ color: progressColor, width: 65, flex: 1, fontSize: 14 }}
             numberOfLines={1}
           >
             {title.toUpperCase()}

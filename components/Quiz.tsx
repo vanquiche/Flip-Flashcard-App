@@ -16,7 +16,7 @@ import Results from './Results';
 import QuizStartPage from './QuizStartPage';
 import AlertDialog from './AlertDialog';
 
-import { Flashcard, StackNavigationTypes } from './types';
+import { Category, Flashcard, StackNavigationTypes } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import db from '../db-services';
@@ -87,7 +87,9 @@ const Quiz = ({
     if (submitted) return;
     // check and remove trailing space and case sensitivity
     const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
-    const solution = flashcards[cardCount].solution.replace(/[ \t]+$/gm, '').toLowerCase();
+    const solution = flashcards[cardCount].solution
+      .replace(/[ \t]+$/gm, '')
+      .toLowerCase();
     if (userInput === solution) {
       setResult('Correct!');
       score.current++;
@@ -104,7 +106,7 @@ const Quiz = ({
     setCardCount((prev) => prev + 1);
   };
 
-  const submitResults = () => {
+  const submitResults = async () => {
     setCompleteQuiz(true);
 
     const stats = {
@@ -132,13 +134,16 @@ const Quiz = ({
       const update = [...user.completedQuiz, setRef];
 
       // add points to category
-      dispatch(
-        updateCard({
-          id: categoryRef,
-          type: 'category',
-          query: { points: awardPoints + categoryXP },
-        })
-      );
+      await db.findOne({ _id: categoryRef, type: 'category' }, (err: Error, doc: Category) => {
+        if (doc) {
+          dispatch(
+            updateCard({
+              card: doc,
+              query: { points: awardPoints + categoryXP },
+            })
+          );
+        }
+      });
       // add points to user
       // add set to reference
       // can only earn points once/day
