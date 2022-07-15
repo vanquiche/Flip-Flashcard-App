@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import React from 'react';
-import { Button, Title } from 'react-native-paper';
+import { Button, IconButton, Title } from 'react-native-paper';
 
 import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import PointTracker from '../PointTracker';
 import s from '../styles/styles';
 
 import { StackNavigationTypes } from '../types';
+import UserInfo from '../UserInfo';
 const profileImg = require('../../assets/images/profile-user.png');
 
 interface Props extends StackNavigationTypes {}
@@ -20,6 +21,8 @@ const Profile = ({ navigation }: Props) => {
     (state: RootState) => state.store
   );
   const dispatch = useDispatch<AppDispatch>();
+
+  const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
   const _color = user.theme.cardColor;
 
@@ -33,25 +36,17 @@ const Profile = ({ navigation }: Props) => {
 
   return (
     <View style={s.screenWrapper}>
-      <Button
-        mode='text'
-        color={_color}
-        style={[
-          // s.cardActionButton,
-          styles.themeButton
-        ]}
-        labelStyle={{ color: _color }}
+      <IconButton
+        style={{ position: 'absolute', right: 0 }}
+        icon='brush-variant'
+        color={user.theme.cardColor}
         onPress={() => navigation.navigate('Themes')}
       >
         themes
-      </Button>
-      <Text>Last Login: {lastLoginDate}</Text>
-      {/*
-      <Text>Hello {user.username}</Text>
-      <Text>Login Streak: {user.streak}</Text>
-      <Text>XP: {user.xp}</Text>
-    */}
-    {/* <Button
+      </IconButton>
+      {/* <Text>Last Login: {lastLoginDate}</Text> */}
+
+      {/* <Button
       mode='contained'
       color='tomato'
       style={{ margin: 25, elevation: 0 }}
@@ -63,16 +58,18 @@ const Profile = ({ navigation }: Props) => {
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>
-        <Title style={{color: _color}}>{user.username.toUpperCase()}</Title>
-        <Image
-          source={profileImg}
-          style={[styles.image, { tintColor: _color }]}
+        <UserInfo
+          xp={user.xp}
+          level={level}
+          color={_color}
+          image={profileImg}
+          coin={user.heartcoin}
+          username={user.username}
         />
         <PointTracker
-          // title={user.username}
           points={user.xp}
-          total={levelUpCondition}
           progressColor={_color}
+          total={levelUpCondition}
         />
       </View>
 
@@ -96,10 +93,6 @@ const Profile = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  image: {
-    width: 72,
-    height: 72,
-  },
   categoryContainer: {
     alignItems: 'center',
   },
@@ -111,8 +104,8 @@ const styles = StyleSheet.create({
   },
   themeButton: {
     position: 'absolute',
-    right: 5
-  }
+    right: 5,
+  },
 });
 
 export default Profile;

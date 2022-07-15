@@ -28,7 +28,7 @@ const Home = ({ navigation, route }: Props) => {
   const _cardColor = user.theme.cardColor;
   const _fontColor = user.theme.fontColor;
 
-  const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
+
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -65,9 +65,9 @@ const Home = ({ navigation, route }: Props) => {
     });
   };
 
-  if (user.login) {
-    const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
 
+  useEffect(() => {
     if (!isSameDay) {
       dispatch(
         checkLogin({
@@ -77,31 +77,33 @@ const Home = ({ navigation, route }: Props) => {
         })
       );
     }
-  }
+    return;
+  }, [isSameDay]);
 
   return (
     <View style={s.screenWrapper}>
       <Suspense fallback={<ActivityIndicator />}>
-        <Button
+        {/* <Button
           color='black'
           onPress={() => navigation.navigate('Stats')}
           style={{ margin: 0 }}
         >
           STATS
-        </Button>
+        </Button> */}
 
-        <View style={styles.infoCardContainer}>
-          <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
-            <Title style={{ color: user.theme.fontColor }}>
-              LEVEL: {level}
-            </Title>
-          </View>
-
-          <View style={[styles.infoCard, { backgroundColor: _cardColor }]}>
-            <Title style={{ color: _fontColor }}>
-              HEARTS: {user.heartcoin}
-            </Title>
-          </View>
+        <View
+          style={{
+            ...styles.infoCardContainer,
+            backgroundColor: user.theme.cardColor,
+          }}
+        >
+          <Button
+            color={user.theme.fontColor}
+            labelStyle={{ fontSize: 20 }}
+            onPress={() => navigation.navigate('Stats')}
+          >
+            STATISTICS
+          </Button>
         </View>
 
         <LoginGoal dates={user.login} streak={user.streak} />
@@ -150,19 +152,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 10,
   },
-  infoCard: {
-    width: '45%',
-    height: 75,
-    borderRadius: 10,
-    margin: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // infoCard: {
+  //   width: '45%',
+  //   height: 75,
+  //   borderRadius: 10,
+  //   margin: 10,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
   infoCardContainer: {
     flexDirection: 'row',
-    marginTop: 15,
-    marginHorizontal: 10,
-    justifyContent: 'space-around',
+    marginHorizontal: 15,
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 13,
+    height: 75,
   },
   favoriteMessage: {
     textAlign: 'center',
