@@ -46,7 +46,8 @@
     "react-native-web": "0.17.7",
     "react-redux": "^8.0.2",
     "use-count-up": "^3.0.1",
-    "victory-native": "^36.5.3"
+    "victory-native": "^36.5.3",
+    "expo-splash-screen": "~0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

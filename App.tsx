@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-
+import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
+import DEFAULT_PATTERNS, {
+  STORE_PATTERNS,
+  PRELOAD_IMGS,
+} from './assets/patterns/defaultPatterns';
 
 import 'react-native-gesture-handler';
 
@@ -29,7 +33,7 @@ const customFonts = {
 };
 
 export default function App() {
-  const [fontLoading, setFontLoading] = useState(true);
+  const [assetLoading, setAssetLoading] = useState(true);
 
   const theme = {
     ...DefaultTheme,
@@ -56,15 +60,33 @@ export default function App() {
     },
   };
 
+  const cacheImages = async (imgs: string[]) => {
+    return imgs.map((i) => {
+      if (typeof i === 'string') {
+        return Image.prefetch(i);
+      } else {
+        return Asset.fromModule(i).downloadAsync();
+      }
+    });
+  };
+
+  const loadFonts = async () => {
+    await Font.loadAsync(customFonts);
+  };
+
+  const loadAssets = async () => {
+    const imgAsset = cacheImages(PRELOAD_IMGS);
+    const fontAsset = loadFonts();
+
+    await Promise.all([fontAsset, imgAsset]);
+    setAssetLoading(false);
+  };
+
   useEffect(() => {
-    const loadFonts = async () => {
-      await Font.loadAsync(customFonts);
-      setFontLoading(false);
-    };
-    loadFonts();
+    loadAssets();
   }, []);
 
-  if (fontLoading) {
+  if (assetLoading) {
     return <ActivityIndicator size='large' style={styles.spinner} />;
   }
 

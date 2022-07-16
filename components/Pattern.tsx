@@ -1,7 +1,7 @@
 import {
   StyleSheet,
   Pressable,
-  ImageBackground,
+  Image,
 } from 'react-native';
 import React from 'react';
 
@@ -22,10 +22,10 @@ const Pattern = ({ select, name, patternList }: Props) => {
       onPress={handlePress}
       onLongPress={(e) => e.preventDefault()}
     >
-      <ImageBackground
+      <Image
         resizeMode='center'
         source={patternList[name]}
-        imageStyle={styles.image}
+        style={styles.image}
       />
     </Pressable>
   );
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   image: {
     height: 45,
     width: 45,
+    resizeMode: 'contain',
     tintColor: 'white',
   },
 });
