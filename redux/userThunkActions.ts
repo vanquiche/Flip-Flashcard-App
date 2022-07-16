@@ -60,7 +60,7 @@ interface LoginObject {
 
 export const checkLogin = createAsyncThunk(
   'store/checkLogin',
-  (payload: { logins: string[]; streak: number; heartcoins: number }) => {
+  (payload: { logins: string[]; streak: number; heartcoin: number }) => {
     return new Promise<void | LoginObject>((resolve, reject) => {
       const dt = DateTime;
 
@@ -78,7 +78,7 @@ export const checkLogin = createAsyncThunk(
         const inStreak = loginStreak(loggedInLast);
         // if user is in streak then increment
         // coins and streak count
-        const coins = inStreak ? payload.heartcoins + 5 : payload.heartcoins;
+        const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
         const streak = inStreak ? payload.streak + 1 : 0;
 
         const updateData: LoginObject = {

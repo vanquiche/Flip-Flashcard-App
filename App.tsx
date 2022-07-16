@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ActivityIndicator, StyleSheet, Image, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import DEFAULT_PATTERNS, {
-  STORE_PATTERNS,
-  PRELOAD_IMGS,
-} from './assets/patterns/defaultPatterns';
+import { PRELOAD_IMGS } from './assets/patterns/defaultPatterns';
 
 import 'react-native-gesture-handler';
 
@@ -33,7 +30,7 @@ const customFonts = {
 };
 
 export default function App() {
-  const [assetLoading, setAssetLoading] = useState(true);
+  const [assetIsLoading, setAssetIsLoading] = useState(true);
 
   const theme = {
     ...DefaultTheme,
@@ -79,14 +76,14 @@ export default function App() {
     const fontAsset = loadFonts();
 
     await Promise.all([fontAsset, imgAsset]);
-    setAssetLoading(false);
+    setAssetIsLoading(false);
   };
 
   useEffect(() => {
     loadAssets();
   }, []);
 
-  if (assetLoading) {
+  if (assetIsLoading) {
     return <ActivityIndicator size='large' style={styles.spinner} />;
   }
 

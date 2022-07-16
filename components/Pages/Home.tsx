@@ -73,7 +73,7 @@ const Home = ({ navigation, route }: Props) => {
         checkLogin({
           streak: user.streak,
           logins: user.login,
-          heartcoins: user.heartcoin,
+          heartcoin: user.heartcoin,
         })
       );
     }
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   favoriteMessage: {
     textAlign: 'center',
-    paddingTop: 50,
+    paddingTop: 60,
   },
 });
 

@@ -34,7 +34,7 @@ const INITIAL_STATE: Category = {
   color: 'tomato',
   createdAt: '',
   type: 'category',
-  points: 0
+  points: 0,
 };
 
 interface Props extends StackNavigationTypes {}
@@ -123,6 +123,8 @@ const Categories = ({ navigation, route }: Props) => {
     // cycle through selection and delete each ID
     for (let i = 0; i < selection.current.length; i++) {
       dispatch(removeCard({ id: selection.current[i], type: 'category' }));
+      // remove all favorites that belong to
+      // delete category 
       dispatch(removeFavorite(selection.current[i]));
     }
     cancelMultiDeletion();

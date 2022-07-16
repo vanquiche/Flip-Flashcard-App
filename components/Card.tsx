@@ -140,8 +140,9 @@ const Card = ({
         {multiSelect && (
           <IconButton
             icon='close-thick'
+            size={58}
             color={checked ? 'white' : 'transparent'}
-            style={{ position: 'absolute', right: 0, top: 0 }}
+            style={{ position: 'absolute', left: '35%', zIndex: 80 }}
           />
         )}
         {cardFacingFront && (

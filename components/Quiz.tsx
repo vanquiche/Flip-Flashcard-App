@@ -127,9 +127,11 @@ const Quiz = ({
     if (!user.completedQuiz.includes(setRef)) {
       let awardHeartCoin = 0;
       const awardPoints = score.current;
-      const leveledUp = checkForLevelUp(user.xp, awardPoints, levelUpCondition);
-      if (leveledUp) {
-        awardHeartCoin = 10 * leveledUp;
+
+      // if user leveled up then award 20 coins/level
+      const levelUp = checkForLevelUp(user.xp, awardPoints, levelUpCondition);
+      if (levelUp) {
+        awardHeartCoin = 20 * levelUp;
       }
       const update = [...user.completedQuiz, setRef];
 
