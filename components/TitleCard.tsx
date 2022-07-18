@@ -1,12 +1,10 @@
-import {
-  View,
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import React, { useState, useRef, useContext } from 'react';
-import * as Haptics from 'expo-haptics';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -40,6 +38,7 @@ interface Props {
   handleColor?: () => void;
   onPress?: () => void;
   markForDelete: (id: any, state: boolean) => void;
+  shouldAnimateEntry?: boolean;
 }
 
 const TitleCard = ({
@@ -49,6 +48,7 @@ const TitleCard = ({
   handleDelete,
   onPress,
   markForDelete,
+  shouldAnimateEntry,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -63,18 +63,27 @@ const TitleCard = ({
     };
   });
 
-
-  // highlights and selects card for deletion
-  const toggleSelection = () => {
+  const fadeCard = () => {
     if (!checked) {
       cardOpacity.value = 0.5;
     } else {
       cardOpacity.value = 1;
     }
+  };
+
+  // highlights and selects card for deletion
+  const toggleSelection = () => {
+    fadeCard();
     setChecked((check) => !check);
     markForDelete(card._id, !checked);
   };
 
+  useEffect(() => {
+    return () => {
+      cardOpacity.value = 1;
+      setChecked(false);
+    };
+  }, [multiSelect]);
 
   return (
     <>
@@ -97,7 +106,9 @@ const TitleCard = ({
         // disable navigation when canMark is true
         onPress={multiSelect ? toggleSelection : onPress}
         exiting={ZoomOut}
-        entering={SlideInLeft.delay(200).duration(350)}
+        entering={
+          shouldAnimateEntry ? SlideInLeft.delay(200).duration(350) : undefined
+        }
         layout={Layout.springify().damping(15).delay(200)}
       >
         {/* indicator of card selection */}
@@ -106,7 +117,7 @@ const TitleCard = ({
             icon='close-thick'
             size={42}
             color={checked ? 'white' : 'transparent'}
-            style={{ position: 'absolute', zIndex: 100}}
+            style={{ position: 'absolute', zIndex: 100 }}
           />
         )}
 
@@ -129,9 +140,9 @@ const TitleCard = ({
           onPress={() => handleEdit(card)}
           disabled={multiSelect}
         />
-        {card.design && (
+        {card.design && card.design !== 'default' && (
           <ImageBackground
-            source={patterns[card.design] || null}
+            source={patterns[card.design]}
             imageStyle={styles.pattern}
             style={styles.patternWrapper}
             resizeMode='cover'
@@ -151,12 +162,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '45%',
     height: 125,
-    // aspectRatio: 1.45,
     padding: 15,
     margin: 5,
     borderRadius: 12,
     backgroundColor: 'white',
-    // position: 'relative',
   },
   patternWrapper: {
     position: 'absolute',
@@ -193,12 +202,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    zIndex: 80
+    zIndex: 80,
   },
   editBtn: {
     position: 'absolute',
     bottom: 0,
-    zIndex: 80
+    zIndex: 80,
     // right: 0,
   },
 });

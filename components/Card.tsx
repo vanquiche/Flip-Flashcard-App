@@ -24,7 +24,6 @@ import { Flashcard } from './types';
 
 import AlertDialog from './AlertDialog';
 
-
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
@@ -42,6 +41,7 @@ interface Props {
   handleColor?: () => void;
   onPress?: () => void;
   markForDelete: (id: any, state: boolean) => void;
+  shouldAnimateEntry?: boolean;
 }
 
 const Card = ({
@@ -53,6 +53,7 @@ const Card = ({
   handleDelete,
   multiSelect,
   markForDelete,
+  shouldAnimateEntry,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
@@ -133,7 +134,7 @@ const Card = ({
         // onPress={onPress}
         onPress={multiSelect ? toggleCheck : flipCard}
         exiting={ZoomOut}
-        entering={SlideInLeft.delay(300)}
+        entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
         layout={Layout.springify().damping(15).delay(200)}
       >
         {/* indicator of card selection */}
@@ -168,9 +169,8 @@ const Card = ({
         <Animated.View style={[styles.textContainer, rStyles_card_front]}>
           {/* CARD DESIGN */}
           <ImageBackground
-            resizeMode='repeat'
-            imageStyle={[styles.image]}
             style={styles.cardPattern}
+            imageStyle={styles.image}
             source={patternList[pattern]}
           />
 
@@ -274,11 +274,16 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     zIndex: 20,
+    opacity: 0.3,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   image: {
     tintColor: 'white',
-    opacity: 0.3,
-    borderRadius: 10,
+    height: 256,
+    width: 256,
+    transform: [{ translateX: -15 }, { translateY: -15 }],
+    resizeMode: 'repeat',
   },
 });
 export default React.memo(Card, (prevProps, nextProps) => {
