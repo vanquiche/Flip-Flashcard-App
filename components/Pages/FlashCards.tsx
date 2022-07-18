@@ -31,6 +31,7 @@ import {
 } from '../../redux/cardThunkActions';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
+import useRenderCounter from '../../hooks/useRenderCounter';
 
 const INITIAL_STATE: Flashcard = {
   _id: '',
@@ -39,7 +40,7 @@ const INITIAL_STATE: Flashcard = {
   solution: '',
   createdAt: '',
   categoryRef: '',
-  type: 'flashcard'
+  type: 'flashcard',
 };
 
 interface Props extends StackNavigationTypes {}
@@ -63,6 +64,9 @@ const FlashCards = ({ navigation, route }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { patterns } = useContext(swatchContext);
+
+  const { renderCount } = useRenderCounter();
+  renderCount.current++;
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -96,7 +100,7 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   const editCard = (card: Flashcard) => {
     setFlashcard({
-      ...card
+      ...card,
     });
     setEditMode(true);
     setShowDialog(true);
@@ -104,9 +108,7 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   const submitEdit = () => {
     const docQuery = { prompt: flashcard.prompt, solution: flashcard.solution };
-    dispatch(
-      updateCard({ card: flashcard, query: docQuery })
-    );
+    dispatch(updateCard({ card: flashcard, query: docQuery }));
     closeDialog();
   };
 
@@ -248,6 +250,7 @@ const FlashCards = ({ navigation, route }: Props) => {
                   handleEdit={editCard}
                   handleDelete={deleteCard}
                   markForDelete={selectItem}
+                  shouldAnimateEntry={renderCount.current > 3 ? true : false}
                 />
               );
             })}

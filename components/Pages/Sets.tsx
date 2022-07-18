@@ -14,6 +14,7 @@ import React, {
   useReducer,
   useCallback,
   useContext,
+  useRef,
 } from 'react';
 
 import Animated from 'react-native-reanimated';
@@ -42,6 +43,7 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
+import useRenderCounter from '../../hooks/useRenderCounter';
 
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
@@ -54,7 +56,7 @@ const INITIAL_STATE: Set = {
   favorite: false,
   type: 'set',
   createdAt: '',
-  categoryRef: ''
+  categoryRef: '',
 };
 
 interface Props extends StackNavigationTypes {}
@@ -77,6 +79,9 @@ const Sets = ({ navigation, route }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { colors, patterns } = useContext(swatchContext);
+
+  const { renderCount } = useRenderCounter();
+  renderCount.current++;
 
   // CRUD functions
   const closeDialog = () => {
@@ -116,7 +121,7 @@ const Sets = ({ navigation, route }: Props) => {
   const editSet = (set: Set) => {
     // place selected card into current state of set
     setCardSet({
-      ...set
+      ...set,
     });
     // turn on edit mode to switch function of action dialog
     setEditMode(true);
@@ -218,14 +223,27 @@ const Sets = ({ navigation, route }: Props) => {
             </Button>
           </>
         ) : (
-          <Button
-            mode='text'
-            color='tomato'
-            onPress={confirmAlert}
-            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-          >
-            DELETE
-          </Button>
+          <>
+            <Button
+              mode='text'
+              color='tomato'
+              onPress={confirmAlert}
+              style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
+            >
+              DELETE
+            </Button>
+            <Button
+              mode='text'
+              style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
+              color='tomato'
+              onPress={() => {
+                clearSelection();
+                setMultiSelectMode(false);
+              }}
+            >
+              CLEAR
+            </Button>
+          </>
         )}
       </View>
 
@@ -249,6 +267,7 @@ const Sets = ({ navigation, route }: Props) => {
                   handleEdit={editSet}
                   markForDelete={selectItem}
                   handleDelete={deleteSet}
+                  shouldAnimateEntry={renderCount.current > 2 ? true : false}
                   onPress={() =>
                     navigation.navigate('Cards', {
                       color: set.color,
