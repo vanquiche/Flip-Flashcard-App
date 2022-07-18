@@ -112,7 +112,7 @@ const Categories = ({ navigation, route }: Props) => {
   };
 
   const confirmAlert = () => {
-    if (selection.current.length > 0) {
+    if (selection.length > 0) {
       setShowAlert(true);
     } else {
       cancelMultiDeletion();
@@ -121,11 +121,11 @@ const Categories = ({ navigation, route }: Props) => {
 
   const deleteSelection = () => {
     // cycle through selection and delete each ID
-    for (let i = 0; i < selection.current.length; i++) {
-      dispatch(removeCard({ id: selection.current[i], type: 'category' }));
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'category' }));
       // remove all favorites that belong to
-      // delete category 
-      dispatch(removeFavorite(selection.current[i]));
+      // delete category
+      dispatch(removeFavorite(selection[i]));
     }
     cancelMultiDeletion();
   };
@@ -161,14 +161,26 @@ const Categories = ({ navigation, route }: Props) => {
             </Button>
           </>
         ) : (
-          <Button
-            mode='text'
-            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-            color='tomato'
-            onPress={confirmAlert}
-          >
-            DELETE
-          </Button>
+          <>
+            <Button
+              mode='text'
+              style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
+              color='tomato'
+              onPress={confirmAlert}
+            >
+              {selection.length > 0 ? 'DELETE' : 'BACK'}
+            </Button>
+
+            <Button
+              mode='text'
+              style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
+              color='tomato'
+              onPress={clearSelection}
+              disabled={selection.length === 0}
+            >
+              CLEAR
+            </Button>
+          </>
         )}
       </View>
 
@@ -191,6 +203,8 @@ const Categories = ({ navigation, route }: Props) => {
                   handleEdit={editCategory}
                   markForDelete={selectItem}
                   handleDelete={deleteCategory}
+                  shouldAnimateEntry={true}
+                  selectedForDeletion={selection.includes(category._id)}
                   onPress={() => {
                     navigation.navigate('Sets', {
                       categoryRef: category._id,

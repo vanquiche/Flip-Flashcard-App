@@ -26,7 +26,6 @@ import swatchContext from '../contexts/swatchContext';
 import DEFAULT_SWATCH_LIST from '../assets/swatchList';
 import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
 
-
 const Tab = createBottomTabNavigator();
 
 const IndexScreen = () => {
@@ -44,110 +43,107 @@ const IndexScreen = () => {
 
   // HYDRATE DATA
   useEffect(() => {
-    // dispatch(getUserData());
-    // dispatch(getFavoriteSets());
-    // dispatch(getCards({ type: 'category', query: { type: 'category' } }));
-    dispatch(hydrateData())
+    dispatch(hydrateData());
   }, []);
 
   return (
-      <swatchContext.Provider value={{ colors, patterns }}>
-        <AlertNotification
-          dismiss={clearNotification}
-          visible={notification.show}
-          message={notification.message}
-        />
-        <StatusBar hidden />
-        <Tab.Navigator
-          screenOptions={{
-            tabBarStyle: {
-              backgroundColor: user.theme.tabColor,
-              height: 70,
-            },
-            tabBarShowLabel: false,
-            headerShown: false,
-          }}
-        >
-          {/* if there is no user then render Signup page, else render normal screens */}
-          {!user._id ? (
+    <swatchContext.Provider value={{ colors, patterns }}>
+      <AlertNotification
+        dismiss={clearNotification}
+        visible={notification.show}
+        message={notification.message}
+      />
+      <StatusBar hidden />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: user.theme.tabColor,
+            height: 70,
+          },
+          tabBarShowLabel: false,
+          headerShown: false,
+        }}
+      >
+        {/* if there is no user then render Signup page, else render normal screens */}
+        {!user._id ? (
+          <Tab.Screen
+            name='SignUp'
+            component={SignUp}
+            options={{
+              tabBarIconStyle: { display: 'none' },
+              tabBarStyle: { display: 'none' },
+            }}
+          />
+        ) : (
+          <>
             <Tab.Screen
-              name='SignUp'
-              component={SignUp}
+              name='Home-page'
+              component={HomeScreen}
               options={{
-                tabBarIconStyle: { display: 'none' },
-                tabBarStyle: { display: 'none' },
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='home'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
               }}
             />
-          ) : (
-            <>
-              <Tab.Screen
-                name='Home-page'
-                component={HomeScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => (
-                    <TabIcon
-                      icon='home'
-                      color={
-                        focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name='flashcards'
-                component={CategoryScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => (
-                    <TabIcon
-                      icon='cards'
-                      color={
-                        focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name='store'
-                component={ShopScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => (
-                    <TabIcon
-                      icon='store'
-                      color={
-                        focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name='Profile-page'
-                component={ProfileScreen}
-                options={{
-                  tabBarIcon: ({ focused }) => (
-                    <TabIcon
-                      icon='heart'
-                      color={
-                        focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
-                      }
-                    />
-                  ),
-                }}
-              />
-            </>
-          )}
-        </Tab.Navigator>
-      </swatchContext.Provider>
+            <Tab.Screen
+              name='flashcards'
+              component={CategoryScreen}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='card'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name='store'
+              component={ShopScreen}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='store'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name='Profile-page'
+              component={ProfileScreen}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <TabIcon
+                    icon='heart'
+                    color={
+                      focused
+                        ? user.theme.actionIconColor
+                        : user.theme.iconColor
+                    }
+                  />
+                ),
+              }}
+            />
+          </>
+        )}
+      </Tab.Navigator>
+    </swatchContext.Provider>
   );
 };
 

@@ -147,7 +147,7 @@ const Sets = ({ navigation, route }: Props) => {
   };
 
   const confirmAlert = () => {
-    if (selection.current.length > 0) {
+    if (selection.length > 0) {
       setShowAlert(true);
     } else {
       cancelMultiDeletion();
@@ -156,8 +156,8 @@ const Sets = ({ navigation, route }: Props) => {
 
   const deleteSelection = () => {
     // cycle through selection and delete each ID
-    for (let i = 0; i < selection.current.length; i++) {
-      dispatch(removeCard({ id: selection.current[i], type: 'set' }));
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'set' }));
     }
     cancelMultiDeletion();
   };
@@ -230,16 +230,14 @@ const Sets = ({ navigation, route }: Props) => {
               onPress={confirmAlert}
               style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
             >
-              DELETE
+              {selection.length > 0 ? 'DELETE' : 'BACK'}
             </Button>
             <Button
               mode='text'
               style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
               color='tomato'
-              onPress={() => {
-                clearSelection();
-                setMultiSelectMode(false);
-              }}
+              onPress={clearSelection}
+              disabled={selection.length === 0}
             >
               CLEAR
             </Button>
@@ -268,6 +266,7 @@ const Sets = ({ navigation, route }: Props) => {
                   markForDelete={selectItem}
                   handleDelete={deleteSet}
                   shouldAnimateEntry={renderCount.current > 2 ? true : false}
+                  selectedForDeletion={selection.includes(set._id)}
                   onPress={() =>
                     navigation.navigate('Cards', {
                       color: set.color,

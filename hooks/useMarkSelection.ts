@@ -1,23 +1,21 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 // import db from '../db-services'
 
 const useMarkSelection = () => {
-  const selection = useRef<string[]>([]);
+  const [selection, setSelection] = useState<string[]>([]);
 
   const selectItem = (item: string, notSelected: boolean) => {
     // if id has not been selected already then pushed to array
     if (notSelected) {
-      selection.current.push(item);
+      setSelection(prev => [...prev, item])
     } else {
       // remove id that has already been selected
-      const index = selection.current.findIndex((id) => id === item);
-      selection.current.splice(index, 1);
+      setSelection(prev => prev.filter(i => i !== item))
     }
-    // console.log(selection)
   };
 
   const clearSelection = () => {
-    selection.current = [];
+    setSelection([])
   };
 
 

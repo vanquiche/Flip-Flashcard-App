@@ -1,10 +1,6 @@
 import { View, ImageBackground, Pressable, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import React, {
-  useState,
-  useContext,
-  useEffect,
-} from 'react';
+import React, { useState, useContext } from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -33,25 +29,26 @@ interface Props {
   card: Collection;
   color?: string;
   multiSelect?: boolean;
+  shouldAnimateEntry?: boolean;
+  selectedForDeletion: boolean;
+  markForDelete: (id: any, state: boolean) => void;
   handleEdit: (card: any) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
-  markForDelete: (id: any, state: boolean) => void;
-  shouldAnimateEntry?: boolean;
 }
 
 const TitleCard = ({
   card,
   multiSelect,
+  shouldAnimateEntry,
+  selectedForDeletion,
   handleEdit,
   handleDelete,
   onPress,
   markForDelete,
-  shouldAnimateEntry,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
-  const [checked, setChecked] = useState(false);
 
   const { patterns } = useContext(swatchContext);
 
@@ -59,31 +56,18 @@ const TitleCard = ({
   const cardOpacity = useSharedValue(1);
   const cardScaleAnimatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: withSpring(cardOpacity.value),
+      opacity: withSpring(cardOpacity.value, undefined, () =>
+        selectedForDeletion
+          ? (cardOpacity.value = 0.5)
+          : (cardOpacity.value = 1)
+      ),
     };
-  });
-
-  const fadeCard = () => {
-    if (!checked) {
-      cardOpacity.value = 0.5;
-    } else {
-      cardOpacity.value = 1;
-    }
-  };
+  }, [selectedForDeletion]);
 
   // highlights and selects card for deletion
   const toggleSelection = () => {
-    fadeCard();
-    setChecked((check) => !check);
-    markForDelete(card._id, !checked);
+    markForDelete(card._id, !selectedForDeletion);
   };
-
-  useEffect(() => {
-    return () => {
-      cardOpacity.value = 1;
-      setChecked(false);
-    };
-  }, [multiSelect]);
 
   return (
     <>
@@ -112,11 +96,11 @@ const TitleCard = ({
         layout={Layout.springify().damping(15).delay(200)}
       >
         {/* indicator of card selection */}
-        {multiSelect && (
+        {selectedForDeletion && (
           <IconButton
             icon='close-thick'
             size={42}
-            color={checked ? 'white' : 'transparent'}
+            color={'white'}
             style={{ position: 'absolute', zIndex: 100 }}
           />
         )}
@@ -218,7 +202,8 @@ export default React.memo(TitleCard, (prev, next) => {
     prev.card.color === next.card.color &&
     prev.card?.design === next.card?.design &&
     prev.card?.favorite === next.card?.favorite &&
-    prev.multiSelect === next.multiSelect
+    prev.multiSelect === next.multiSelect &&
+    prev.selectedForDeletion === next.selectedForDeletion
   )
     return true;
   return false;

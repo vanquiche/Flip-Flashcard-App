@@ -118,7 +118,7 @@ const FlashCards = ({ navigation, route }: Props) => {
   };
 
   const confirmAlert = () => {
-    if (selection.current.length > 0) {
+    if (selection.length > 0) {
       setShowAlert(true);
     } else {
       cancelMultiDeletion();
@@ -127,8 +127,8 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   const deleteSelection = () => {
     // cycle through selection and delete each ID
-    for (let i = 0; i < selection.current.length; i++) {
-      dispatch(removeCard({ id: selection.current[i], type: 'flashcard' }));
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
     }
     cancelMultiDeletion();
   };
@@ -148,7 +148,7 @@ const FlashCards = ({ navigation, route }: Props) => {
     db.find({ _id: setRef }, (err: Error, docs: any) => {
       if (err) console.log(err);
       navigation.setOptions({
-        title: docs[0].name.toUpperCase(),
+        title: docs[0].name,
       });
       setSetName(docs[0].name);
     });
@@ -203,14 +203,25 @@ const FlashCards = ({ navigation, route }: Props) => {
             </Button>
           </>
         ) : (
+          <>
           <Button
             mode='text'
             color='tomato'
             onPress={confirmAlert}
             style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-          >
-            DELETE
+            >
+            {selection.length > 0 ? 'DELETE' : 'BACK'}
           </Button>
+             <Button
+            mode='text'
+            color='tomato'
+            onPress={clearSelection}
+            style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
+            disabled={selection.length === 0}
+            >
+            CLEAR
+          </Button>
+            </>
         )}
       </View>
 
@@ -251,6 +262,7 @@ const FlashCards = ({ navigation, route }: Props) => {
                   handleDelete={deleteCard}
                   markForDelete={selectItem}
                   shouldAnimateEntry={renderCount.current > 3 ? true : false}
+                  selectedForDeletion={selection.includes(card._id)}
                 />
               );
             })}

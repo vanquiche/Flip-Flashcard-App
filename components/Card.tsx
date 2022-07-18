@@ -36,12 +36,13 @@ interface Props {
   pattern?: any;
   patternList: Record<string, any>;
   multiSelect: boolean;
+  selectedForDeletion: boolean;
+  shouldAnimateEntry?: boolean;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
   onPress?: () => void;
   markForDelete: (id: any, state: boolean) => void;
-  shouldAnimateEntry?: boolean;
 }
 
 const Card = ({
@@ -49,15 +50,16 @@ const Card = ({
   color,
   pattern,
   patternList,
+  multiSelect,
+  shouldAnimateEntry,
+  selectedForDeletion,
   handleEdit,
   handleDelete,
-  multiSelect,
   markForDelete,
-  shouldAnimateEntry,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
 
   // animation values for card flip
   const cardFlip = useSharedValue(0);
@@ -66,9 +68,13 @@ const Card = ({
   const cardOpacity = useSharedValue(1);
   const cardOpacityAnimatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: withSpring(cardOpacity.value),
+      opacity: withSpring(cardOpacity.value, undefined, () =>
+        selectedForDeletion
+          ? (cardOpacity.value = 0.5)
+          : (cardOpacity.value = 1)
+      ),
     };
-  });
+  }, [selectedForDeletion]);
 
   const rStyles_card_container = useAnimatedStyle(() => {
     return {
@@ -105,13 +111,7 @@ const Card = ({
   };
 
   const toggleCheck = () => {
-    if (!checked) {
-      cardOpacity.value = 0.5;
-    } else {
-      cardOpacity.value = 1;
-    }
-    setChecked((check) => !check);
-    markForDelete(card._id, !checked);
+    markForDelete(card._id, !selectedForDeletion);
   };
 
   return (
@@ -142,7 +142,7 @@ const Card = ({
           <IconButton
             icon='close-thick'
             size={58}
-            color={checked ? 'white' : 'transparent'}
+            color={selectedForDeletion ? 'white' : 'transparent'}
             style={{ position: 'absolute', left: '35%', zIndex: 80 }}
           />
         )}
@@ -154,6 +154,7 @@ const Card = ({
               size={25}
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
+              disabled={multiSelect}
             />
             <IconButton
               icon='dots-horizontal'
@@ -161,6 +162,7 @@ const Card = ({
               size={25}
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
+              disabled={multiSelect}
             />
           </Animated.View>
         )}
@@ -286,11 +288,12 @@ const styles = StyleSheet.create({
     resizeMode: 'repeat',
   },
 });
-export default React.memo(Card, (prevProps, nextProps) => {
+export default React.memo(Card, (prev, next) => {
   if (
-    prevProps.card.prompt === nextProps.card.prompt &&
-    prevProps.card.solution === nextProps.card.solution &&
-    prevProps.multiSelect === nextProps.multiSelect
+    prev.card.prompt === next.card.prompt &&
+    prev.card.solution === next.card.solution &&
+    prev.multiSelect === next.multiSelect &&
+    prev.selectedForDeletion === next.selectedForDeletion
   )
     return true;
   return false;
