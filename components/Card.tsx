@@ -58,10 +58,6 @@ const Card = ({
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
-<<<<<<< HEAD
-  // const [checked, setChecked] = useState(false);
-=======
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
 
   // animation values for card flip
   const cardFlip = useSharedValue(0);
@@ -112,11 +108,7 @@ const Card = ({
     setCardFacingFront((prev) => !prev);
   };
 
-<<<<<<< HEAD
-  const toggleCheck = () => {
-=======
   const toggleSelection = () => {
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
     markForDelete(card._id, !selectedForDeletion);
   };
 

@@ -31,19 +31,11 @@ interface Props {
   multiSelect?: boolean;
   shouldAnimateEntry?: boolean;
   selectedForDeletion: boolean;
-<<<<<<< HEAD
-  markForDelete: (id: any, state: boolean) => void;
-  handleEdit: (card: any) => void;
-  handleDelete: (docId: string) => void;
-  handleColor?: () => void;
-  onPress?: () => void;
-=======
   onPress?: () => void;
   handleColor?: () => void;
   handleEdit: (card: any) => void;
   handleDelete: (docId: string) => void;
   markForDelete: (id: any, state: boolean) => void;
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
 }
 
 const TitleCard = ({
@@ -51,19 +43,12 @@ const TitleCard = ({
   multiSelect,
   shouldAnimateEntry,
   selectedForDeletion,
-<<<<<<< HEAD
-=======
   onPress,
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
   handleEdit,
   handleDelete,
   markForDelete,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
-<<<<<<< HEAD
-
-=======
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
   const { patterns } = useContext(swatchContext);
 
   // ANIMATION VALUES
@@ -217,10 +202,6 @@ export default React.memo(TitleCard, (prev, next) => {
     prev.multiSelect === next.multiSelect &&
     prev.card?.design === next.card?.design &&
     prev.card?.favorite === next.card?.favorite &&
-<<<<<<< HEAD
-    prev.multiSelect === next.multiSelect &&
-=======
->>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
     prev.selectedForDeletion === next.selectedForDeletion
   )
     return true;
