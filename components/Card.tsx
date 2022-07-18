@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import { Text, Title } from 'react-native-paper';
 import React, { useState } from 'react';
-import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -59,7 +58,10 @@ const Card = ({
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
+<<<<<<< HEAD
   // const [checked, setChecked] = useState(false);
+=======
+>>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
 
   // animation values for card flip
   const cardFlip = useSharedValue(0);
@@ -110,7 +112,11 @@ const Card = ({
     setCardFacingFront((prev) => !prev);
   };
 
+<<<<<<< HEAD
   const toggleCheck = () => {
+=======
+  const toggleSelection = () => {
+>>>>>>> 678bdec (update multiDelete hook to store id in state instead of ref for render)
     markForDelete(card._id, !selectedForDeletion);
   };
 
@@ -126,13 +132,15 @@ const Card = ({
       {/* Card */}
       <AnimatedPressable
         style={[
-          styles.card,
-          { backgroundColor: color },
+          {
+            ...styles.card,
+            backgroundColor: color,
+          },
           rStyles_card_container,
           cardOpacityAnimatedStyle,
         ]}
         // onPress={onPress}
-        onPress={multiSelect ? toggleCheck : flipCard}
+        onPress={multiSelect ? toggleSelection : flipCard}
         exiting={ZoomOut}
         entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
         layout={Layout.springify().damping(15).delay(200)}
@@ -176,8 +184,8 @@ const Card = ({
             source={patternList[pattern]}
           />
 
-          <Title style={[styles.cardTitle, { top: 0, left: 5 }]}>Q .</Title>
-          <View style={[styles.textBG, { backgroundColor: color }]}>
+          <Title style={{ ...styles.cardTitle, top: 0, left: 5 }}>Q .</Title>
+          <View style={{ ...styles.textBG, backgroundColor: color }}>
             <Text style={[styles.textContent]} numberOfLines={3}>
               {card.prompt}
             </Text>
