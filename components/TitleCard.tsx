@@ -104,7 +104,7 @@ const TitleCard = ({
           />
         )}
 
-        <Text style={[styles.textContent, { backgroundColor: card.color }]}>
+        <Text style={[styles.textContent]}>
           {card.name}
         </Text>
         <IconButton

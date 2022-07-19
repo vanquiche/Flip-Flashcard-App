@@ -9,18 +9,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import uuid from 'react-native-uuid';
 
 import Swatch from './Swatch';
 import { useSharedValue } from 'react-native-reanimated';
-
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -117,8 +111,6 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {useMemo(() => {
-
-
                   return swatches.map((swatch) => (
                     <Swatch
                       key={uuid.v4().toString()}
@@ -134,10 +126,11 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
             icon='menu-down'
             size={50}
             color='white'
-            style={[
-              { position: 'absolute', bottom: -47 },
-              { ...caretPosition.value },
-            ]}
+            style={{
+              ...caretPosition.value,
+              position: 'absolute',
+              bottom: -47,
+            }}
           />
         </Dialog>
       </Portal>
@@ -158,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 0,
     borderWidth: 2,
-    borderColor: 'white'
+    borderColor: 'white',
     // elevation: 0
   },
   dialog: {
@@ -172,7 +165,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 5,
+    padding: 5,
     position: 'relative',
   },
   list: {
