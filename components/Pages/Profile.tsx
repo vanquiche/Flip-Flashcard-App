@@ -38,6 +38,7 @@ const Profile = ({ navigation }: Props) => {
     <View style={s.screenWrapper}>
       <IconButton
         style={{ position: 'absolute', right: 0 }}
+        size={32}
         icon='brush-variant'
         color={user.theme.cardColor}
         onPress={() => navigation.navigate('Themes')}

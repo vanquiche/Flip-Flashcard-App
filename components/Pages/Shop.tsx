@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import React, { useCallback } from 'react';
-import { Button } from 'react-native-paper';
+import { Button, Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { updateUser } from '../../redux/userThunkActions';
@@ -95,10 +95,17 @@ const Shop = () => {
 
   return (
     <>
+      <View style={{ padding: 10, paddingHorizontal: 20 }}>
+        <Title style={{ color: user.theme.cardColor, textAlign: 'right' }}>
+          HEARTCOIN: {user.heartcoin}
+        </Title>
+      </View>
       <ScrollView>
-        <Text>COINS: {user.heartcoin}</Text>
         {/* SWATCH COLORS */}
-        <ShopCatalogue title='CARD COLORS' titleColor={user.theme.cardColor}>
+        <ShopCatalogue
+          title='CARD COLORS'
+          titleColor={user.theme.cardColor}
+        >
           {STORE_SWATCH_LIST.map((d, i) => (
             <ShopSwatchColor
               key={i}

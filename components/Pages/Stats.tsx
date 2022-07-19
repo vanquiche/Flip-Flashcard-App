@@ -130,6 +130,7 @@ const Stats = () => {
         <Button
           color={user.theme.cardColor}
           onPress={() => setCurrentWeek((prev) => prev + 1)}
+          disabled={currentWeek >= 12}
         >
           Prev
         </Button>

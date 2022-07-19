@@ -1,6 +1,20 @@
-import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  Image,
+} from 'react-native';
+import React, { useRef } from 'react';
 import { Title } from 'react-native-paper';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -11,31 +25,91 @@ interface Props {
 }
 
 const ShopCatalogue = ({ children, title, titleColor }: Props) => {
+  const scrollPosition = useSharedValue(0);
+  const arrowRightOpacity = useSharedValue(1);
+  const arrowLeftOpacity = useSharedValue(1);
+  const arrowRightFade = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(arrowRightOpacity.value, { duration: 75 }),
+    };
+  });
+  const arrowLeftFade = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(
+        scrollPosition.value > 0 ? arrowLeftOpacity.value : 0,
+        { duration: 75 }
+      ),
+    };
+  });
+  const arrowLeftVisible = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(scrollPosition.value > 0 ? 1 : 0, { duration: 100 }),
+    };
+  });
+
+  const arrowRightImg = require('../assets/images/right-arrow.png');
+  const arrowLeftImg = require('../assets/images/left-arrow.png');
+
   return (
-    <>
-      <Title style={[styles.title, { color: titleColor }]}>{title}</Title>
+    <View>
+      <Title style={{ ...styles.title, color: titleColor }}>{title}</Title>
+      <AnimatedImage
+        source={arrowRightImg}
+        style={[styles.rightArrow, arrowRightFade]}
+      />
+      <AnimatedImage
+        source={arrowLeftImg}
+        style={[
+          styles.leftArrow,
+          arrowLeftFade,
+          arrowLeftVisible,
+        ]}
+      />
       <ScrollView
         horizontal
         scrollEnabled
-        persistentScrollbar={false}
+        scrollEventThrottle={275}
         contentContainerStyle={styles.container}
+        onScrollBeginDrag={() => {
+          arrowRightOpacity.value = 0;
+          arrowLeftOpacity.value = 0;
+        }}
+        onMomentumScrollEnd={(e) => {
+          arrowRightOpacity.value = 1;
+          arrowLeftOpacity.value = 1;
+          scrollPosition.value = e.nativeEvent.contentOffset.x;
+        }}
       >
         {children}
       </ScrollView>
-    </>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     paddingTop: 10,
     paddingHorizontal: 10,
-    marginBottom: 30
+    marginBottom: 30,
   },
   title: {
-    // position: 'absolute',
-    // top: 0,
     textAlign: 'center',
     width: SCREEN_WIDTH,
+  },
+  rightArrow: {
+    position: 'absolute',
+    right: 10,
+    top: '49%',
+    zIndex: 100,
+    width: 16,
+    height: 16,
+  },
+  leftArrow: {
+    position: 'absolute',
+    left: 10,
+    top: '49%',
+    zIndex: 100,
+    width: 16,
+    height: 16,
   },
 });
 export default ShopCatalogue;

@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import { PRELOAD_IMGS } from './assets/patterns/defaultPatterns';
+import PRELOAD_IMGS from './assets/preloadImages';
 
 import 'react-native-gesture-handler';
 

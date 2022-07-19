@@ -12,14 +12,7 @@ export const STORE_PATTERNS: Record<string, any> = {
   dots: require('./dots.png')
 };
 
-export const PRELOAD_IMGS = [
-    require('./pattern.png'),
-    require('./heart.png'),
-    require('./square-pattern.png'),
-    require('./floor.png'),
-    require('./circle-outline.png'),
-    require('./dots.png'),
-  ];
+
 
 export default DEFAULT_PATTERNS;
 
