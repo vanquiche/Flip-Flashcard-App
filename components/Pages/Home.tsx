@@ -72,7 +72,7 @@ const Home = ({ navigation, route }: Props) => {
       dispatch(
         checkLogin({
           streak: user.streak,
-          logins: user.login,
+          login: user.login,
           heartcoin: user.heartcoin,
         })
       );
@@ -83,13 +83,6 @@ const Home = ({ navigation, route }: Props) => {
   return (
     <View style={s.screenWrapper}>
       <Suspense fallback={<ActivityIndicator />}>
-        {/* <Button
-          color='black'
-          onPress={() => navigation.navigate('Stats')}
-          style={{ margin: 0 }}
-        >
-          STATS
-        </Button> */}
 
         <View
           style={{

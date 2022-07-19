@@ -56,15 +56,16 @@ interface LoginObject {
   streak: number;
   heartcoin: number;
   completedQuiz: [];
+  inStreak: boolean;
 }
 
 export const checkLogin = createAsyncThunk(
   'store/checkLogin',
-  (payload: { logins: string[]; streak: number; heartcoin: number }) => {
+  (payload: { login: string[]; streak: number; heartcoin: number }) => {
     return new Promise<void | LoginObject>((resolve, reject) => {
       const dt = DateTime;
 
-      const loggedInLast = payload.logins[payload.logins.length - 1];
+      const loggedInLast = payload.login[payload.login.length - 1];
 
       const sameday = dt.now().weekday === dt.fromISO(loggedInLast).weekday;
 
@@ -73,7 +74,7 @@ export const checkLogin = createAsyncThunk(
         resolve();
       } else if (!sameday) {
         // return an updated array of logins
-        const updatedWeek = sortWeek(payload.logins);
+        const updatedWeek = sortWeek(payload.login);
         // check if user is in streak
         const inStreak = loginStreak(loggedInLast);
         // if user is in streak then increment
@@ -86,6 +87,7 @@ export const checkLogin = createAsyncThunk(
           heartcoin: coins,
           completedQuiz: [],
           login: updatedWeek,
+          inStreak: inStreak ? true : false
         };
 
         db.update(

@@ -5,10 +5,11 @@ import React from 'react';
 interface Props {
   message: string;
   visible: boolean;
+  textColor?: string;
+  bgColor?: string;
   dismiss: () => void;
 }
-const AlertNotification = ({ message, visible, dismiss }: Props) => {
-  const { colors } = useTheme();
+const AlertNotification = ({ message, visible, textColor, bgColor, dismiss }: Props) => {
 
   return (
     <Portal>
@@ -17,10 +18,10 @@ const AlertNotification = ({ message, visible, dismiss }: Props) => {
         onDismiss={dismiss}
         contentContainerStyle={[
           styles.container,
-          { backgroundColor: colors.primary },
+          { backgroundColor: bgColor },
         ]}
       >
-        <Title style={{ color: colors.secondary }}>{message.toUpperCase()}</Title>
+        <Title style={{ color: textColor }}>{message.toUpperCase()}</Title>
       </Modal>
     </Portal>
   );
@@ -33,7 +34,8 @@ const styles = StyleSheet.create({
     margin: 30,
     borderRadius: 15,
     minHeight: 150,
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: 'white'
   },
 });
 

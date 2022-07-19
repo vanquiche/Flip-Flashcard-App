@@ -214,6 +214,10 @@ export const storeSlice = createSlice({
         // check-in is younger than 24h
         if (action.payload) {
           Object.assign(state.user, action.payload);
+          if (action.payload.inStreak) {
+            state.notification.show = true;
+            state.notification.message = 'you earned 5 coins for logging in consecutively'
+          }
         }
         // return original state if no payload recieved
         else return state;

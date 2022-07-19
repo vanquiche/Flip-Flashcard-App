@@ -52,6 +52,8 @@ const IndexScreen = () => {
         dismiss={clearNotification}
         visible={notification.show}
         message={notification.message}
+        bgColor={user.theme.cardColor}
+        textColor={user.theme.fontColor}
       />
       <StatusBar hidden />
       <Tab.Navigator
