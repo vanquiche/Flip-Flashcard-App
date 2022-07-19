@@ -216,7 +216,7 @@ export const storeSlice = createSlice({
           Object.assign(state.user, action.payload);
           if (action.payload.inStreak) {
             state.notification.show = true;
-            state.notification.message = 'you earned 5 coins for logging in consecutively'
+            state.notification.message = 'login streak bonus: 5 heartcoins'
           }
         }
         // return original state if no payload recieved
