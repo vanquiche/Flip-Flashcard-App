@@ -49,12 +49,6 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
     };
   });
 
-  const arrowRightVisible = useAnimatedStyle(() => {
-    return {
-      opacity: withTiming(scrollPosition.value > 0 ? 1 : 0, { duration: 0 }),
-    };
-  });
-
   const arrowRightImg = require('../assets/images/right-arrow.png');
   const arrowLeftImg = require('../assets/images/left-arrow.png');
 
