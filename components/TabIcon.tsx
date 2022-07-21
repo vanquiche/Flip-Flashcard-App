@@ -1,13 +1,37 @@
 import { IconButton } from 'react-native-paper';
+import { View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  FadeIn,
+  withTiming,
+} from 'react-native-reanimated';
 
-const TabIcon = (props: { icon: string; color?: string }) => {
+interface Props {
+  icon: string;
+  color?: string;
+  focused?: boolean;
+}
+
+const TabIcon = ({ icon, color, focused }: Props) => {
+  // const flip = useSharedValue(focused ? -8 : 0);
+
+  // const flipAnimate = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [{ translateY: withSpring(flip.value) }],
+  //   };
+  // }, [focused]);
+
   return (
-    <IconButton
-      icon={props.icon}
-      size={27}
-      color={props.color}
-      style={{ marginTop: 5 }}
-    />
+
+      <IconButton
+        icon={icon}
+        size={27}
+        color={color}
+        style={{ marginTop: 5 }}
+      />
+
   );
 };
 

@@ -85,6 +85,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <TabIcon
                     icon='home'
+                    focused={focused}
                     color={
                       focused
                         ? user.theme.actionIconColor
@@ -101,6 +102,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <TabIcon
                     icon='card'
+                    focused={focused}
                     color={
                       focused
                         ? user.theme.actionIconColor
@@ -117,6 +119,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <TabIcon
                     icon='store'
+                    focused={focused}
                     color={
                       focused
                         ? user.theme.actionIconColor
@@ -133,6 +136,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <TabIcon
                     icon='heart'
+                    focused={focused}
                     color={
                       focused
                         ? user.theme.actionIconColor

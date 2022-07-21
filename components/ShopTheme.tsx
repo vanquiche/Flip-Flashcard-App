@@ -6,6 +6,7 @@ import AlertDialog from './AlertDialog';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { IconButton, Title } from 'react-native-paper';
+import fontColorContrast from 'font-color-contrast';
 
 interface Props {
   theme: Theme;
@@ -49,7 +50,14 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
             style={styles.icon}
           />
         ) : (
-          <Title style={styles.price}>{price}</Title>
+          <Title
+            style={{
+              ...styles.price,
+              color: fontColorContrast(theme.cardColor, 0.7),
+            }}
+          >
+            {price}
+          </Title>
         )}
 
         <ThemeDisplay theme={theme} style={{ marginHorizontal: 10 }} />

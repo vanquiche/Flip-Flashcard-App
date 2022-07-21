@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   rightArrow: {
     position: 'absolute',
-    right: 10,
+    right: 0,
     top: '49%',
     zIndex: 100,
     width: 16,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   leftArrow: {
     position: 'absolute',
-    left: 10,
+    left: 0,
     top: '49%',
     zIndex: 100,
     width: 16,
