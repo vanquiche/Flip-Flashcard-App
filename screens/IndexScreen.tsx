@@ -1,5 +1,5 @@
-import { StatusBar, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { StatusBar, View, Text } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
 import { IconButton, useTheme } from 'react-native-paper';
 
 // COMPONENTS
@@ -25,12 +25,72 @@ import { getCards } from '../redux/cardThunkActions';
 import swatchContext from '../contexts/swatchContext';
 import DEFAULT_SWATCH_LIST from '../assets/swatchList';
 import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  interpolateColor,
+  withSpring,
+} from 'react-native-reanimated';
 
 const Tab = createBottomTabNavigator();
+
+// animation values
+const SPIN_START = 0;
+const SPIN_END = 180;
+const SCALE_START = 1;
+const SCALE_END = 1.3;
 
 const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
+
+  const homeIconSpin = useSharedValue(SPIN_START);
+  const homeIconScale = useSharedValue(SCALE_START);
+
+  const cardIconFlip = useSharedValue(SPIN_START);
+  const cardIconScale = useSharedValue(SCALE_START);
+
+  const shopIconFlip = useSharedValue(SPIN_START);
+  const shopIconScale = useSharedValue(SCALE_START);
+  
+  const profileIconFlip = useSharedValue(SPIN_START);
+  const profileIconScale = useSharedValue(SCALE_START);
+
+  const homeAnimate = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateY: withSpring(homeIconSpin.value + 'deg') },
+        { scale: withSpring(homeIconScale.value) },
+      ],
+    };
+  });
+
+  const shopAnimate = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateY: withSpring(shopIconFlip.value + 'deg') },
+        { scale: withSpring(shopIconScale.value) },
+      ],
+    };
+  });
+
+  const profileAnimate = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateY: withSpring(profileIconFlip.value + 'deg') },
+        { scale: withSpring(profileIconScale.value) },
+      ],
+    };
+  });
+
+  const cardAnimate = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateX: withSpring(cardIconFlip.value + 'deg') },
+        { scale: withSpring(cardIconScale.value) },
+      ],
+    };
+  });
 
   // swatch colors and patterns for swatch selector
   // passed through context
@@ -83,16 +143,27 @@ const IndexScreen = () => {
               component={HomeScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <TabIcon
-                    icon='home'
-                    focused={focused}
-                    color={
-                      focused
-                        ? user.theme.actionIconColor
-                        : user.theme.iconColor
-                    }
-                  />
+                  <Animated.View style={homeAnimate}>
+                    <TabIcon
+                      icon='home'
+                      color={
+                        focused
+                          ? user.theme.actionIconColor
+                          : user.theme.iconColor
+                      }
+                    />
+                  </Animated.View>
                 ),
+              }}
+              listeners={{
+                focus: () => {
+                  homeIconSpin.value = SPIN_END;
+                  homeIconScale.value = SCALE_END;
+                },
+                blur: () => {
+                  homeIconSpin.value = SPIN_START;
+                  homeIconScale.value = SCALE_START;
+                },
               }}
             />
             <Tab.Screen
@@ -100,16 +171,27 @@ const IndexScreen = () => {
               component={CategoryScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <TabIcon
-                    icon='card'
-                    focused={focused}
-                    color={
-                      focused
-                        ? user.theme.actionIconColor
-                        : user.theme.iconColor
-                    }
-                  />
+                  <Animated.View style={cardAnimate}>
+                    <TabIcon
+                      icon='card'
+                      color={
+                        focused
+                          ? user.theme.actionIconColor
+                          : user.theme.iconColor
+                      }
+                    />
+                  </Animated.View>
                 ),
+              }}
+              listeners={{
+                focus: () => {
+                  cardIconFlip.value = SPIN_END;
+                  cardIconScale.value = SCALE_END;
+                },
+                blur: () => {
+                  cardIconFlip.value = SPIN_START;
+                  cardIconScale.value = SCALE_START;
+                },
               }}
             />
             <Tab.Screen
@@ -117,16 +199,28 @@ const IndexScreen = () => {
               component={ShopScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <TabIcon
-                    icon='store'
-                    focused={focused}
-                    color={
-                      focused
-                        ? user.theme.actionIconColor
-                        : user.theme.iconColor
-                    }
-                  />
+                  <Animated.View style={shopAnimate}>
+                    <TabIcon
+                      icon='store'
+                      focused={focused}
+                      color={
+                        focused
+                          ? user.theme.actionIconColor
+                          : user.theme.iconColor
+                      }
+                    />
+                  </Animated.View>
                 ),
+              }}
+              listeners={{
+                focus: () => {
+                  shopIconFlip.value = SPIN_END;
+                  shopIconScale.value = SCALE_END;
+                },
+                blur: () => {
+                  shopIconFlip.value = SPIN_START;
+                  shopIconScale.value = SCALE_START;
+                },
               }}
             />
             <Tab.Screen
@@ -134,16 +228,28 @@ const IndexScreen = () => {
               component={ProfileScreen}
               options={{
                 tabBarIcon: ({ focused }) => (
-                  <TabIcon
-                    icon='heart'
-                    focused={focused}
-                    color={
-                      focused
-                        ? user.theme.actionIconColor
-                        : user.theme.iconColor
-                    }
-                  />
+                  <Animated.View style={profileAnimate}>
+                    <TabIcon
+                      icon='heart'
+                      focused={focused}
+                      color={
+                        focused
+                          ? user.theme.actionIconColor
+                          : user.theme.iconColor
+                      }
+                    />
+                  </Animated.View>
                 ),
+              }}
+              listeners={{
+                focus: () => {
+                  profileIconFlip.value = SPIN_END;
+                  profileIconScale.value = SCALE_END;
+                },
+                blur: () => {
+                  profileIconFlip.value = SPIN_START;
+                  profileIconScale.value = SCALE_START;
+                },
               }}
             />
           </>
