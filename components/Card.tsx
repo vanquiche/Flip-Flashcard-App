@@ -17,6 +17,7 @@ import Animated, {
   withSpring,
   FadeIn,
 } from 'react-native-reanimated';
+import fontColorContrast from 'font-color-contrast';
 import { IconButton } from 'react-native-paper';
 
 import { Flashcard } from './types';
@@ -150,7 +151,7 @@ const Card = ({
           <Animated.View style={styles.btnContainer} entering={FadeIn}>
             <IconButton
               icon='close'
-              color='white'
+              color={color ? fontColorContrast(color, 0.7) : 'white'}
               size={25}
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
@@ -158,7 +159,7 @@ const Card = ({
             />
             <IconButton
               icon='dots-horizontal'
-              color='white'
+              color={color ? fontColorContrast(color, 0.7) : 'white'}
               size={25}
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
@@ -170,30 +171,53 @@ const Card = ({
         {/* FRONT OF CARD */}
         <Animated.View style={[styles.textContainer, rStyles_card_front]}>
           {/* CARD DESIGN */}
+
+          <Title
+            style={{
+              ...styles.cardTitle,
+              top: 0,
+              left: 5,
+              color: color ? fontColorContrast(color, 0.7) : 'white',
+            }}
+          >
+            Q .
+          </Title>
+          <Text
+            style={{
+              ...styles.textContent,
+              color: color ? fontColorContrast(color, 0.7) : 'white',
+            }}
+            numberOfLines={3}
+          >
+            {card.prompt}
+          </Text>
           <ImageBackground
             style={styles.cardPattern}
             imageStyle={styles.image}
             source={patternList[pattern]}
           />
-
-          <Title style={{ ...styles.cardTitle, top: 0, left: 5 }}>Q .</Title>
-          <View style={{ ...styles.textBG, backgroundColor: color }}>
-            <Text style={[styles.textContent]} numberOfLines={3}>
-              {card.prompt}
-            </Text>
-          </View>
         </Animated.View>
 
         {/* BACK OF CARD */}
         <Animated.View style={[styles.textContainer, rStyles_card_back]}>
-          <Text style={[styles.textContent, styles.cardBackText]}>
+          <Text
+            style={{
+              ...styles.textContent,
+              ...styles.cardBackText,
+              color: color ? fontColorContrast(color, 0.7) : 'white',
+            }}
+          >
             {card.solution}
           </Text>
           <Title
             style={[
               styles.cardBackText,
               styles.cardTitle,
-              { bottom: 0, left: 5 },
+              {
+                bottom: 0,
+                left: 5,
+                color: color ? fontColorContrast(color, 0.7) : 'white',
+              },
             ]}
           >
             A .
@@ -243,6 +267,7 @@ const styles = StyleSheet.create({
     // marginVertical: 10,
     backfaceVisibility: 'hidden',
     lineHeight: 30,
+    zIndex: 50,
   },
   textContainer: {
     width: '100%',
@@ -251,7 +276,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backfaceVisibility: 'hidden',
-    // padding: 20,
   },
   cardBackText: {
     transform: [{ scaleY: -1 }],
@@ -265,6 +289,7 @@ const styles = StyleSheet.create({
     color: 'white',
     position: 'absolute',
     fontSize: 26,
+    zIndex: 50,
   },
 
   popup: {
@@ -275,8 +300,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    zIndex: 20,
-    opacity: 0.3,
+    zIndex: 10,
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -286,6 +310,7 @@ const styles = StyleSheet.create({
     width: 256,
     transform: [{ translateX: -15 }, { translateY: -15 }],
     resizeMode: 'repeat',
+    opacity: 0.3,
   },
 });
 export default React.memo(Card, (prev, next) => {

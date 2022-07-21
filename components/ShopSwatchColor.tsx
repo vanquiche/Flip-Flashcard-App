@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
+import fontColorContrast from 'font-color-contrast';
 
 interface Props {
   color: string;
@@ -55,7 +56,11 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
             size={75}
           />
         ) : (
-          <Title style={styles.price}>{price}</Title>
+          <Title
+            style={{ ...styles.price, color: fontColorContrast(color, 0.7) }}
+          >
+            {price}
+          </Title>
         )}
       </Pressable>
     </>

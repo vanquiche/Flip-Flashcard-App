@@ -9,6 +9,7 @@ import Animated, {
   ZoomOut,
   withSpring,
 } from 'react-native-reanimated';
+import fontColorContrast from 'font-color-contrast';
 
 import AlertDialog from './AlertDialog';
 import swatchContext from '../contexts/swatchContext';
@@ -104,12 +105,17 @@ const TitleCard = ({
           />
         )}
 
-        <Text style={[styles.textContent]}>
+        <Text
+          style={[
+            styles.textContent,
+            { color: fontColorContrast(card.color, 0.7) },
+          ]}
+        >
           {card.name}
         </Text>
         <IconButton
           icon='close'
-          color='white'
+          color={fontColorContrast(card.color, 0.7)}
           size={17}
           style={styles.deleteBtn}
           onPress={() => setShowAlert(true)}
@@ -117,7 +123,7 @@ const TitleCard = ({
         />
         <IconButton
           icon='dots-horizontal'
-          color='white'
+          color={fontColorContrast(card.color, 0.7)}
           size={20}
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
@@ -132,7 +138,11 @@ const TitleCard = ({
           />
         )}
         {card.favorite && (
-          <IconButton icon='heart' color='white' style={styles.favicon} />
+          <IconButton
+            icon='heart'
+            color={fontColorContrast(card.color, 0.7)}
+            style={styles.favicon}
+          />
         )}
       </AnimatedPressable>
     </>

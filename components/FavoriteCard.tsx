@@ -3,6 +3,7 @@ import { Title } from 'react-native-paper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import fontColorContrast from 'font-color-contrast';
 
 interface Collection {
   _id: string;
@@ -23,12 +24,14 @@ interface Props {
 const FavoriteCard = ({ card, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
 
+  const _fontColor = fontColorContrast(card.color, 0.7);
+
   return (
     <Pressable
       style={[styles.card, { backgroundColor: card.color }]}
       onPress={onPress}
     >
-      <Title style={[styles.textContent, { color: user.theme.fontColor }]}>
+      <Title style={[styles.textContent, { color: _fontColor }]}>
         {card.name}
       </Title>
     </Pressable>

@@ -15,8 +15,7 @@ export default StyleSheet.create({
   cardActionButton: {
     marginVertical: 10,
     height: 50,
-    minWidth: 50,
-    maxWidth: 100,
+    width: 85,
     elevation: 0,
     justifyContent: 'center',
   },
