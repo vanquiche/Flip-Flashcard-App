@@ -53,7 +53,7 @@ const Quiz = ({
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [cardCount, setCardCount] = useState(0);
   const [answer, setAnswer] = useState('');
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState<boolean>();
 
   // VIEW STATE
   const [startQuiz, setStartQuiz] = useState(false);
@@ -86,15 +86,14 @@ const Quiz = ({
   const checkAnswer = () => {
     if (submitted) return;
     // check and remove trailing space and case sensitivity
-    const userInput = answer.replace(/[ \t]+$/gm, '').toLowerCase();
-    const solution = flashcards[cardCount].solution
-      .replace(/[ \t]+$/gm, '')
-      .toLowerCase();
-    if (userInput === solution) {
-      setResult('Correct!');
+    const userInput = answer.trim().toLowerCase();
+    const solution = flashcards[cardCount].solution.trim().toLowerCase();
+
+    if (userInput == solution) {
+      setResult(true);
       score.current++;
     } else {
-      setResult('Incorrect!');
+      setResult(false);
     }
     setSubmitted(true);
   };
@@ -136,16 +135,19 @@ const Quiz = ({
       const update = [...user.completedQuiz, setRef];
 
       // add points to category
-      await db.findOne({ _id: categoryRef, type: 'category' }, (err: Error, doc: Category) => {
-        if (doc) {
-          dispatch(
-            updateCard({
-              card: doc,
-              query: { points: awardPoints + categoryXP },
-            })
-          );
+      await db.findOne(
+        { _id: categoryRef, type: 'category' },
+        (err: Error, doc: Category) => {
+          if (doc) {
+            dispatch(
+              updateCard({
+                card: doc,
+                query: { points: awardPoints + categoryXP },
+              })
+            );
+          }
         }
-      });
+      );
       // add points to user
       // add set to reference
       // can only earn points once/day

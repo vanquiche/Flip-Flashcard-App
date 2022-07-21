@@ -1,10 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ImageBackground,
-
-} from 'react-native';
+import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {
   IconButton,
@@ -21,7 +15,10 @@ import Animated, {
   withSpring,
   SlideOutLeft,
   SlideInRight,
+  FadeInUp,
+  FadeInDown,
 } from 'react-native-reanimated';
+import fontColorContrast from 'font-color-contrast';
 
 import { Flashcard } from './types';
 
@@ -39,7 +36,7 @@ interface Props {
   slideRemaining?: boolean;
   showSolution?: boolean;
   nextCard?: () => void;
-  result: string;
+  result?: boolean;
 }
 
 const Card = ({
@@ -57,6 +54,7 @@ const Card = ({
   const [cardFacingFront, setCardFacingFront] = useState(true);
 
   const { colors } = useTheme();
+  const _fontColor = fontColorContrast(color, 0.7);
 
   const cardFlip = useSharedValue(0);
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
@@ -110,67 +108,85 @@ const Card = ({
 
   return (
     // CARD CONTAINER
-    <Animated.View
-      style={[styles.container, styles.shadow]}
-      entering={SlideInRight.delay(250)}
-      exiting={SlideOutLeft}
-    >
-      <Animated.View
-        style={[
-          styles.card,
-          { backgroundColor: color },
-          rStyles_card_container,
-        ]}
-      >
-        {/* front of card - prompt */}
-        <Animated.View style={[styles.textContainer, rStyles_card_front]}>
-          <ImageBackground
-            resizeMode='repeat'
-            imageStyle={[styles.image]}
-            style={styles.cardPattern}
-            source={patternList[pattern]}
-          />
-          <Title style={styles.cardTitle}>Q .</Title>
-          <Text style={styles.text}>{card.prompt}</Text>
-        </Animated.View>
-
-        {/* back of card - solution */}
-        <Animated.View style={[styles.textContainer, rStyles_card_back]}>
-          <Text style={[styles.text, styles.cardBackText]}>
-            {card.solution}
-          </Text>
-          <Title style={[styles.cardBackText, styles.cardTitle]}>A .</Title>
-          <Text
-            style={[
-              styles.text,
-              styles.cardBackText,
-              { position: 'absolute', bottom: -10 },
-            ]}
-            // entering={ZoomIn.delay(300)}
-          >
-            {result.toUpperCase()}
-          </Text>
-        </Animated.View>
-      </Animated.View>
-
-      <IconButton
-        style={[styles.button, { bottom: 20 }]}
-        icon='sync'
-        color='white'
-        onPress={flipCard}
-        disabled={!canFlip}
-      />
-      {!slideRemaining && (
-        <IconButton
-          style={[styles.button, { right: -20 }]}
-          icon='arrow-right-thick'
-          color={colors.secondary}
-          size={26}
-          onPress={nextCard}
-          disabled={!next}
-        />
+    <>
+      {showSolution && (
+        <Animated.Text
+          style={{ ...styles.points, color: result ? 'green' : 'tomato' }}
+          entering={FadeInDown.delay(1000)}
+        >
+          {result ? 'CORRECT!' : 'INCORRECT!'}
+        </Animated.Text>
       )}
-    </Animated.View>
+      <Animated.View
+        style={[styles.container]}
+        entering={SlideInRight.delay(250)}
+        exiting={SlideOutLeft}
+      >
+        <Animated.View
+          style={[
+            styles.card,
+            { backgroundColor: color },
+            rStyles_card_container,
+          ]}
+        >
+          {/* front of card - prompt */}
+          <Animated.View style={[styles.textContainer, rStyles_card_front]}>
+            <ImageBackground
+              resizeMode='repeat'
+              imageStyle={[styles.image]}
+              style={styles.cardPattern}
+              source={patternList[pattern]}
+            />
+            <Title style={{ ...styles.cardTitle, color: _fontColor }}>
+              Q .
+            </Title>
+            <Text style={{ ...styles.text, color: _fontColor }}>
+              {card.prompt}
+            </Text>
+          </Animated.View>
+
+          {/* back of card - solution */}
+          <Animated.View style={[styles.textContainer, rStyles_card_back]}>
+            <Text
+              style={{
+                ...styles.text,
+                ...styles.cardBackText,
+                color: _fontColor,
+              }}
+            >
+              {card.solution}
+            </Text>
+            <Title
+              style={{
+                ...styles.cardBackText,
+                ...styles.cardTitle,
+                color: _fontColor,
+              }}
+            >
+              A .
+            </Title>
+          </Animated.View>
+        </Animated.View>
+
+        <IconButton
+          style={[styles.button, { bottom: 20 }]}
+          icon='sync'
+          color='white'
+          onPress={flipCard}
+          disabled={!canFlip}
+        />
+        {!slideRemaining && (
+          <IconButton
+            style={[styles.button, { right: -20 }]}
+            icon='arrow-right-thick'
+            color={colors.secondary}
+            size={26}
+            onPress={nextCard}
+            disabled={!next}
+          />
+        )}
+      </Animated.View>
+    </>
   );
 };
 
@@ -221,23 +237,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 100,
   },
-  shadow: {
-    // shadowColor: 'black',
-    // shadowOffset: { width: 2, height: 10 },
-    // shadowOpacity: 0.15,
-    // shadowRadius: 5,
-  },
   cardPattern: {
     // flex: 1,
     width: '100%',
     height: '100%',
     position: 'absolute',
-
   },
   image: {
     tintColor: 'white',
     opacity: 0.3,
     borderRadius: 10,
+  },
+  points: {
+    position: 'absolute',
+    top: -50,
+    // right: 65,
+    zIndex: 100,
+    fontSize: 28,
+    fontFamily: 'BalooBhaiExtraBold',
   },
 });
 
