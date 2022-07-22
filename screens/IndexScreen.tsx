@@ -52,15 +52,15 @@ const IndexScreen = () => {
 
   const shopIconFlip = useSharedValue(SPIN_START);
   const shopIconScale = useSharedValue(SCALE_START);
-  
+
   const profileIconFlip = useSharedValue(SPIN_START);
   const profileIconScale = useSharedValue(SCALE_START);
 
   const homeAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateY: withSpring(homeIconSpin.value + 'deg') },
-        { scale: withSpring(homeIconScale.value) },
+        { rotateY: homeIconSpin.value + 'deg' },
+        { scale: homeIconScale.value },
       ],
     };
   });
@@ -68,8 +68,8 @@ const IndexScreen = () => {
   const shopAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateY: withSpring(shopIconFlip.value + 'deg') },
-        { scale: withSpring(shopIconScale.value) },
+        { rotateY: shopIconFlip.value + 'deg' },
+        { scale: shopIconScale.value },
       ],
     };
   });
@@ -77,8 +77,8 @@ const IndexScreen = () => {
   const profileAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateY: withSpring(profileIconFlip.value + 'deg') },
-        { scale: withSpring(profileIconScale.value) },
+        { rotateY: profileIconFlip.value + 'deg'},
+        { scale: profileIconScale.value },
       ],
     };
   });
@@ -86,8 +86,8 @@ const IndexScreen = () => {
   const cardAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateX: withSpring(cardIconFlip.value + 'deg') },
-        { scale: withSpring(cardIconScale.value) },
+        { rotateX: cardIconFlip.value + 'deg' },
+        { scale: cardIconScale.value },
       ],
     };
   });
@@ -145,7 +145,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <Animated.View style={homeAnimate}>
                     <TabIcon
-                      icon='home'
+                      icon='home-variant'
                       color={
                         focused
                           ? user.theme.actionIconColor
@@ -157,12 +157,12 @@ const IndexScreen = () => {
               }}
               listeners={{
                 focus: () => {
-                  homeIconSpin.value = SPIN_END;
-                  homeIconScale.value = SCALE_END;
+                  homeIconSpin.value = withSpring(SPIN_END);
+                  homeIconScale.value = withSpring(SCALE_END);
                 },
                 blur: () => {
                   homeIconSpin.value = SPIN_START;
-                  homeIconScale.value = SCALE_START;
+                  homeIconScale.value = withSpring(SCALE_START);
                 },
               }}
             />
@@ -185,12 +185,12 @@ const IndexScreen = () => {
               }}
               listeners={{
                 focus: () => {
-                  cardIconFlip.value = SPIN_END;
-                  cardIconScale.value = SCALE_END;
+                  cardIconFlip.value = withSpring(SPIN_END);
+                  cardIconScale.value = withSpring(SCALE_END);
                 },
                 blur: () => {
                   cardIconFlip.value = SPIN_START;
-                  cardIconScale.value = SCALE_START;
+                  cardIconScale.value = withSpring(SCALE_START);
                 },
               }}
             />
@@ -201,7 +201,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <Animated.View style={shopAnimate}>
                     <TabIcon
-                      icon='store'
+                      icon='circle'
                       focused={focused}
                       color={
                         focused
@@ -214,12 +214,12 @@ const IndexScreen = () => {
               }}
               listeners={{
                 focus: () => {
-                  shopIconFlip.value = SPIN_END;
-                  shopIconScale.value = SCALE_END;
+                  shopIconFlip.value = withSpring(SPIN_END);
+                  shopIconScale.value = withSpring(SCALE_END);
                 },
                 blur: () => {
                   shopIconFlip.value = SPIN_START;
-                  shopIconScale.value = SCALE_START;
+                  shopIconScale.value = withSpring(SCALE_START);
                 },
               }}
             />
@@ -243,12 +243,12 @@ const IndexScreen = () => {
               }}
               listeners={{
                 focus: () => {
-                  profileIconFlip.value = SPIN_END;
-                  profileIconScale.value = SCALE_END;
+                  profileIconFlip.value = withSpring(SPIN_END);
+                  profileIconScale.value = withSpring(SCALE_END);
                 },
                 blur: () => {
                   profileIconFlip.value = SPIN_START;
-                  profileIconScale.value = SCALE_START;
+                  profileIconScale.value = withSpring(SCALE_START);
                 },
               }}
             />
