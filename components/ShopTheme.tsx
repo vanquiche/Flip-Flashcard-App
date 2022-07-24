@@ -69,11 +69,11 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
 const styles = StyleSheet.create({
   price: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 26,
     position: 'absolute',
     zIndex: 20,
-    left: '45%',
-    top: '45%',
+    left: '42%',
+    top: '44%',
   },
   icon: {
     position: 'absolute',

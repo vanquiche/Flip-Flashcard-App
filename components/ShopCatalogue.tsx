@@ -13,8 +13,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AntDesign } from '@expo/vector-icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -49,20 +48,17 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
     };
   });
 
-  const arrowRightImg = require('../assets/images/right-arrow.png');
-  const arrowLeftImg = require('../assets/images/left-arrow.png');
-
   return (
     <View>
       <Title style={{ ...styles.title, color: titleColor }}>{title}</Title>
-      <AnimatedImage
-        source={arrowRightImg}
-        style={[styles.rightArrow, arrowRightFade]}
-      />
-      <AnimatedImage
-        source={arrowLeftImg}
-        style={[styles.leftArrow, arrowLeftFade, arrowLeftVisible]}
-      />
+
+      <Animated.View style={[styles.rightArrow, arrowRightFade]}>
+        <AntDesign name='caretright' size={24} color='black' />
+      </Animated.View>
+
+      <Animated.View style={[styles.leftArrow, arrowLeftFade, arrowLeftVisible]}>
+        <AntDesign name='caretleft' size={24} color='black' />
+      </Animated.View>
       <ScrollView
         horizontal
         scrollEnabled
@@ -105,19 +101,19 @@ const styles = StyleSheet.create({
   },
   rightArrow: {
     position: 'absolute',
-    right: 0,
-    top: '49%',
+    right: 5,
+    top: '46%',
     zIndex: 100,
-    width: 16,
-    height: 16,
+    // width: 16,
+    // height: 16,
   },
   leftArrow: {
     position: 'absolute',
-    left: 0,
-    top: '49%',
+    left: 5,
+    top: '46%',
     zIndex: 100,
-    width: 16,
-    height: 16,
+    // width: 16,
+    // height: 16,
   },
 });
 export default ShopCatalogue;

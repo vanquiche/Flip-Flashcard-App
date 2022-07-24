@@ -15,6 +15,7 @@ import { STORE_THEMES } from '../../assets/theme/userTheme';
 import ShopSwatchPattern from '../ShopSwatchPattern';
 import ThemeDisplay from '../ThemeDisplay';
 import ShopTheme from '../ShopTheme';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import { Theme } from '../types';
 
@@ -96,16 +97,19 @@ const Shop = () => {
   return (
     <>
       <View style={{ padding: 10, paddingHorizontal: 20 }}>
-        <Title style={{ color: user.theme.cardColor, textAlign: 'right' }}>
-          HEARTCOIN: {user.heartcoin}
+        <FontAwesome5
+          name='coins'
+          size={20}
+          color={user.theme.cardColor}
+          style={{ position: 'absolute', right: 15, top: 15 }}
+        />
+        <Title style={{ color: user.theme.cardColor, textAlign: 'right', marginRight: 20 }}>
+          {user.heartcoin}
         </Title>
       </View>
       <ScrollView>
         {/* SWATCH COLORS */}
-        <ShopCatalogue
-          title='CARD COLORS'
-          titleColor={user.theme.cardColor}
-        >
+        <ShopCatalogue title='CARD COLORS' titleColor={user.theme.cardColor}>
           {STORE_SWATCH_LIST.map((d, i) => (
             <ShopSwatchColor
               key={i}

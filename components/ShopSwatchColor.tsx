@@ -1,10 +1,11 @@
 import { View, Pressable, StyleSheet } from 'react-native';
-import { IconButton, Text, Title } from 'react-native-paper';
+import { Title } from 'react-native-paper';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
 import fontColorContrast from 'font-color-contrast';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   color: string;
@@ -49,11 +50,11 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
         disabled={alreadyPurchased}
       >
         {alreadyPurchased ? (
-          <IconButton
-            icon='check-circle'
-            style={styles.icon}
+          <Ionicons
+            name='checkmark-circle'
+            size={72}
             color='white'
-            size={75}
+            style={styles.icon}
           />
         ) : (
           <Title
@@ -79,7 +80,8 @@ const styles = StyleSheet.create({
   },
   price: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 26,
+    paddingTop: 10
   },
   name: {
     color: 'white',

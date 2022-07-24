@@ -1,9 +1,10 @@
 import { View, Pressable, StyleSheet, Image } from 'react-native';
-import { IconButton, Text } from 'react-native-paper';
+import { Text, Title } from 'react-native-paper';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   pattern: any[];
@@ -14,7 +15,6 @@ interface Props {
 const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const [showAlert, setShowAlert] = useState(false);
-
 
   const alreadyPurchased = user.collection.patterns
     ? Object.keys(user.collection.patterns).includes(pattern[0])
@@ -50,14 +50,14 @@ const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
       >
         <Image source={pattern[1]} style={styles.image} />
         {alreadyPurchased ? (
-          <IconButton
-            icon='check-circle'
-            style={styles.icon}
+          <Ionicons
+            name='checkmark-circle'
+            size={72}
             color='white'
-            size={75}
+            style={styles.icon}
           />
         ) : (
-          <Text style={styles.price}>{price}</Text>
+          <Title style={styles.price}>{price}</Title>
         )}
       </Pressable>
     </>
@@ -76,8 +76,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   price: {
-    color: 'white',
-    fontSize: 20,
+    color: 'black',
+    fontSize: 26,
+    // borderWidth: 2,
+    paddingTop: 10,
   },
   name: {
     color: 'white',
