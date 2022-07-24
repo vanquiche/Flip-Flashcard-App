@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { AntDesign } from '@expo/vector-icons';
 
 const displayWeek = [
   { name: 'S', date: 7 },
@@ -68,12 +69,7 @@ const LoginGoal = ({ dates, streak }: Props) => {
           return (
             <View key={index} style={[styles.dayCard]}>
               {loggedInDay?.loggedIn && (
-                <IconButton
-                  icon='star'
-                  size={50}
-                  color='yellow'
-                  style={{ marginBottom: 13 }}
-                />
+                <AntDesign name="star" size={38} color="yellow" style={{position: 'absolute', top: -6, right: 1}} />
               )}
               <Title
                 style={[

@@ -13,6 +13,7 @@ import fontColorContrast from 'font-color-contrast';
 
 import AlertDialog from './AlertDialog';
 import swatchContext from '../contexts/swatchContext';
+import { AntDesign } from '@expo/vector-icons';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -51,6 +52,8 @@ const TitleCard = ({
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const { patterns } = useContext(swatchContext);
+
+  const _fontColor = fontColorContrast(card.color, 0.7);
 
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
@@ -108,15 +111,15 @@ const TitleCard = ({
         <Text
           style={[
             styles.textContent,
-            { color: fontColorContrast(card.color, 0.7) },
+            { color: _fontColor },
           ]}
         >
           {card.name}
         </Text>
         <IconButton
           icon='close'
-          color={fontColorContrast(card.color, 0.7)}
-          size={17}
+          color={_fontColor}
+          size={20}
           style={styles.deleteBtn}
           onPress={() => setShowAlert(true)}
           disabled={multiSelect}
@@ -124,7 +127,7 @@ const TitleCard = ({
         <IconButton
           icon='dots-horizontal'
           color={fontColorContrast(card.color, 0.7)}
-          size={20}
+          size={25}
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
           disabled={multiSelect}
@@ -138,9 +141,10 @@ const TitleCard = ({
           />
         )}
         {card.favorite && (
-          <IconButton
-            icon='heart'
-            color={fontColorContrast(card.color, 0.7)}
+          <AntDesign
+            name='heart'
+            size={20}
+            color={_fontColor}
             style={styles.favicon}
           />
         )}
@@ -177,8 +181,8 @@ const styles = StyleSheet.create({
   },
   favicon: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: 10,
+    left: 10,
   },
   textContent: {
     textAlign: 'center',

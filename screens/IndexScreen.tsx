@@ -32,13 +32,14 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+
 const Tab = createBottomTabNavigator();
 
 // animation values
 const SPIN_START = 0;
 const SPIN_END = 180;
 const SCALE_START = 1;
-const SCALE_END = 1.3;
+const SCALE_END = 1.2;
 
 const IndexScreen = () => {
   const { user, notification } = useSelector((state: RootState) => state.store);
@@ -86,7 +87,7 @@ const IndexScreen = () => {
   const cardAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateX: cardIconFlip.value + 'deg' },
+        { rotateY: cardIconFlip.value + 'deg' },
         { scale: cardIconScale.value },
       ],
     };
@@ -152,6 +153,7 @@ const IndexScreen = () => {
                           : user.theme.iconColor
                       }
                     />
+
                   </Animated.View>
                 ),
               }}
@@ -173,7 +175,7 @@ const IndexScreen = () => {
                 tabBarIcon: ({ focused }) => (
                   <Animated.View style={cardAnimate}>
                     <TabIcon
-                      icon='card'
+                      icon='cards'
                       color={
                         focused
                           ? user.theme.actionIconColor
@@ -189,7 +191,7 @@ const IndexScreen = () => {
                   cardIconScale.value = withSpring(SCALE_END);
                 },
                 blur: () => {
-                  cardIconFlip.value = SPIN_START;
+                  cardIconFlip.value = withSpring(SPIN_START);
                   cardIconScale.value = withSpring(SCALE_START);
                 },
               }}
