@@ -112,7 +112,7 @@ const Card = ({
       {showSolution && (
         <Animated.Text
           style={{ ...styles.points, color: result ? 'green' : 'tomato' }}
-          entering={FadeInDown.delay(1000)}
+          entering={FadeInDown.delay(900)}
         >
           {result ? 'CORRECT!' : 'INCORRECT!'}
         </Animated.Text>
