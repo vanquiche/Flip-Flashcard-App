@@ -69,7 +69,12 @@ const LoginGoal = ({ dates, streak }: Props) => {
           return (
             <View key={index} style={[styles.dayCard]}>
               {loggedInDay?.loggedIn && (
-                <AntDesign name="star" size={38} color="yellow" style={{position: 'absolute', top: -6, right: 1}} />
+                <AntDesign
+                  name='star'
+                  size={38}
+                  color='yellow'
+                  style={{ position: 'absolute', top: -6, right: 1 }}
+                />
               )}
               <Title
                 style={[
@@ -116,4 +121,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginGoal;
+export default React.memo(LoginGoal, (prev, next) => {
+  if (prev.dates[prev.dates.length - 1] === next.dates[next.dates.length - 1])
+    return true;
+  return false;
+});

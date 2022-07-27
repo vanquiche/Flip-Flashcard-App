@@ -1,8 +1,8 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, Suspense, useCallback } from 'react';
 import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
 
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
 import FavoriteCard from '../FavoriteCard';
 
@@ -27,8 +27,6 @@ const Home = ({ navigation, route }: Props) => {
 
   const _cardColor = user.theme.cardColor;
   const _fontColor = user.theme.fontColor;
-
-
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -67,23 +65,38 @@ const Home = ({ navigation, route }: Props) => {
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
 
-  useEffect(() => {
-    if (!isSameDay) {
-      dispatch(
-        checkLogin({
-          streak: user.streak,
-          login: user.login,
-          heartcoin: user.heartcoin,
-        })
-      );
-    }
-    return;
-  }, [isSameDay]);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (!isSameDay) {
+          dispatch(
+            checkLogin({
+              streak: user.streak,
+              login: user.login,
+              heartcoin: user.heartcoin,
+            })
+          );
+        } else return;
+      };
+    }, [isSameDay])
+  );
+
+  // useEffect(() => {
+  //   if (!isSameDay) {
+  //     dispatch(
+  //       checkLogin({
+  //         streak: user.streak,
+  //         login: user.login,
+  //         heartcoin: user.heartcoin,
+  //       })
+  //     );
+  //   }
+  //   return;
+  // }, [isSameDay]);
 
   return (
     <View style={s.screenWrapper}>
       <Suspense fallback={<ActivityIndicator />}>
-
         <View
           style={{
             ...styles.infoCardContainer,
