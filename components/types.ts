@@ -1,9 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ParamListBase } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
-import DEFAULT_SWATCH_LIST from '../assets/swatchList';
-import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
-import DEFAULT_THEMES from '../assets/theme/userTheme';
 
 export interface StackNavigationTypes {
   navigation: StackNavigationProp<ParamListBase>;

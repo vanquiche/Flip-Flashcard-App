@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import PRELOAD_IMGS from './assets/preloadImages';
+import { PRELOAD_PATTERNS } from './assets/patterns/patterns';
 
 import 'react-native-gesture-handler';
 
@@ -12,6 +12,8 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 // COMPONENTS
 import IndexScreen from './screens/IndexScreen';
+
+
 
 declare global {
   namespace ReactNativePaper {
@@ -72,7 +74,7 @@ export default function App() {
   };
 
   const loadAssets = async () => {
-    const imgAsset = cacheImages(PRELOAD_IMGS);
+    const imgAsset = cacheImages(PRELOAD_PATTERNS);
     const fontAsset = loadFonts();
 
     await Promise.all([fontAsset, imgAsset]);

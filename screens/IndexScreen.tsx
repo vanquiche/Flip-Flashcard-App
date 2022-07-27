@@ -24,7 +24,7 @@ import { getCards } from '../redux/cardThunkActions';
 
 import swatchContext from '../contexts/swatchContext';
 import DEFAULT_SWATCH_LIST from '../assets/swatchList';
-import DEFAULT_PATTERNS from '../assets/patterns/defaultPatterns';
+import DEFAULT_PATTERNS from '../assets/patterns/patterns';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

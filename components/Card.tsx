@@ -60,6 +60,8 @@ const Card = ({
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
 
+  const _fontColor = color ? fontColorContrast(color, 0.6) : 'white';
+
   // animation values for card flip
   const cardFlip = useSharedValue(0);
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
@@ -151,7 +153,7 @@ const Card = ({
           <Animated.View style={styles.btnContainer} entering={FadeIn}>
             <IconButton
               icon='close'
-              color={color ? fontColorContrast(color, 0.7) : 'white'}
+              color={_fontColor}
               size={25}
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
@@ -159,7 +161,7 @@ const Card = ({
             />
             <IconButton
               icon='dots-horizontal'
-              color={color ? fontColorContrast(color, 0.7) : 'white'}
+              color={_fontColor}
               size={25}
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
@@ -177,7 +179,7 @@ const Card = ({
               ...styles.cardTitle,
               top: 0,
               left: 5,
-              color: color ? fontColorContrast(color, 0.7) : 'white',
+              color: _fontColor,
             }}
           >
             Q .
@@ -185,7 +187,7 @@ const Card = ({
           <Text
             style={{
               ...styles.textContent,
-              color: color ? fontColorContrast(color, 0.7) : 'white',
+              color: _fontColor,
             }}
             numberOfLines={3}
           >
@@ -195,6 +197,8 @@ const Card = ({
             style={styles.cardPattern}
             imageStyle={styles.image}
             source={patternList[pattern]}
+            resizeMode='cover'
+            resizeMethod='resize'
           />
         </Animated.View>
 
@@ -204,7 +208,7 @@ const Card = ({
             style={{
               ...styles.textContent,
               ...styles.cardBackText,
-              color: color ? fontColorContrast(color, 0.7) : 'white',
+              color: _fontColor,
             }}
           >
             {card.solution}
@@ -216,7 +220,7 @@ const Card = ({
               {
                 bottom: 0,
                 left: 5,
-                color: color ? fontColorContrast(color, 0.7) : 'white',
+                color: _fontColor,
               },
             ]}
           >
@@ -297,8 +301,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cardPattern: {
-    width: '100%',
-    height: '100%',
+    width: '98%',
+    height: '98%',
     position: 'absolute',
     zIndex: 10,
     borderRadius: 10,
@@ -306,10 +310,11 @@ const styles = StyleSheet.create({
   },
   image: {
     tintColor: 'white',
-    height: 256,
+    height: 190,
     width: 256,
-    transform: [{ translateX: -15 }, { translateY: -15 }],
-    resizeMode: 'repeat',
+    // transform: [{ translateX: -18 }, { translateY: -18 }],
+    // transform: [{scale: 0.9}],
+    // resizeMode: 'repeat',
     opacity: 0.3,
   },
 });

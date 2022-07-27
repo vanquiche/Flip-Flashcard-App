@@ -53,7 +53,7 @@ const TitleCard = ({
   const [showAlert, setShowAlert] = useState(false);
   const { patterns } = useContext(swatchContext);
 
-  const _fontColor = fontColorContrast(card.color, 0.7);
+  const _fontColor = fontColorContrast(card.color, 0.6);
 
   // ANIMATION VALUES
   const cardOpacity = useSharedValue(1);
@@ -126,7 +126,7 @@ const TitleCard = ({
         />
         <IconButton
           icon='dots-horizontal'
-          color={fontColorContrast(card.color, 0.7)}
+          color={_fontColor}
           size={25}
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
@@ -137,7 +137,6 @@ const TitleCard = ({
             source={patterns[card.design]}
             imageStyle={styles.pattern}
             style={styles.patternWrapper}
-            resizeMode='cover'
           />
         )}
         {card.favorite && (
@@ -165,19 +164,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   patternWrapper: {
+  width: '100%',
+    height: '100%',
     position: 'absolute',
-    top: 12,
-    left: 10,
-    right: 10,
-    bottom: 12,
     zIndex: 0,
+    overflow: 'hidden',
+    borderRadius: 8,
   },
   pattern: {
-    height: 100,
-    aspectRatio: 1.45,
+    height: 125,
     tintColor: 'white',
-    borderRadius: 8,
     opacity: 0.3,
+    resizeMode: 'cover',
+
   },
   favicon: {
     position: 'absolute',

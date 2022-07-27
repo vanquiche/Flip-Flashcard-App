@@ -120,6 +120,11 @@ const PatternSelector = ({
               showsVerticalScrollIndicator={true}
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
+                <Pattern
+                  isNull={true}
+                  name='default'
+                  select={setPattern}
+                />
                 {useMemo(() => {
                   // extract and map keys as pattern names
                   const PATTERNS = Object.keys(patternList);

@@ -9,7 +9,7 @@ import ShopCatalogue from '../ShopCatalogue';
 import ShopSwatchColor from '../ShopSwatchColor';
 
 import { STORE_SWATCH_LIST } from '../../assets/swatchList';
-import { STORE_PATTERNS } from '../../assets/patterns/defaultPatterns';
+import { STORE_PATTERNS } from '../../assets/patterns/patterns';
 import { STORE_THEMES } from '../../assets/theme/userTheme';
 
 import ShopSwatchPattern from '../ShopSwatchPattern';

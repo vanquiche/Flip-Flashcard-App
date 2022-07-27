@@ -1,17 +1,13 @@
-import {
-  StyleSheet,
-  Pressable,
-  Image,
-} from 'react-native';
+import { StyleSheet, Pressable, Image } from 'react-native';
 import React from 'react';
-
 
 interface Props {
   name: string;
   select: any;
-  patternList: Record<string, any>;
+  patternList?: Record<string, any>;
+  isNull?: boolean;
 }
-const Pattern = ({ select, name, patternList }: Props) => {
+const Pattern = ({ select, name, patternList, isNull }: Props) => {
   const handlePress = () => {
     select(name);
   };
@@ -22,11 +18,13 @@ const Pattern = ({ select, name, patternList }: Props) => {
       onPress={handlePress}
       onLongPress={(e) => e.preventDefault()}
     >
-      <Image
-        resizeMode='center'
-        source={patternList[name]}
-        style={styles.image}
-      />
+      {!isNull && patternList && (
+        <Image
+          resizeMode='cover'
+          source={patternList[name]}
+          style={styles.image}
+        />
+      )}
     </Pressable>
   );
 };
@@ -35,13 +33,12 @@ const styles = StyleSheet.create({
     height: 45,
     aspectRatio: 1,
     borderRadius: 8,
-    backgroundColor: 'black',
+    backgroundColor: '#264653',
     margin: 5,
   },
   image: {
     height: 45,
     width: 45,
-    resizeMode: 'contain',
     tintColor: 'white',
   },
 });
