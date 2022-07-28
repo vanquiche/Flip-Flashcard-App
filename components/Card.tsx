@@ -198,7 +198,6 @@ const Card = ({
             imageStyle={styles.image}
             source={patternList[pattern]}
             resizeMode='cover'
-            resizeMethod='resize'
           />
         </Animated.View>
 
@@ -301,21 +300,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cardPattern: {
-    width: '98%',
-    height: '98%',
+    width: '100%',
+    height: '100%',
     position: 'absolute',
     zIndex: 10,
-    borderRadius: 10,
-    overflow: 'hidden',
   },
   image: {
     tintColor: 'white',
-    height: 190,
-    width: 256,
-    // transform: [{ translateX: -18 }, { translateY: -18 }],
-    // transform: [{scale: 0.9}],
-    // resizeMode: 'repeat',
-    opacity: 0.3,
+    height: 160,
+    width: 226,
+    opacity: 0.4,
+    borderRadius: 10
   },
 });
 export default React.memo(Card, (prev, next) => {

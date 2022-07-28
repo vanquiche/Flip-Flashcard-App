@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '45%',
+    width: 165,
     height: 125,
     padding: 15,
     margin: 5,
@@ -174,8 +174,12 @@ const styles = StyleSheet.create({
   pattern: {
     height: 125,
     tintColor: 'white',
-    opacity: 0.3,
-    resizeMode: 'cover',
+    opacity: 0.4,
+    resizeMode: 'contain',
+    // borderWidth: 2,
+    transform: [{
+      translateY: -15
+    }]
 
   },
   favicon: {

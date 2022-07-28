@@ -86,7 +86,7 @@ export default function App() {
   }, []);
 
   if (assetIsLoading) {
-    return <ActivityIndicator size='large' style={styles.spinner} />;
+    return null
   }
 
   return (
