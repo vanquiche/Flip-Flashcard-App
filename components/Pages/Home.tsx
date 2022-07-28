@@ -65,34 +65,18 @@ const Home = ({ navigation, route }: Props) => {
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        if (!isSameDay) {
-          dispatch(
-            checkLogin({
-              streak: user.streak,
-              login: user.login,
-              heartcoin: user.heartcoin,
-            })
-          );
-        } else return;
-      };
-    }, [isSameDay])
-  );
-
-  // useEffect(() => {
-  //   if (!isSameDay) {
-  //     dispatch(
-  //       checkLogin({
-  //         streak: user.streak,
-  //         login: user.login,
-  //         heartcoin: user.heartcoin,
-  //       })
-  //     );
-  //   }
-  //   return;
-  // }, [isSameDay]);
+  useEffect(() => {
+    if (!isSameDay) {
+      dispatch(
+        checkLogin({
+          streak: user.streak,
+          login: user.login,
+          heartcoin: user.heartcoin,
+        })
+      );
+    }
+    return;
+  }, [isSameDay]);
 
   return (
     <View style={s.screenWrapper}>
