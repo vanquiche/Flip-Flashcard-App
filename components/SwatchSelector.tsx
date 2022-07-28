@@ -110,15 +110,14 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
               showsVerticalScrollIndicator={true}
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
-                {useMemo(() => {
-                  return swatches.map((swatch) => (
-                    <Swatch
-                      key={uuid.v4().toString()}
-                      color={swatch}
-                      onChange={setColor}
-                    />
-                  ));
-                }, [])}
+                {swatches.map((swatch) => (
+                  <Swatch
+                    key={uuid.v4().toString()}
+                    color={swatch}
+                    onChange={setColor}
+                    isSelected={color === swatch}
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>

@@ -10,7 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, { useEffect, useState, useRef, useMemo  } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import uuid from 'react-native-uuid';
 
@@ -33,6 +33,7 @@ const PatternSelector = ({
   patternList,
 }: Props) => {
   const [showPalette, setShowPalette] = useState(false);
+  const PATTERNS = useMemo(() => Object.keys(patternList), [patternList])
 
   // popup tooltip coordinates
   const swatchRef = useRef<View>(null);
@@ -103,7 +104,6 @@ const PatternSelector = ({
   return (
     <>
       <Portal theme={{ colors: { backdrop: 'transparent' } }}>
-
         <Dialog
           visible={showPalette}
           onDismiss={() => setShowPalette(false)}
@@ -124,20 +124,17 @@ const PatternSelector = ({
                   isNull={true}
                   name='default'
                   select={setPattern}
+                  isSelected={'default' === pattern}
                 />
-                {useMemo(() => {
-                  // extract and map keys as pattern names
-                  const PATTERNS = Object.keys(patternList);
-
-                  return PATTERNS.map((p) => (
-                    <Pattern
-                      key={uuid.v4().toString()}
-                      name={p}
-                      select={setPattern}
-                      patternList={patternList}
-                    />
-                  ));
-                }, [patternList])}
+                {PATTERNS.map((p) => (
+                  <Pattern
+                    key={uuid.v4().toString()}
+                    name={p}
+                    select={setPattern}
+                    patternList={patternList}
+                    isSelected={p === pattern}
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>
@@ -152,7 +149,6 @@ const PatternSelector = ({
               { ...caretPosition.value },
             ]}
           />
-
         </Dialog>
       </Portal>
 
