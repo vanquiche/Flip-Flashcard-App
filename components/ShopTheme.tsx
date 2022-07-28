@@ -46,7 +46,7 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
           <IconButton
             icon='check-circle'
             size={75}
-            color='white'
+            color='black'
             style={styles.icon}
           />
         ) : (
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
   icon: {
     position: 'absolute',
     zIndex: 20,
-    left: 75,
-    top: '35%',
+    left: '24%',
+    top: '32%',
   },
 });
 

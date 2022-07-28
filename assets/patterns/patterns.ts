@@ -1,6 +1,5 @@
 const DEFAULT_PATTERNS: Record<string, any> = {
   honeycomb: require('./honeycomb.png'),
-  tartan: require('./tartan.png'),
   checker: require('./checker.png'),
 };
 
