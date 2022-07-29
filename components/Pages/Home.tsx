@@ -75,7 +75,6 @@ const Home = ({ navigation, route }: Props) => {
         })
       );
     }
-    return;
   }, [isSameDay]);
 
   return (

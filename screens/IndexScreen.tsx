@@ -1,6 +1,5 @@
-import { StatusBar, View, Text } from 'react-native';
-import React, { useEffect, useMemo } from 'react';
-import { IconButton, useTheme } from 'react-native-paper';
+import { StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
 
 // COMPONENTS
 import HomeScreen from './HomeScreen';
@@ -19,8 +18,6 @@ import { AppDispatch, RootState } from '../redux/store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { dismissNotification } from '../redux/storeSlice';
 import { hydrateData } from '../redux/userThunkActions';
-import { getFavoriteSets } from '../redux/cardThunkActions';
-import { getCards } from '../redux/cardThunkActions';
 
 import swatchContext from '../contexts/swatchContext';
 import DEFAULT_SWATCH_LIST from '../assets/swatchList';
@@ -28,7 +25,6 @@ import DEFAULT_PATTERNS from '../assets/patterns/patterns';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  interpolateColor,
   withSpring,
 } from 'react-native-reanimated';
 

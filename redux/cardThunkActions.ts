@@ -109,7 +109,4 @@ export const getFavoriteSets = createAsyncThunk('store/getFavoriteSets', () => {
   });
 });
 
-export const toggleFavoriteSet = createAsyncThunk(
-  'store/toggleFavoritSet',
-  (payload) => {}
-);
+
