@@ -1,23 +1,15 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import {
-  Text,
   IconButton,
-  TextInput,
-  useTheme,
-  Button,
   Title,
 } from 'react-native-paper';
 import React, {
   useState,
   useEffect,
   Suspense,
-  useReducer,
   useCallback,
   useContext,
-  useRef,
 } from 'react';
-
-import Animated from 'react-native-reanimated';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
@@ -47,6 +39,8 @@ import useRenderCounter from '../../hooks/useRenderCounter';
 
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
+import CustomTextInput from '../CustomTextInput';
+import ModifcationBar from '../ModifcationBar';
 
 const INITIAL_STATE: Set = {
   _id: '',
@@ -169,6 +163,11 @@ const Sets = ({ navigation, route }: Props) => {
     setCardSet((prev) => ({ ...prev, color }));
   }, []);
 
+  const startMultiSelectMode = () => {
+    clearSelection();
+    setMultiSelectMode(true);
+  };
+
   useEffect(() => {
     // find cards within the parent category
     dispatch(
@@ -177,14 +176,11 @@ const Sets = ({ navigation, route }: Props) => {
         query: { type: 'set', categoryRef: categoryRef },
       })
     );
-  }, [categoryRef]);
-
-  useEffect(() => {
     // set title of screen to category name
-    db.find({ _id: categoryRef }, (err: Error, docs: any) => {
+    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
       if (err) console.log(err);
       navigation.setOptions({
-        title: docs[0].name,
+        title: doc.name,
       });
     });
   }, [categoryRef]);
@@ -192,57 +188,17 @@ const Sets = ({ navigation, route }: Props) => {
   return (
     <View>
       {/* ACTION BUTTONS */}
-      <View style={s.cardButtonWrapper}>
-        {!multiSelectMode ? (
-          <>
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              color={theme.cardColor}
-              labelStyle={{ color: theme.fontColor }}
-              onPress={() => setShowDialog(true)}
-            >
-              NEW
-            </Button>
-
-            {/* start mode to mark for deletion */}
-
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              color={theme.cardColor}
-              labelStyle={{ color: theme.fontColor }}
-              onPress={() => {
-                clearSelection();
-                setMultiSelectMode(true);
-              }}
-              disabled={cards.set.length === 0}
-            >
-              SELECT
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              mode='text'
-              color='tomato'
-              onPress={confirmAlert}
-              style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-            >
-              {selection.length > 0 ? 'DELETE' : 'BACK'}
-            </Button>
-            <Button
-              mode='text'
-              style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
-              color='tomato'
-              onPress={clearSelection}
-              disabled={selection.length === 0}
-            >
-              CLEAR
-            </Button>
-          </>
-        )}
-      </View>
+      <ModifcationBar
+        buttonColor={theme.cardColor}
+        labelColor={theme.fontColor}
+        selections={selection}
+        enableSelection={multiSelectMode}
+        disableSelection={cards.set.length === 0}
+        clearSelection={clearSelection}
+        onPressNew={() => setShowDialog(true)}
+        onPressSelect={startMultiSelectMode}
+        onConfirmSelection={confirmAlert}
+      />
 
       {/* ALERT USER OF DELETION */}
       <AlertDialog
@@ -290,21 +246,14 @@ const Sets = ({ navigation, route }: Props) => {
         onSubmit={editMode ? submitEdit : addNewSet}
         disableSubmit={cardSet.name ? false : true}
       >
-        <TextInput
-          mode='outlined'
+        <CustomTextInput
           label='SET NAME'
-          outlineColor='grey'
-          activeOutlineColor='black'
-          autoCorrect={false}
-          maxLength={32}
-          style={{ height: 40, margin: 0 }}
+          style={styles.textInput}
           defaultValue={editMode ? cardSet.name : undefined}
-          onChange={({ nativeEvent: { text } }) =>
-            setCardSet((prev) => ({ ...prev, name: text }))
-          }
+          onChange={(name) => setCardSet((prev) => ({ ...prev, name }))}
         />
         <View style={[s.actionDialogChildrenContainer, { marginTop: 15 }]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.swatchContainer}>
             <SwatchSelector
               color={cardSet.color}
               setColor={selectColor}
@@ -315,7 +264,7 @@ const Sets = ({ navigation, route }: Props) => {
             </Title>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.swatchContainer}>
             <Title style={{ color: theme.fontColor, marginRight: 10 }}>
               DESIGN
             </Title>
@@ -331,13 +280,7 @@ const Sets = ({ navigation, route }: Props) => {
         <IconButton
           size={30}
           color='white'
-          style={{
-            margin: 0,
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            zIndex: 10,
-          }}
+          style={styles.favicon}
           icon={cardSet.favorite ? 'heart' : 'heart-outline'}
           onPress={() =>
             setCardSet((prev) => ({ ...prev, favorite: !prev.favorite }))
@@ -348,6 +291,22 @@ const Sets = ({ navigation, route }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  favicon: {
+    margin: 0,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  swatchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textInput: {
+    height: 40,
+    margin: 0,
+  },
+});
 
 export default Sets;

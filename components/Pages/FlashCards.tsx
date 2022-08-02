@@ -6,7 +6,7 @@ import React, {
   useRef,
   useContext,
 } from 'react';
-import { TextInput, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { DateTime } from 'luxon';
 
 import uuid from 'react-native-uuid';
@@ -32,6 +32,8 @@ import {
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import useRenderCounter from '../../hooks/useRenderCounter';
+import CustomTextInput from '../CustomTextInput';
+import ModifcationBar from '../ModifcationBar';
 
 const INITIAL_STATE: Flashcard = {
   _id: '',
@@ -133,6 +135,11 @@ const FlashCards = ({ navigation, route }: Props) => {
     cancelMultiDeletion();
   };
 
+  const startMultiSelectMode = () => {
+    clearSelection();
+    setMultiSelectMode(true);
+  };
+
   useEffect(() => {
     // fetch data from db
     dispatch(
@@ -145,85 +152,45 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     // set title
-    db.find({ _id: setRef }, (err: Error, docs: any) => {
+    db.findOne({ _id: setRef }, (err: Error, doc: any) => {
       if (err) console.log(err);
       navigation.setOptions({
-        title: docs[0].name,
+        title: doc.name,
       });
-      setSetName(docs[0].name);
+      setSetName(doc.name);
     });
 
     // get points of category to calculate xp progress
-    db.find({ _id: categoryRef }, (err: Error, docs: any[]) => {
-      if (docs.length > 0) {
-        categoryXP.current = docs[0].points;
-      }
+    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
+      categoryXP.current = !err ? doc.points : 0;
     });
   }, [setRef, categoryRef]);
 
   return (
     <View>
       {/* CONTROL BUTTONS  */}
-      <View style={s.cardButtonWrapper}>
-        {!multiSelectMode ? (
-          <>
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              color={theme.cardColor}
-              labelStyle={{ color: theme.fontColor }}
-              onPress={() => setShowDialog(true)}
-            >
-              NEW
-            </Button>
-
-            <Button
-              mode='contained'
-              color={theme.cardColor}
-              style={[s.cardActionButton]}
-              labelStyle={{ color: theme.fontColor }}
-              onPress={() => setStartQuiz(true)}
-              disabled={cards.flashcard.length === 0}
-            >
-              QUIZ
-            </Button>
-
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              labelStyle={{ color: theme.fontColor }}
-              color={theme.cardColor}
-              onPress={() => {
-                clearSelection();
-                setMultiSelectMode(true);
-              }}
-              disabled={cards.flashcard.length === 0}
-            >
-              SELECT
-            </Button>
-          </>
-        ) : (
-          <>
-          <Button
-            mode='text'
-            color='tomato'
-            onPress={confirmAlert}
-            style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-            >
-            {selection.length > 0 ? 'DELETE' : 'BACK'}
-          </Button>
-             <Button
-            mode='text'
-            color='tomato'
-            onPress={clearSelection}
-            style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
-            disabled={selection.length === 0}
-            >
-            CLEAR
-          </Button>
-            </>
-        )}
-      </View>
+      <ModifcationBar
+        selections={selection}
+        labelColor={theme.fontColor}
+        buttonColor={theme.cardColor}
+        enableSelection={multiSelectMode}
+        disableSelection={cards.flashcard.length === 0}
+        clearSelection={clearSelection}
+        onPressNew={() => setShowDialog(true)}
+        onPressSelect={startMultiSelectMode}
+        onConfirmSelection={confirmAlert}
+      >
+        <Button
+          mode='contained'
+          color={theme.cardColor}
+          style={[s.cardActionButton]}
+          labelStyle={{ color: theme.fontColor }}
+          onPress={() => setStartQuiz(true)}
+          disabled={cards.flashcard.length === 0}
+        >
+          QUIZ
+        </Button>
+      </ModifcationBar>
 
       {startQuiz && (
         <Quiz
@@ -279,30 +246,19 @@ const FlashCards = ({ navigation, route }: Props) => {
         disableSubmit={flashcard.prompt && flashcard.solution ? false : true}
       >
         <View>
-          <TextInput
-            mode='outlined'
+          <CustomTextInput
             label='PROMPT'
-            outlineColor='grey'
-            activeOutlineColor='black'
-            autoCorrect={false}
-            maxLength={32}
-            defaultValue={editMode ? flashcard.prompt : undefined}
-            onChange={({nativeEvent: {text}}) => setFlashcard(prev => ({...prev, prompt: text}))}
             style={{ height: 40, marginBottom: 5 }}
+            defaultValue={editMode ? flashcard.prompt : undefined}
+            onChange={(prompt) => setFlashcard((prev) => ({ ...prev, prompt }))}
           />
-
-          <TextInput
-            mode='outlined'
+          <CustomTextInput
             label='SOLUTION'
-            outlineColor='grey'
-            activeOutlineColor='black'
-            autoCorrect={false}
-            maxLength={32}
-            defaultValue={editMode ? flashcard.solution : undefined}
-            onChange={({nativeEvent: {text}}) =>
-              setFlashcard((prev) => ({ ...prev, solution: text }))
-            }
             style={{ height: 40, marginTop: 5 }}
+            defaultValue={editMode ? flashcard.solution : undefined}
+            onChange={(solution) =>
+              setFlashcard((prev) => ({ ...prev, solution }))
+            }
           />
         </View>
       </ActionDialog>

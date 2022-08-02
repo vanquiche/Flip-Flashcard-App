@@ -1,5 +1,4 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
 import React, { useState, Suspense, useCallback, useContext } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
@@ -15,7 +14,7 @@ import AlertDialog from '../AlertDialog';
 import SwatchSelector from '../SwatchSelector';
 
 // TYPES
-import { Category, Set } from '../types';
+import { Category } from '../types';
 import { StackNavigationTypes } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -27,6 +26,8 @@ import {
 import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
+import CustomTextInput from '../CustomTextInput';
+import ModifcationBar from '../ModifcationBar';
 
 const INITIAL_STATE: Category = {
   _id: '',
@@ -129,59 +130,25 @@ const Categories = ({ navigation, route }: Props) => {
     cancelMultiDeletion();
   };
 
+  const startMultiSelectMode = () => {
+    clearSelection();
+    setMultiSelectMode(true);
+  };
+
   return (
     <View>
       {/* button wrapper */}
-      <View style={[s.cardButtonWrapper]}>
-        {!multiSelectMode ? (
-          <>
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              labelStyle={[{ color: theme.fontColor }]}
-              color={theme.cardColor}
-              onPress={() => setShowDialog(true)}
-            >
-              NEW
-            </Button>
-
-            <Button
-              mode='contained'
-              style={s.cardActionButton}
-              labelStyle={[{ color: theme.fontColor }]}
-              color={theme.cardColor}
-              onPress={() => {
-                clearSelection();
-                setMultiSelectMode(true);
-              }}
-              disabled={cards.category.length === 0}
-            >
-              SELECT
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              mode='text'
-              style={[s.cardActionButton, { position: 'absolute', right: 12 }]}
-              color='tomato'
-              onPress={confirmAlert}
-            >
-              {selection.length > 0 ? 'DELETE' : 'BACK'}
-            </Button>
-
-            <Button
-              mode='text'
-              style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
-              color='tomato'
-              onPress={clearSelection}
-              disabled={selection.length === 0}
-            >
-              CLEAR
-            </Button>
-          </>
-        )}
-      </View>
+      <ModifcationBar
+        selections={selection}
+        labelColor={theme.fontColor}
+        buttonColor={theme.cardColor}
+        enableSelection={multiSelectMode}
+        disableSelection={cards.category.length === 0}
+        clearSelection={clearSelection}
+        onPressNew={() => setShowDialog(true)}
+        onPressSelect={startMultiSelectMode}
+        onConfirmSelection={confirmAlert}
+      />
 
       <AlertDialog
         visible={showAlert}
@@ -226,18 +193,11 @@ const Categories = ({ navigation, route }: Props) => {
         disableSubmit={category.name ? false : true}
       >
         <View style={s.actionDialogChildrenContainer}>
-          <TextInput
-            mode='outlined'
-            label='CATEGORY NAME'
-            outlineColor='grey'
-            activeOutlineColor='black'
-            maxLength={32}
-            autoCorrect={false}
-            defaultValue={editMode ? category.name : undefined}
-            onChange={({ nativeEvent: { text } }) =>
-              setCategory((prev) => ({ ...prev, name: text }))
-            }
+          <CustomTextInput
             style={styles.textInput}
+            label='CATEGORY NAME'
+            defaultValue={editMode ? category.name : undefined}
+            onChange={(name) => setCategory((prev) => ({ ...prev, name }))}
           />
 
           <SwatchSelector
