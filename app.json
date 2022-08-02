@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "flashcard-v2",
-    "slug": "flashcard-v2",
+    "name": "flip flashcard",
+    "slug": "flip-flashcard",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,9 +14,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["assets/patterns/*"],
+    "assetBundlePatterns": [
+      "assets/patterns/*"
+    ],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.flip-flashcard"
     },
     "android": {
       "adaptiveIcon": {
