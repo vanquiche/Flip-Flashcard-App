@@ -60,10 +60,10 @@ const FlashCards = ({ navigation, route }: Props) => {
   const { setRef, categoryRef, color, design } = route.params;
   const { selection, selectItem, clearSelection } = useMarkSelection();
 
-  const { user, cards } = useSelector((state: RootState) => state.store);
+  const { cards } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  const { patterns } = useContext(swatchContext);
+  const { patterns, theme } = useContext(swatchContext);
 
   const { renderCount } = useRenderCounter();
   renderCount.current++;
@@ -170,8 +170,8 @@ const FlashCards = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              color={user.theme.cardColor}
-              labelStyle={{ color: user.theme.fontColor }}
+              color={theme.cardColor}
+              labelStyle={{ color: theme.fontColor }}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -179,9 +179,9 @@ const FlashCards = ({ navigation, route }: Props) => {
 
             <Button
               mode='contained'
-              color={user.theme.cardColor}
+              color={theme.cardColor}
               style={[s.cardActionButton]}
-              labelStyle={{ color: user.theme.fontColor }}
+              labelStyle={{ color: theme.fontColor }}
               onPress={() => setStartQuiz(true)}
               disabled={cards.flashcard.length === 0}
             >
@@ -191,8 +191,8 @@ const FlashCards = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              labelStyle={{ color: user.theme.fontColor }}
-              color={user.theme.cardColor}
+              labelStyle={{ color: theme.fontColor }}
+              color={theme.cardColor}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -284,11 +284,10 @@ const FlashCards = ({ navigation, route }: Props) => {
             label='PROMPT'
             outlineColor='grey'
             activeOutlineColor='black'
+            autoCorrect={false}
             maxLength={32}
-            value={flashcard.prompt}
-            onChangeText={(prompt) =>
-              setFlashcard((prev) => ({ ...prev, prompt }))
-            }
+            defaultValue={editMode ? flashcard.prompt : undefined}
+            onChange={({nativeEvent: {text}}) => setFlashcard(prev => ({...prev, prompt: text}))}
             style={{ height: 40, marginBottom: 5 }}
           />
 
@@ -297,10 +296,11 @@ const FlashCards = ({ navigation, route }: Props) => {
             label='SOLUTION'
             outlineColor='grey'
             activeOutlineColor='black'
+            autoCorrect={false}
             maxLength={32}
-            value={flashcard.solution}
-            onChangeText={(solution) =>
-              setFlashcard((prev) => ({ ...prev, solution }))
+            defaultValue={editMode ? flashcard.solution : undefined}
+            onChange={({nativeEvent: {text}}) =>
+              setFlashcard((prev) => ({ ...prev, solution: text }))
             }
             style={{ height: 40, marginTop: 5 }}
           />

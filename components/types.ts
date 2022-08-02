@@ -117,13 +117,13 @@ export interface Action {
 export const defaultTheme: Theme = {
   name: 'default',
   fontColor: 'white',
-  cardColor: 'pink',
-  tabColor: '#ffa69e',
-  headerColor: '#ffa69e',
-  bgColor: '#fff0f3',
-  iconColor: '#ffccd5',
+  cardColor: '#22333b',
+  tabColor: '#22333b',
+  headerColor: '#22333b',
+  bgColor: 'whitesmoke',
+  iconColor: 'grey',
   actionIconColor: 'white',
-  accentColor: 'hotpink',
+  accentColor: 'grey',
 };
 
 export interface Stats {
@@ -159,7 +159,7 @@ export const initUser: User = {
   type: 'user' as Datatype,
   username: '',
   xp: 0,
-  heartcoin: 0,
+  heartcoin: 75,
   achievements: [],
   completedQuiz: [],
   login: [],

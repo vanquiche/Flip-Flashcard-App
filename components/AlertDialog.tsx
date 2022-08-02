@@ -1,13 +1,9 @@
 import { View, StyleSheet, Animated } from 'react-native';
-import {
-  Dialog,
-  Portal,
-  Title,
-  IconButton,
-} from 'react-native-paper';
-import React, { useRef, useEffect } from 'react';
+import { Dialog, Portal, Title, IconButton } from 'react-native-paper';
+import React, { useRef, useEffect, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import swatchContext from '../contexts/swatchContext';
 
 interface Props {
   visible: boolean;
@@ -24,7 +20,7 @@ const AlertDialog = ({
   onDismiss,
   onConfirm,
 }: Props) => {
-  const {user} = useSelector((state: RootState) => state.store)
+  const { theme } = useContext(swatchContext);
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
 
   const expand = () => {
@@ -52,13 +48,13 @@ const AlertDialog = ({
       <Dialog
         style={[
           styles.dialog,
-          { backgroundColor: user.theme.cardColor },
+          { backgroundColor: theme.cardColor },
           { transform: [{ scale: scaleAnimation }] },
         ]}
         visible={visible}
         dismissable={false}
       >
-        <Title style={[styles.title, { color: user.theme.fontColor }]}>
+        <Title style={[styles.title, { color: theme.fontColor }]}>
           {message.toUpperCase()}
         </Title>
         <View style={styles.buttonContainer}>
@@ -66,7 +62,7 @@ const AlertDialog = ({
             style={styles.button}
             icon='close-circle-outline'
             size={50}
-            color={user.theme.fontColor}
+            color={theme.fontColor}
             onPress={onDismiss}
           />
 
@@ -74,7 +70,7 @@ const AlertDialog = ({
             style={styles.button}
             icon='check-circle-outline'
             size={50}
-            color={user.theme.fontColor}
+            color={theme.fontColor}
             onPress={onConfirm}
             disabled={disable}
           />

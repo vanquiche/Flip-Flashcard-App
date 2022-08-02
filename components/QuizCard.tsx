@@ -112,7 +112,7 @@ const Card = ({
       {showSolution && (
         <Animated.Text
           style={{ ...styles.points, color: result ? 'green' : 'tomato' }}
-          entering={FadeInDown.delay(900)}
+          entering={FadeInDown.delay(700)}
         >
           {result ? 'CORRECT!' : 'INCORRECT!'}
         </Animated.Text>
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontSize: 20,
-    // margin: 15,
     color: 'white',
     backfaceVisibility: 'hidden',
   },
@@ -232,13 +231,10 @@ const styles = StyleSheet.create({
 
   button: {
     position: 'absolute',
-    // padding: 20,
-    // borderBottomRightRadius: 15,
     alignSelf: 'center',
     zIndex: 100,
   },
   cardPattern: {
-    // flex: 1,
     width: '100%',
     height: '100%',
     position: 'absolute',
@@ -251,7 +247,6 @@ const styles = StyleSheet.create({
   points: {
     position: 'absolute',
     top: -50,
-    // right: 65,
     zIndex: 100,
     fontSize: 28,
     fontFamily: 'BalooBhaiExtraBold',

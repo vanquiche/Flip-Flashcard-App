@@ -1,8 +1,9 @@
 import { View, StyleSheet, Keyboard, Animated } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import swatchContext from '../contexts/swatchContext';
 interface Props {
   children: React.ReactNode;
   visible: boolean;
@@ -22,7 +23,7 @@ const ActionDialog = ({
   onCancel,
   onSubmit,
 }: Props) => {
-  const { user } = useSelector((state: RootState) => state.store);
+  const { theme } = useContext(swatchContext);
   const slideAnimation = useRef<any>(new Animated.Value(0)).current;
 
   // slide and reset dialog when keyboard opens and closes
@@ -64,7 +65,7 @@ const ActionDialog = ({
           styles.dialog,
           {
             transform: [{ translateY: slideAnimation }],
-            backgroundColor: user.theme.cardColor,
+            backgroundColor: theme.cardColor,
           },
         ]}
         dismissable={false}
@@ -73,7 +74,7 @@ const ActionDialog = ({
           style={[
             styles.title,
             {
-              color: user.theme.fontColor,
+              color: theme.fontColor,
             },
           ]}
         >
@@ -85,7 +86,7 @@ const ActionDialog = ({
             style={styles.button}
             icon='close-circle-outline'
             size={50}
-            color={user.theme.fontColor}
+            color={theme.fontColor}
             onPress={onCancel}
           />
 
@@ -93,7 +94,7 @@ const ActionDialog = ({
             style={styles.button}
             icon='check-circle-outline'
             size={50}
-            color={user.theme.fontColor}
+            color={theme.fontColor}
             onPress={onSubmit}
             disabled={disableSubmit}
           />

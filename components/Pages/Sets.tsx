@@ -75,10 +75,9 @@ const Sets = ({ navigation, route }: Props) => {
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { categoryRef } = route.params;
 
-  const { user, cards } = useSelector((state: RootState) => state.store);
+  const { cards } = useSelector((state: RootState) => state.store);
+  const { colors, patterns, theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
-
-  const { colors, patterns } = useContext(swatchContext);
 
   const { renderCount } = useRenderCounter();
   renderCount.current++;
@@ -199,8 +198,8 @@ const Sets = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              color={user.theme.cardColor}
-              labelStyle={{ color: user.theme.fontColor }}
+              color={theme.cardColor}
+              labelStyle={{ color: theme.fontColor }}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -211,8 +210,8 @@ const Sets = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              color={user.theme.cardColor}
-              labelStyle={{ color: user.theme.fontColor }}
+              color={theme.cardColor}
+              labelStyle={{ color: theme.fontColor }}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -296,10 +295,13 @@ const Sets = ({ navigation, route }: Props) => {
           label='SET NAME'
           outlineColor='grey'
           activeOutlineColor='black'
+          autoCorrect={false}
           maxLength={32}
           style={{ height: 40, margin: 0 }}
-          value={cardSet.name}
-          onChangeText={(name) => setCardSet((prev) => ({ ...prev, name }))}
+          defaultValue={editMode ? cardSet.name : undefined}
+          onChange={({ nativeEvent: { text } }) =>
+            setCardSet((prev) => ({ ...prev, name: text }))
+          }
         />
         <View style={[s.actionDialogChildrenContainer, { marginTop: 15 }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -308,13 +310,13 @@ const Sets = ({ navigation, route }: Props) => {
               setColor={selectColor}
               swatches={colors}
             />
-            <Title style={{ color: user.theme.fontColor, marginLeft: 10 }}>
+            <Title style={{ color: theme.fontColor, marginLeft: 10 }}>
               COLOR
             </Title>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Title style={{ color: user.theme.fontColor, marginRight: 10 }}>
+            <Title style={{ color: theme.fontColor, marginRight: 10 }}>
               DESIGN
             </Title>
             <PatternSelector

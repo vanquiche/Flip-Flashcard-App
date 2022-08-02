@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, IconButton, Title } from 'react-native-paper';
 
 import { DateTime } from 'luxon';
@@ -12,6 +12,7 @@ import s from '../styles/styles';
 
 import { StackNavigationTypes } from '../types';
 import UserInfo from '../UserInfo';
+import swatchContext from '../../contexts/swatchContext';
 const profileImg = require('../../assets/images/profile-user.png');
 
 interface Props extends StackNavigationTypes {}
@@ -21,18 +22,19 @@ const Profile = ({ navigation }: Props) => {
     (state: RootState) => state.store
   );
   const dispatch = useDispatch<AppDispatch>();
+  const { theme } = useContext(swatchContext);
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const _color = user.theme.cardColor;
+  const _cardColor = theme.cardColor;
 
   const lastLoginDate = DateTime.fromISO(
     user.login[user.login.length - 1]
   ).toFormat('ff');
 
-  const deleteCurrentUser = () => {
-    dispatch(deleteUser());
-  };
+  // const deleteCurrentUser = () => {
+  //   dispatch(deleteUser());
+  // };
 
   return (
     <View style={s.screenWrapper}>
@@ -40,7 +42,7 @@ const Profile = ({ navigation }: Props) => {
         style={{ position: 'absolute', right: 0 }}
         size={32}
         icon='brush-variant'
-        color={user.theme.cardColor}
+        color={_cardColor}
         onPress={() => navigation.navigate('Themes')}
       >
         themes
@@ -62,28 +64,28 @@ const Profile = ({ navigation }: Props) => {
         <UserInfo
           xp={user.xp}
           level={level}
-          color={_color}
+          color={_cardColor}
           image={profileImg}
           coin={user.heartcoin}
           username={user.username}
         />
         <PointTracker
           points={user.xp}
-          progressColor={_color}
+          progressColor={_cardColor}
           total={levelUpCondition}
         />
       </View>
 
       {/* CATEGORY POINT CONTAINER */}
       <ScrollView contentContainerStyle={styles.categoryContainer}>
-        <Title style={{ color: _color }}>CATEGORIES</Title>
+        <Title style={{ color: _cardColor }}>CATEGORIES</Title>
         {cards.category.map((c) => {
           return (
             <PointTracker
               key={c._id}
               title={c.name}
               points={c.points}
-              progressColor={_color}
+              progressColor={_cardColor}
               total={100}
             />
           );

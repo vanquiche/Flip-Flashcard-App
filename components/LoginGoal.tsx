@@ -1,10 +1,11 @@
 import { View, StyleSheet } from 'react-native';
 import { Text, IconButton, useTheme, Title } from 'react-native-paper';
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { AntDesign } from '@expo/vector-icons';
+import swatchContext from '../contexts/swatchContext';
 
 const displayWeek = [
   { name: 'S', date: 7 },
@@ -22,7 +23,7 @@ interface Props {
 }
 
 const LoginGoal = ({ dates, streak }: Props) => {
-  const { user } = useSelector((state: RootState) => state.store);
+  const { theme } = useContext(swatchContext);
   const dt = DateTime;
 
   // create an object corresponding for each day of the week
@@ -60,8 +61,8 @@ const LoginGoal = ({ dates, streak }: Props) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: user.theme.cardColor }]}>
-      <Title style={{ color: user.theme.fontColor }}>DAYS LOGGED IN</Title>
+    <View style={[styles.container, { backgroundColor: theme.cardColor }]}>
+      <Title style={{ color: theme.fontColor }}>DAYS LOGGED IN</Title>
 
       <View style={styles.weekContainer}>
         {displayWeek.map((d, index) => {
@@ -80,8 +81,8 @@ const LoginGoal = ({ dates, streak }: Props) => {
                 style={[
                   { position: 'absolute' },
                   loggedInDay?.loggedIn
-                    ? { color: user.theme.cardColor }
-                    : { color: user.theme.fontColor },
+                    ? { color: theme.cardColor }
+                    : { color: theme.fontColor },
                 ]}
               >
                 {d.name}
@@ -90,9 +91,7 @@ const LoginGoal = ({ dates, streak }: Props) => {
           );
         })}
       </View>
-      <Title style={{ color: user.theme.fontColor }}>
-        LOGIN STREAK: {streak}
-      </Title>
+      <Title style={{ color: theme.fontColor }}>LOGIN STREAK: {streak}</Title>
     </View>
   );
 };

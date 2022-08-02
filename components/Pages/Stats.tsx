@@ -1,11 +1,12 @@
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { DateTime } from 'luxon';
 import { Stats as StatsType } from '../types';
 import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
 import { Button, Title } from 'react-native-paper';
+import swatchContext from '../../contexts/swatchContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -16,6 +17,10 @@ const Stats = () => {
   const [currentWeek, setCurrentWeek] = useState<number>(0);
   const [dataType, setDataType] = useState<SelectDataType>('avg');
   const { user } = useSelector((state: RootState) => state.store);
+  const {theme} = useContext(swatchContext)
+
+  const _cardColor = theme.cardColor
+  const _fontColor = theme.fontColor
 
   const generateData = (
     stats: StatsType[],
@@ -84,8 +89,8 @@ const Stats = () => {
       <View style={styles.btnContainer}>
         <Button
           mode='contained'
-          color={user.theme.cardColor}
-          labelStyle={{ color: user.theme.fontColor }}
+          color={_cardColor}
+          labelStyle={{ color: _fontColor }}
           onPress={() => setDataType('avg')}
           disabled={dataType === 'avg'}
           style={styles.button}
@@ -94,8 +99,8 @@ const Stats = () => {
         </Button>
         <Button
           mode='contained'
-          color={user.theme.cardColor}
-          labelStyle={{ color: user.theme.fontColor }}
+          color={_cardColor}
+          labelStyle={{ color: _fontColor }}
           onPress={() => setDataType('sets')}
           disabled={dataType === 'sets'}
           style={styles.button}
@@ -104,7 +109,7 @@ const Stats = () => {
         </Button>
       </View>
 
-      <Title style={{ ...styles.chartTitle, color: user.theme.cardColor }}>
+      <Title style={{ ...styles.chartTitle, color: _cardColor }}>
         {dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'}
       </Title>
       <View style={styles.chartContainer}>
@@ -121,21 +126,21 @@ const Stats = () => {
             cornerRadius={{ top: 6 }}
             x='date'
             y='datapoints'
-            style={{ data: { fill: user.theme.cardColor, width: 25 } }}
+            style={{ data: { fill: _cardColor, width: 25 } }}
           />
         </VictoryChart>
       </View>
 
       <View style={styles.btnContainer}>
         <Button
-          color={user.theme.cardColor}
+          color={_cardColor}
           onPress={() => setCurrentWeek((prev) => prev + 1)}
           disabled={currentWeek >= 12}
         >
           Prev
         </Button>
         <Button
-          color={user.theme.cardColor}
+          color={_cardColor}
           onPress={() => setCurrentWeek((prev) => prev - 1)}
           disabled={currentWeek === 0}
         >
@@ -152,11 +157,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   chartContainer: {
-    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#f5fcff',
-    // borderWidth: 2,
     height: 300,
   },
   btnContainer: {

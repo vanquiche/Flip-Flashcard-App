@@ -27,6 +27,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
+import { defaultTheme } from '../components/types';
 
 
 const Tab = createBottomTabNavigator();
@@ -93,6 +94,7 @@ const IndexScreen = () => {
   // passed through context
   const colors = DEFAULT_SWATCH_LIST.concat(user.collection.colors);
   const patterns = { ...DEFAULT_PATTERNS, ...user.collection.patterns };
+  const theme = user.theme || defaultTheme
 
   const clearNotification = () => {
     dispatch(dismissNotification());
@@ -104,19 +106,19 @@ const IndexScreen = () => {
   }, []);
 
   return (
-    <swatchContext.Provider value={{ colors, patterns }}>
+    <swatchContext.Provider value={{ colors, patterns, theme }}>
       <AlertNotification
         dismiss={clearNotification}
         visible={notification.show}
         message={notification.message}
-        bgColor={user.theme.cardColor}
-        textColor={user.theme.fontColor}
+        bgColor={theme.cardColor}
+        textColor={theme.fontColor}
       />
       <StatusBar hidden />
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: {
-            backgroundColor: user.theme.tabColor,
+            backgroundColor: theme.tabColor,
             height: 70,
           },
           tabBarShowLabel: false,
@@ -124,7 +126,7 @@ const IndexScreen = () => {
         }}
       >
         {/* if there is no user then render Signup page, else render normal screens */}
-        {!user._id ? (
+        {!user._id || !user ? (
           <Tab.Screen
             name='SignUp'
             component={SignUp}
@@ -145,8 +147,8 @@ const IndexScreen = () => {
                       icon='home-variant'
                       color={
                         focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
+                          ? theme.actionIconColor
+                          : theme.iconColor
                       }
                     />
 
@@ -174,8 +176,8 @@ const IndexScreen = () => {
                       icon='cards'
                       color={
                         focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
+                          ? theme.actionIconColor
+                          : theme.iconColor
                       }
                     />
                   </Animated.View>
@@ -203,8 +205,8 @@ const IndexScreen = () => {
                       focused={focused}
                       color={
                         focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
+                          ? theme.actionIconColor
+                          : theme.iconColor
                       }
                     />
                   </Animated.View>
@@ -232,8 +234,8 @@ const IndexScreen = () => {
                       focused={focused}
                       color={
                         focused
-                          ? user.theme.actionIconColor
-                          : user.theme.iconColor
+                          ? theme.actionIconColor
+                          : theme.iconColor
                       }
                     />
                   </Animated.View>

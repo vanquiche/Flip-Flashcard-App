@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Text, Title, Button } from 'react-native-paper';
 
 import Animated, { SlideInRight, withDelay } from 'react-native-reanimated';
@@ -14,6 +14,7 @@ import {
 
 import { CountUp } from 'use-count-up';
 import { Set } from './types';
+import swatchContext from '../contexts/swatchContext';
 
 interface Props {
   set: Set;
@@ -25,12 +26,13 @@ interface Props {
 
 const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
   const { user, cards } = useSelector((state: RootState) => state.store);
+  const {theme} = useContext(swatchContext)
 
   // color variables
-  const _fontColor = user.theme.fontColor;
-  const _xpBarColor = user.theme.fontColor;
-  const _cardColor = user.theme.cardColor;
-  const _accentColor = user.theme.accentColor;
+  const _fontColor = theme.fontColor;
+  const _xpBarColor = theme.fontColor;
+  const _cardColor = theme.cardColor;
+  const _accentColor = theme.accentColor;
 
   const quizGrade = Math.floor((score / total) * 100);
 
@@ -72,7 +74,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
 
   return (
     <Animated.View
-      style={[styles.container, { backgroundColor: user.theme.cardColor }]}
+      style={[styles.container, { backgroundColor: theme.cardColor }]}
       entering={SlideInRight.delay(500)}
     >
       <Title style={[{ textAlign: 'center', color: _fontColor }]}>
@@ -117,7 +119,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
 
       {/* XP BAR */}
 
-      <View style={[styles.progressBar, { borderColor: user.theme.fontColor }]}>
+      <View style={[styles.progressBar, { borderColor: theme.fontColor }]}>
         {!setCompleted && (
           <Animated.View
             style={[

@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import AppBar from './AppBar';
@@ -7,6 +7,7 @@ import uuid from 'react-native-uuid';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import swatchContext from '../contexts/swatchContext';
 
 const Stack = createStackNavigator();
 
@@ -23,17 +24,17 @@ interface Props {
 }
 
 const StackNavigator = ({ screens, title, id }: Props) => {
-  const { user } = useSelector((state: RootState) => state.store);
+  const { theme } = useContext(swatchContext);
 
   return (
     <Stack.Navigator
       id={id}
       screenOptions={{
         headerStyle: {
-          backgroundColor: user.theme.headerColor,
+          backgroundColor: theme.headerColor,
           height: 70,
         },
-        headerTintColor: user.theme.fontColor,
+        headerTintColor: theme.fontColor,
         headerTitleStyle: {
           fontFamily: 'BalooBhaiExtraBold',
           fontSize: 22,
@@ -48,7 +49,7 @@ const StackNavigator = ({ screens, title, id }: Props) => {
           key={uuid.v4().toString()}
           options={{
             cardStyle: {
-              backgroundColor: user.theme.bgColor,
+              backgroundColor: theme.bgColor,
             },
           }}
         />

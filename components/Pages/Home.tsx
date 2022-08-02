@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect, Suspense, useCallback } from 'react';
+import React, { useEffect, Suspense, useCallback, useContext } from 'react';
 import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
 
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
@@ -16,6 +16,7 @@ import s from '../styles/styles';
 import useCheckDate from '../../hooks/useCheckDate';
 import loginStreak from '../../utility/loginStreak';
 import { showNotification } from '../../redux/storeSlice';
+import swatchContext from '../../contexts/swatchContext';
 
 interface Props extends StackNavigationTypes {}
 
@@ -23,10 +24,11 @@ const Home = ({ navigation, route }: Props) => {
   const { user, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
+  const {theme} = useContext(swatchContext)
   const dispatch = useDispatch<AppDispatch>();
 
-  const _cardColor = user.theme.cardColor;
-  const _fontColor = user.theme.fontColor;
+  const _cardColor = theme.cardColor;
+  const _fontColor = theme.fontColor;
 
   const navigateToFavorite = (set: Set) => {
     navigation.dispatch({
@@ -83,11 +85,11 @@ const Home = ({ navigation, route }: Props) => {
         <View
           style={{
             ...styles.infoCardContainer,
-            backgroundColor: user.theme.cardColor,
+            backgroundColor: _cardColor,
           }}
         >
           <Button
-            color={user.theme.fontColor}
+            color={_fontColor}
             labelStyle={{ fontSize: 20 }}
             onPress={() => navigation.navigate('Stats')}
           >
@@ -104,7 +106,7 @@ const Home = ({ navigation, route }: Props) => {
         {favoriteSets.length === 0 && (
           <Text
             style={{
-              color: user.theme.cardColor,
+              color: _cardColor,
               ...styles.favoriteMessage,
             }}
           >

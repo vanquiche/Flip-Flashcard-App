@@ -21,7 +21,7 @@ const SignUp = () => {
       type: 'user',
       username: newUser,
       xp: 0,
-      heartcoin: 0,
+      heartcoin: 75,
       achievements: [],
       completedQuiz: [],
       login: [dt.now().toISO()],
@@ -46,11 +46,8 @@ const SignUp = () => {
         <Title
           style={{ textAlign: 'center', color: colors.secondary, fontSize: 22 }}
         >
-          CREATE YOUR PROFILE
+          CREATE YOUR ACCOUNT
         </Title>
-        <View
-          style={[styles.icon, { backgroundColor: colors.secondary }]}
-        ></View>
 
         <TextInput
           label='USER NAME'

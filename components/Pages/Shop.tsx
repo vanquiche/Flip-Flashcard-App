@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Pressable } from 'react-native';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { Button, Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -18,11 +18,14 @@ import ShopTheme from '../ShopTheme';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import { Theme } from '../types';
+import swatchContext from '../../contexts/swatchContext';
 
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
+  const {theme} = useContext(swatchContext)
   const dispatch = useDispatch<AppDispatch>();
   // console.log(user)
+  const _cardColor = theme.cardColor
 
   const purchaseColor = useCallback(
     (c: string, p: number) => {
@@ -84,15 +87,15 @@ const Shop = () => {
     [user.collection.themes, user.heartcoin]
   );
 
-  const resetPurchase = () => {
-    dispatch(
-      updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
-    );
-  };
+  // const resetPurchase = () => {
+  //   dispatch(
+  //     updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
+  //   );
+  // };
 
-  const addCoins = () => {
-    dispatch(updateUser({ heartcoin: user.heartcoin + 50 }));
-  };
+  // const addCoins = () => {
+  //   dispatch(updateUser({ heartcoin: user.heartcoin + 50 }));
+  // };
 
   return (
     <>
@@ -100,16 +103,16 @@ const Shop = () => {
         <FontAwesome5
           name='coins'
           size={20}
-          color={user.theme.cardColor}
+          color={_cardColor}
           style={{ position: 'absolute', right: 15, top: 15 }}
         />
-        <Title style={{ color: user.theme.cardColor, textAlign: 'right', marginRight: 20 }}>
+        <Title style={{ color: _cardColor, textAlign: 'right', marginRight: 20 }}>
           {user.heartcoin}
         </Title>
       </View>
       <ScrollView>
         {/* SWATCH COLORS */}
-        <ShopCatalogue title='CARD COLORS' titleColor={user.theme.cardColor}>
+        <ShopCatalogue title='CARD COLORS' titleColor={_cardColor}>
           {STORE_SWATCH_LIST.map((d, i) => (
             <ShopSwatchColor
               key={i}
@@ -121,7 +124,7 @@ const Shop = () => {
         </ShopCatalogue>
 
         {/* SWATCH PATTERNS */}
-        <ShopCatalogue title='CARD PATTERNS' titleColor={user.theme.cardColor}>
+        <ShopCatalogue title='CARD PATTERNS' titleColor={_cardColor}>
           {Object.entries(STORE_PATTERNS).map((p, i) => {
             return (
               <ShopSwatchPattern
@@ -134,7 +137,7 @@ const Shop = () => {
           })}
         </ShopCatalogue>
 
-        <ShopCatalogue title='THEMES' titleColor={user.theme.cardColor}>
+        <ShopCatalogue title='THEMES' titleColor={_cardColor}>
           {STORE_THEMES.map((t, i) => {
             return (
               <ShopTheme
@@ -146,13 +149,13 @@ const Shop = () => {
             );
           })}
         </ShopCatalogue>
-
+{/*
         <Button color='black' onPress={resetPurchase}>
           reset purchase
         </Button>
         <Button color='black' onPress={addCoins}>
           get coins
-        </Button>
+        </Button> */}
       </ScrollView>
     </>
   );

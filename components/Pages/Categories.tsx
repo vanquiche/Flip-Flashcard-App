@@ -49,11 +49,10 @@ const Categories = ({ navigation, route }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
 
-  const { colors } = useContext(swatchContext);
+  const { cards } = useSelector((state: RootState) => state.store);
+  const { colors, theme } = useContext(swatchContext);
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
-
-  const { user, cards } = useSelector((state: RootState) => state.store);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -139,8 +138,8 @@ const Categories = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              labelStyle={[{ color: user.theme.fontColor }]}
-              color={user.theme.cardColor}
+              labelStyle={[{ color: theme.fontColor }]}
+              color={theme.cardColor}
               onPress={() => setShowDialog(true)}
             >
               NEW
@@ -149,8 +148,8 @@ const Categories = ({ navigation, route }: Props) => {
             <Button
               mode='contained'
               style={s.cardActionButton}
-              labelStyle={[{ color: user.theme.fontColor }]}
-              color={user.theme.cardColor}
+              labelStyle={[{ color: theme.fontColor }]}
+              color={theme.cardColor}
               onPress={() => {
                 clearSelection();
                 setMultiSelectMode(true);
@@ -233,8 +232,11 @@ const Categories = ({ navigation, route }: Props) => {
             outlineColor='grey'
             activeOutlineColor='black'
             maxLength={32}
-            value={category.name}
-            onChangeText={(name) => setCategory((prev) => ({ ...prev, name }))}
+            autoCorrect={false}
+            defaultValue={editMode ? category.name : undefined}
+            onChange={({ nativeEvent: { text } }) =>
+              setCategory((prev) => ({ ...prev, name: text }))
+            }
             style={styles.textInput}
           />
 

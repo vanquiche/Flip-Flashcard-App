@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Animated, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, Animated, Keyboard, TextInput as TI } from 'react-native';
 import {
   Portal,
   useTheme,
@@ -61,6 +61,7 @@ const Quiz = ({
   const [showAlert, setShowAlert] = useState(false);
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
+  const textfieldRef = useRef<TI>(null)
   const dt = DateTime;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -74,7 +75,7 @@ const Quiz = ({
     return quiz.set.find((c) => c._id === setRef);
   }, []);
 
-  const { patterns } = useContext(swatchContext);
+  const { patterns, theme } = useContext(swatchContext);
   const { colors: themeColors } = useTheme();
 
   // track questions that were correct
@@ -100,6 +101,9 @@ const Quiz = ({
 
   // reset and move to next slide
   const goToNextSlide = () => {
+    if (textfieldRef.current) {
+      textfieldRef.current.clear()
+    }
     setAnswer('');
     setSubmitted(false);
     setCardCount((prev) => prev + 1);
@@ -209,7 +213,7 @@ const Quiz = ({
 
   return (
     <Portal>
-      <QuizContainer color={user.theme.bgColor}>
+      <QuizContainer color={theme.bgColor}>
         <View style={styles.container}>
           <AlertDialog
             message='Are you sure you want to quit?'
@@ -279,14 +283,15 @@ const Quiz = ({
                     patternList={patterns}
                   />
                   <TextInput
+                    ref={textfieldRef}
                     mode='outlined'
                     style={styles.input}
                     activeOutlineColor='black'
                     outlineColor='lightgrey'
                     label='ANSWER'
                     maxLength={42}
-                    value={answer}
-                    onChangeText={(text) => setAnswer(text)}
+                    // value={answer}
+                    onChange={({nativeEvent: {text}}) => setAnswer(text)}
                     disabled={submitted}
                   />
                   <View

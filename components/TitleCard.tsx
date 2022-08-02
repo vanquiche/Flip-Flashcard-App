@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   pattern: {
     height: 125,
     tintColor: 'white',
-    opacity: 0.4,
+    opacity: 0.25,
     resizeMode: 'contain',
     // borderWidth: 2,
     transform: [{
