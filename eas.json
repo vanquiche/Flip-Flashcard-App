@@ -13,6 +13,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "stevevang425@gmail.com",
+        "ascAppId": "1637560175",
+        "appleTeamId": "D8382ADT6R"
+      }
+    }
   }
 }
