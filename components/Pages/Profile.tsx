@@ -28,13 +28,13 @@ const Profile = ({ navigation }: Props) => {
 
   const _cardColor = theme.cardColor;
 
-  const lastLoginDate = DateTime.fromISO(
-    user.login[user.login.length - 1]
-  ).toFormat('ff');
+  // const lastLoginDate = DateTime.fromISO(
+  //   user.login[user.login.length - 1]
+  // ).toFormat('ff');
 
-  // const deleteCurrentUser = () => {
-  //   dispatch(deleteUser());
-  // };
+  const deleteCurrentUser = () => {
+    dispatch(deleteUser());
+  };
 
   return (
     <View style={s.screenWrapper}>
@@ -48,12 +48,12 @@ const Profile = ({ navigation }: Props) => {
         themes
       </IconButton>
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
-
-      {/* <Button
-      mode='contained'
+{/* 
+      <Button
+      mode='text'
       color='tomato'
       style={{ margin: 25, elevation: 0 }}
-      labelStyle={{ color: 'white' }}
+      labelStyle={{ color: 'black' }}
       onPress={deleteCurrentUser}
     >
       Delete User

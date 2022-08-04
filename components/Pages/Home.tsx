@@ -14,8 +14,6 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
 import s from '../styles/styles';
 import useCheckDate from '../../hooks/useCheckDate';
-import loginStreak from '../../utility/loginStreak';
-import { showNotification } from '../../redux/storeSlice';
 import swatchContext from '../../contexts/swatchContext';
 
 interface Props extends StackNavigationTypes {}
@@ -24,7 +22,7 @@ const Home = ({ navigation, route }: Props) => {
   const { user, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
-  const {theme} = useContext(swatchContext)
+  const { theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
 
   const _cardColor = theme.cardColor;
@@ -66,7 +64,6 @@ const Home = ({ navigation, route }: Props) => {
   };
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
-
   useEffect(() => {
     if (!isSameDay) {
       dispatch(
@@ -140,17 +137,9 @@ const Home = ({ navigation, route }: Props) => {
 
 const styles = StyleSheet.create({
   favoritesContainer: {
-    marginHorizontal: 15,
-    marginVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  // infoCard: {
-  //   width: '45%',
-  //   height: 75,
-  //   borderRadius: 10,
-  //   margin: 10,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
   infoCardContainer: {
     flexDirection: 'row',
     marginHorizontal: 15,
@@ -158,7 +147,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 13,
-    height: 75,
+    minHeight: 75,
+    height: '15%',
   },
   favoriteMessage: {
     textAlign: 'center',

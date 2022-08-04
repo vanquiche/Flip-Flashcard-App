@@ -92,9 +92,9 @@ const IndexScreen = () => {
 
   // swatch colors and patterns for swatch selector
   // passed through context
-  const colors = DEFAULT_SWATCH_LIST.concat(user.collection.colors);
-  const patterns = { ...DEFAULT_PATTERNS, ...user.collection.patterns };
-  const theme = user.theme || defaultTheme
+  const colors = user ? DEFAULT_SWATCH_LIST.concat(user.collection.colors) : DEFAULT_SWATCH_LIST;
+  const patterns = user ? { ...DEFAULT_PATTERNS, ...user.collection.patterns } : DEFAULT_PATTERNS;
+  const theme = user ? user.theme : defaultTheme
 
   const clearNotification = () => {
     dispatch(dismissNotification());
@@ -126,7 +126,8 @@ const IndexScreen = () => {
         }}
       >
         {/* if there is no user then render Signup page, else render normal screens */}
-        {!user._id || !user ? (
+        {/* if user is undefined or if user object exist but has not been initialized yet */}
+        {!user || (user && !user._id) ? (
           <Tab.Screen
             name='SignUp'
             component={SignUp}
