@@ -54,7 +54,7 @@ const Card = ({
   const [cardFacingFront, setCardFacingFront] = useState(true);
 
   const { colors } = useTheme();
-  const _fontColor = fontColorContrast(color, 0.7);
+  const _fontColor = fontColorContrast(color, 0.6);
 
   const cardFlip = useSharedValue(0);
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);

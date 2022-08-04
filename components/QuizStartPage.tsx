@@ -11,7 +11,7 @@ interface Props {
   onPress: () => void;
 }
 const QuizStartPage = ({ color, title, count, onPress }: Props) => {
-  const _fontColor = fontColorContrast(color, 0.7)
+  const _fontColor = fontColorContrast(color, 0.6)
   return (
     <Animated.View
       style={[styles.cardStart, { backgroundColor: color }]}

@@ -53,7 +53,7 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
           <Title
             style={{
               ...styles.price,
-              color: fontColorContrast(theme.cardColor, 0.7),
+              color: fontColorContrast(theme.cardColor, 0.6),
             }}
           >
             {price}

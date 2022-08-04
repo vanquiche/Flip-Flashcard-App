@@ -58,7 +58,7 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
           />
         ) : (
           <Title
-            style={{ ...styles.price, color: fontColorContrast(color, 0.7) }}
+            style={{ ...styles.price, color: fontColorContrast(color, 0.6) }}
           >
             {price}
           </Title>

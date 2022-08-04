@@ -1,6 +1,5 @@
 const DEFAULT_SWATCH_LIST = [
   'tomato',
-  '#F83F23',
   '#F8A323',
   '#63D268',
   '#1183ED',

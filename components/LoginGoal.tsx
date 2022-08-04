@@ -98,7 +98,8 @@ const LoginGoal = ({ dates, streak }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 185,
+    minHeight: 185,
+    height: '35%',
     borderRadius: 15,
     marginVertical: 15,
     marginHorizontal: 15,

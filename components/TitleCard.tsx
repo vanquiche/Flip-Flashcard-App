@@ -108,12 +108,7 @@ const TitleCard = ({
           />
         )}
 
-        <Text
-          style={[
-            styles.textContent,
-            { color: _fontColor },
-          ]}
-        >
+        <Text style={[styles.textContent, { color: _fontColor }]}>
           {card.name}
         </Text>
         <IconButton
@@ -156,15 +151,17 @@ const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 165,
-    height: 125,
+    width: '45%',
+    aspectRatio: 1 / 1.2,
+    minHeight: 135,
+    maxHeight: 150,
     padding: 15,
     margin: 5,
     borderRadius: 12,
     backgroundColor: 'white',
   },
   patternWrapper: {
-  width: '100%',
+    width: '100%',
     height: '100%',
     position: 'absolute',
     zIndex: 0,
@@ -172,14 +169,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   pattern: {
-    height: 125,
+    // height: 125,
+    height: '100%',
+    width: '100%',
     tintColor: 'white',
     opacity: 0.25,
     resizeMode: 'contain',
-    // borderWidth: 2,
-    transform: [{
-      translateY: -15
-    }]
 
   },
   favicon: {

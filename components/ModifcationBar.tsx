@@ -70,7 +70,7 @@ const ModifcationBar = ({
             mode='text'
             style={[
               s.cardActionButton,
-              { position: 'absolute', right: 12, width: 100 },
+              { position: 'absolute', right: 0, width: 100 },
             ]}
             color='tomato'
             onPress={onConfirmSelection}
@@ -80,7 +80,7 @@ const ModifcationBar = ({
 
           <Button
             mode='text'
-            style={[s.cardActionButton, { position: 'absolute', left: 12 }]}
+            style={s.cardActionButton}
             color='tomato'
             onPress={clearSelection}
             disabled={selections.length === 0}

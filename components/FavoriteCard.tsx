@@ -22,9 +22,7 @@ interface Props {
 }
 
 const FavoriteCard = ({ card, onPress }: Props) => {
-  const { user } = useSelector((state: RootState) => state.store);
-
-  const _fontColor = fontColorContrast(card.color, 0.7);
+  const _fontColor = fontColorContrast(card.color, 0.6);
 
   return (
     <Pressable
@@ -43,7 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // width: '45%',
     height: 125,
-    aspectRatio: 1.3,
+    width: 160,
     padding: 15,
     margin: 5,
     borderRadius: 12,
