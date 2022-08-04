@@ -18,7 +18,7 @@ import swatchContext from '../../contexts/swatchContext';
 
 interface Props extends StackNavigationTypes {}
 
-const Home = ({ navigation, route }: Props) => {
+const Home = ({ navigation }: Props) => {
   const { user, favoriteSets, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
