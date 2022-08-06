@@ -17,17 +17,18 @@ const Stats = () => {
   const [currentWeek, setCurrentWeek] = useState<number>(0);
   const [dataType, setDataType] = useState<SelectDataType>('avg');
   const { user } = useSelector((state: RootState) => state.store);
-  const {theme} = useContext(swatchContext)
+  const { theme } = useContext(swatchContext);
 
-  const _cardColor = theme.cardColor
-  const _fontColor = theme.fontColor
+  const _cardColor = theme.cardColor;
+  const _fontColor = theme.fontColor;
+
+  const dt = DateTime;
 
   const generateData = (
     stats: StatsType[],
     week: number,
     datatype: SelectDataType
   ) => {
-    const dt = DateTime;
     const current = dt.fromObject({
       weekYear: dt.now().year,
       weekNumber: dt.now().weekNumber,
@@ -97,6 +98,9 @@ const Stats = () => {
         >
           avg.
         </Button>
+        <Title style={{ ...styles.chartTitle, color: _cardColor }}>
+          {dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'}
+        </Title>
         <Button
           mode='contained'
           color={_cardColor}
@@ -109,9 +113,6 @@ const Stats = () => {
         </Button>
       </View>
 
-      <Title style={{ ...styles.chartTitle, color: _cardColor }}>
-        {dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'}
-      </Title>
       <View style={styles.chartContainer}>
         <VictoryChart
           width={SCREEN_WIDTH}
@@ -133,14 +134,20 @@ const Stats = () => {
 
       <View style={styles.btnContainer}>
         <Button
+          mode='contained'
+          labelStyle={{ color: _fontColor }}
           color={_cardColor}
+          style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev + 1)}
           disabled={currentWeek >= 12}
         >
           Prev
         </Button>
         <Button
+          mode='contained'
+          labelStyle={{ color: _fontColor }}
           color={_cardColor}
+          style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev - 1)}
           disabled={currentWeek === 0}
         >
@@ -154,7 +161,7 @@ const Stats = () => {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    flex: 1
+    flex: 1,
   },
   chartContainer: {
     justifyContent: 'center',
@@ -164,7 +171,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20
+    padding: 20,
   },
   button: {
     elevation: 0,

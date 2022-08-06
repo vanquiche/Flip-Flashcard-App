@@ -1,5 +1,5 @@
-import { View, Text, ScrollView, Pressable } from 'react-native';
-import React, { useCallback, useContext } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { Button, Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -13,26 +13,38 @@ import { STORE_PATTERNS } from '../../assets/patterns/patterns';
 import { STORE_THEMES } from '../../assets/theme/userTheme';
 
 import ShopSwatchPattern from '../ShopSwatchPattern';
-import ThemeDisplay from '../ThemeDisplay';
 import ShopTheme from '../ShopTheme';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { CountUp } from 'use-count-up';
 
 import { Theme } from '../types';
 import swatchContext from '../../contexts/swatchContext';
 
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
-  const {theme} = useContext(swatchContext)
+  const { theme } = useContext(swatchContext);
+
+  // start and end value for countUp animation
+  const [countUpValue, setCountUpValue] = useState({
+    start: user.heartcoin,
+    end: user.heartcoin,
+  });
+  const [delayButton, setDelayButton] = useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
-  // console.log(user)
-  const _cardColor = theme.cardColor
+
+  const _cardColor = theme.cardColor;
 
   const purchaseColor = useCallback(
     (c: string, p: number) => {
       const updateColors = user.collection.colors.concat(c);
       const updateCoins = user.heartcoin - p;
 
-      // console.log(updated)
+      setCountUpValue((prev) => ({
+        start: prev.end,
+        end: prev.end - p,
+      }));
+
       dispatch(
         updateUser({
           heartcoin: updateCoins,
@@ -54,6 +66,11 @@ const Shop = () => {
 
       const updateCoins = user.heartcoin - p;
 
+      setCountUpValue((prev) => ({
+        start: prev.end,
+        end: prev.end - p,
+      }));
+
       dispatch(
         updateUser({
           heartcoin: updateCoins,
@@ -74,6 +91,11 @@ const Shop = () => {
         ? user.collection.themes.concat(t)
         : t;
 
+      setCountUpValue((prev) => ({
+        start: prev.end,
+        end: prev.end - p,
+      }));
+
       dispatch(
         updateUser({
           heartcoin: updateCoins,
@@ -87,28 +109,66 @@ const Shop = () => {
     [user.collection.themes, user.heartcoin]
   );
 
-  // const resetPurchase = () => {
-  //   dispatch(
-  //     updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
-  //   );
-  // };
+  // prevents user from pressing 'get coins'
+  // too frequently in a short time
+  const debounceBtn = () => {
+    setDelayButton(true);
+    setTimeout(() => {
+      setDelayButton(false);
+    }, 900);
+  };
 
-  // const addCoins = () => {
-  //   dispatch(updateUser({ heartcoin: user.heartcoin + 50 }));
-  // };
+  // disable 'reset purchases' btn if
+  // collection is already empty
+  const emptyCollection = useMemo(() => {
+    const isEmpty = Object.values(user.collection).some((item) => {
+      if (Array.isArray(item)) {
+        return item.length > 0;
+      } else {
+        return Object.values(item).length > 0;
+      }
+    });
+    return isEmpty;
+  }, [user.collection]);
+
+  // strictly for testing purposes
+  const resetPurchase = () => {
+    dispatch(
+      updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
+    );
+  };
+
+  // strictly for testing purposes
+  const addCoins = () => {
+    debounceBtn();
+    setCountUpValue((prev) => ({
+      start: prev.end,
+      end: prev.end + 25,
+    }));
+    dispatch(updateUser({ heartcoin: user.heartcoin + 25 }));
+  };
 
   return (
     <>
       <View style={{ padding: 10, paddingHorizontal: 20 }}>
+        <Title
+          style={{ color: _cardColor, textAlign: 'right', marginRight: 20 }}
+        >
+          <CountUp
+            duration={1.2}
+            start={countUpValue.start}
+            end={countUpValue.end}
+            key={countUpValue.end}
+            isCounting={countUpValue.start !== countUpValue.end}
+          />
+        </Title>
+
         <FontAwesome5
           name='coins'
           size={20}
           color={_cardColor}
           style={{ position: 'absolute', right: 15, top: 15 }}
         />
-        <Title style={{ color: _cardColor, textAlign: 'right', marginRight: 20 }}>
-          {user.heartcoin}
-        </Title>
       </View>
       <ScrollView>
         {/* SWATCH COLORS */}
@@ -149,13 +209,27 @@ const Shop = () => {
             );
           })}
         </ShopCatalogue>
-{/*
-        <Button color='black' onPress={resetPurchase}>
-          reset purchase
+        {/* strictly for testing purposes */}
+        <Button
+          color='black'
+          onPress={resetPurchase}
+          disabled={!emptyCollection}
+        >
+          reset purchases
         </Button>
-        <Button color='black' onPress={addCoins}>
+        <Button color='black' onPress={addCoins} disabled={delayButton}>
           get coins
-        </Button> */}
+        </Button>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 11,
+            color: 'grey',
+            paddingHorizontal: 20,
+          }}
+        >
+          This is just for testing purposes, but go crazy in the meantime
+        </Text>
       </ScrollView>
     </>
   );

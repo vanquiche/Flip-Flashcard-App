@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect, Suspense, useCallback, useContext } from 'react';
+import React, { Suspense, useCallback, useContext } from 'react';
 import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
 
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
@@ -19,7 +19,7 @@ import swatchContext from '../../contexts/swatchContext';
 interface Props extends StackNavigationTypes {}
 
 const Home = ({ navigation }: Props) => {
-  const { user, favoriteSets, levelUpCondition } = useSelector(
+  const { user, favoriteSets } = useSelector(
     (state: RootState) => state.store
   );
   const { theme } = useContext(swatchContext);
@@ -64,17 +64,19 @@ const Home = ({ navigation }: Props) => {
   };
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
-  useEffect(() => {
-    if (!isSameDay) {
-      dispatch(
-        checkLogin({
-          streak: user.streak,
-          login: user.login,
-          heartcoin: user.heartcoin,
-        })
-      );
-    }
-  }, [isSameDay]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!isSameDay) {
+        dispatch(
+          checkLogin({
+            streak: user.streak,
+            login: user.login,
+            heartcoin: user.heartcoin,
+          })
+        );
+      }
+    }, [isSameDay])
+  );
 
   return (
     <View style={s.screenWrapper}>
