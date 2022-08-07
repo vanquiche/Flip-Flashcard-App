@@ -34,7 +34,7 @@ const StackNavigator = ({ screens, title, id }: Props) => {
           backgroundColor: theme.headerColor,
           height: 70,
         },
-        headerTintColor: theme.fontColor,
+        headerTintColor: 'white',
         headerTitleStyle: {
           fontFamily: 'BalooBhaiExtraBold',
           fontSize: 22,

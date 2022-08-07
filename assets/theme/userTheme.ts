@@ -5,7 +5,7 @@ const DEFAULT_THEMES: Theme[] = [
   {
     name: 'Sprout',
     cardColor: '#43aa8b',
-    fontColor: 'white',
+    fontColor: '#032F1A',
     tabColor: '#0ead69',
     headerColor: '#0ead69',
     bgColor: '#ebf5df',
@@ -16,7 +16,7 @@ const DEFAULT_THEMES: Theme[] = [
   {
     name: 'Sea Side',
     cardColor: '#5fa8d3',
-    fontColor: 'white',
+    fontColor: '#0A0A47',
     tabColor: '#0077b6',
     headerColor: '#0077b6',
     bgColor: '#e2eafc',
@@ -30,7 +30,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Kyoto',
     cardColor: '#e56b6f',
-    fontColor: 'white',
+    fontColor: '#000000',
     tabColor: '#ff595e',
     headerColor: '#ff595e',
     bgColor: '#ffe5d9',
@@ -41,7 +41,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Cherry Blossoms',
     cardColor: '#FFC1B7',
-    fontColor: 'white',
+    fontColor: '#490E0E',
     tabColor: '#FF8B79',
     headerColor: '#FF8B79',
     bgColor: '#FFFBFA',
@@ -52,7 +52,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Hydrangea',
     cardColor: '#C0C0F9',
-    fontColor: 'white',
+    fontColor: '#262D74',
     tabColor: '#A1A1F6',
     headerColor: '#A1A1F6',
     bgColor: 'white',
@@ -63,7 +63,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Sweet Bakery',
     cardColor: '#F2C7B3',
-    fontColor: 'white',
+    fontColor: '#573611',
     tabColor: '#D3AC87',
     headerColor: '#D3AC87',
     bgColor: 'white',
@@ -74,7 +74,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Tokyo',
     cardColor: '#FFADF1',
-    fontColor: 'white',
+    fontColor: '#6F2D92',
     tabColor: '#42CAFD',
     headerColor: '#42CAFD',
     bgColor: '#FFFCFF',
@@ -85,7 +85,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Autumn',
     cardColor: '#FFCA98',
-    fontColor: 'white',
+    fontColor: '#5A3423',
     tabColor: '#F5AB66',
     headerColor: '#F5AB66',
     bgColor: '#FFFBED',
@@ -96,7 +96,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Shamrock',
     cardColor: '#8CCF97',
-    fontColor: 'white',
+    fontColor: '#0E3D0A',
     tabColor: '#8CCF97',
     headerColor: '#8CCF97',
     bgColor: 'white',
@@ -107,7 +107,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Fruits',
     cardColor: '#FFBCAD',
-    fontColor: 'white',
+    fontColor: '#761010',
     tabColor: '#FFB68F',
     headerColor: '#FFB68F',
     bgColor: '#FEFFE8',
@@ -118,7 +118,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Magic Girl',
     cardColor: '#CDB5FF',
-    fontColor: 'white',
+    fontColor: '#5C0F49',
     tabColor: '#FF94C0',
     headerColor: '#FF94C0',
     bgColor: '#FFF5F9',
@@ -129,7 +129,7 @@ export const STORE_THEMES: Theme[] = [
   {
     name: 'Berries',
     cardColor: '#83CED4',
-    fontColor: 'white',
+    fontColor: '#073742',
     tabColor: '#9984D4',
     headerColor: '#9984D4',
     bgColor: '#FFFFFF',

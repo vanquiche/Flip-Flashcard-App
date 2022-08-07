@@ -15,12 +15,14 @@ const ThemeDisplay= ({ theme, style }: Props) => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}>
-      <Title style={[styles.title, { color: theme.fontColor }]}>
+      <Title style={[styles.title, { color: 'white' }]}>
         {theme.name.toUpperCase()}
       </Title>
       <View style={[styles.header, { backgroundColor: theme.headerColor }]} />
       <View style={[styles.card1, { backgroundColor: theme.accentColor }]} />
-      <View style={[styles.card4, { backgroundColor: theme.cardColor }]} />
+      <View style={[styles.card4, { backgroundColor: theme.cardColor }]} >
+        <Title style={{textAlign: 'center', color: theme.fontColor, paddingTop: 60}}>FLIP</Title>
+      </View>
       <View style={[styles.card2, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.tab, { backgroundColor: theme.tabColor }]}>

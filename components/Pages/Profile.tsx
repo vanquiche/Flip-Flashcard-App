@@ -26,7 +26,7 @@ const Profile = ({ navigation }: Props) => {
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const _cardColor = fontColorContrast(theme.bgColor, 0.6)
+  const _cardColor = theme.fontColor
 
   // const lastLoginDate = DateTime.fromISO(
   //   user.login[user.login.length - 1]

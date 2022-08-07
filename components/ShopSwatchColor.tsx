@@ -6,6 +6,7 @@ import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
 import fontColorContrast from 'font-color-contrast';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, { BounceIn, FadeIn, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
 
 interface Props {
   color: string;
@@ -50,12 +51,13 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
         disabled={alreadyPurchased}
       >
         {alreadyPurchased ? (
-          <Ionicons
-            name='checkmark-circle'
-            size={72}
-            color='white'
-            style={styles.icon}
-          />
+          <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.icon}>
+            <Ionicons
+              name='checkmark-circle'
+              size={72}
+              color='white'
+            />
+          </Animated.View>
         ) : (
           <Title
             style={{ ...styles.price, color: fontColorContrast(color, 0.6) }}
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
   price: {
     color: 'white',
     fontSize: 26,
-    paddingTop: 10
+    paddingTop: 10,
   },
   name: {
     color: 'white',

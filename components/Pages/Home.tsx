@@ -28,7 +28,7 @@ const Home = ({ navigation }: Props) => {
 
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
-  const titleColor = fontColorContrast(theme.bgColor, 0.6);
+  const titleColor = theme.fontColor
 
   const navigateToFavorite = useCallback((set: Set) => {
     navigation.dispatch({
