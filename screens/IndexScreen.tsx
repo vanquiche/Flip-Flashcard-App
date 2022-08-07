@@ -28,6 +28,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { defaultTheme } from '../components/types';
+import Loader from '../components/Loader';
 
 
 const Tab = createBottomTabNavigator();
@@ -39,7 +40,7 @@ const SCALE_START = 1;
 const SCALE_END = 1.2;
 
 const IndexScreen = () => {
-  const { user, notification } = useSelector((state: RootState) => state.store);
+  const { user, notification, loading } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
   const homeIconSpin = useSharedValue(SPIN_START);
@@ -114,6 +115,7 @@ const IndexScreen = () => {
         bgColor={theme.cardColor}
         textColor={theme.fontColor}
       />
+      <Loader visible={loading}/>
       <StatusBar hidden />
       <Tab.Navigator
         screenOptions={{

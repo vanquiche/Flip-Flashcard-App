@@ -25,6 +25,8 @@ import {
   completeQuiz,
   hydrateData,
 } from './userThunkActions';
+import { DateTime } from 'luxon';
+const dt = DateTime;
 
 interface StoreInit {
   user: User;
@@ -74,6 +76,9 @@ export const storeSlice = createSlice({
       state.favoriteSets = state.favoriteSets.filter(
         (f) => f.categoryRef !== action.payload
       );
+    },
+    toggleLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -196,13 +201,24 @@ export const storeSlice = createSlice({
       })
       .addCase(getCards.fulfilled, (state, action) => {
         const key = action.payload.type;
+        // reorder cards by newest
+        const orderByDate = action.payload.cards.sort((a, b) => {
+          return (
+            dt.fromISO(b.createdAt).toMillis() -
+            dt.fromISO(a.createdAt).toMillis()
+          );
+        });
+
         return {
           ...state,
           cards: {
             ...state.cards,
-            [key]: action.payload.cards,
+            [key]: orderByDate,
           },
         };
+      })
+      .addCase(getCards.rejected, (state, action) => {
+        return state;
       })
       .addCase(getFavoriteSets.fulfilled, (state, action) => {
         if (action.payload.length > 0) {
@@ -216,7 +232,7 @@ export const storeSlice = createSlice({
           Object.assign(state.user, action.payload);
           if (action.payload.inStreak) {
             state.notification.show = true;
-            state.notification.message = 'login streak bonus: 5 heartcoins'
+            state.notification.message = 'login streak bonus: 5 heartcoins';
           }
         }
         // return original state if no payload recieved
@@ -231,10 +247,16 @@ export const storeSlice = createSlice({
         state.user.completedQuiz.push(action.payload);
       })
       .addCase(hydrateData.fulfilled, (state, action) => {
-        // console.log(action.payload)
+        // reorder cards by newest
+        const orderByDate = action.payload.categoryCards.sort((a, b) => {
+          return (
+            dt.fromISO(b.createdAt).toMillis() -
+            dt.fromISO(a.createdAt).toMillis()
+          );
+        });
         state.user = action.payload.user;
         state.favoriteSets = action.payload.favorites;
-        state.cards.category = action.payload.categoryCards;
+        state.cards.category = orderByDate;
       })
       .addCase(hydrateData.rejected, (state, action) => {
         state.notification.show = true;
@@ -245,7 +267,11 @@ export const storeSlice = createSlice({
   },
 });
 
-export const { dismissNotification, showNotification, removeFavorite } =
-  storeSlice.actions;
+export const {
+  dismissNotification,
+  showNotification,
+  removeFavorite,
+  toggleLoading,
+} = storeSlice.actions;
 
 export default storeSlice.reducer;
