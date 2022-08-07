@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import React, { useContext } from 'react';
-import { IconButton, Title } from 'react-native-paper';
+import { IconButton, Title, Button } from 'react-native-paper';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -26,7 +26,7 @@ const Profile = ({ navigation }: Props) => {
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const _cardColor = theme.fontColor
+  const fontColor = fontColorContrast(theme.bgColor, 0.6)
 
   // const lastLoginDate = DateTime.fromISO(
   //   user.login[user.login.length - 1]
@@ -42,13 +42,13 @@ const Profile = ({ navigation }: Props) => {
         style={{ position: 'absolute', right: 0 }}
         size={32}
         icon='brush-variant'
-        color={_cardColor}
+        color={fontColor}
         onPress={() => navigation.navigate('Themes')}
       >
         themes
       </IconButton>
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
-{/*
+
       <Button
       mode='text'
       color='tomato'
@@ -57,35 +57,35 @@ const Profile = ({ navigation }: Props) => {
       onPress={deleteCurrentUser}
     >
       Delete User
-    </Button> */}
+    </Button>
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>
         <UserInfo
           xp={user.xp}
           level={level}
-          color={_cardColor}
+          color={fontColor}
           image={profileImg}
           coin={user.heartcoin}
           username={user.username}
         />
         <PointTracker
           points={user.xp}
-          progressColor={_cardColor}
+          progressColor={fontColor}
           total={levelUpCondition}
         />
       </View>
 
       {/* CATEGORY POINT CONTAINER */}
       <ScrollView contentContainerStyle={styles.categoryContainer}>
-        <Title style={{ color: _cardColor }}>CATEGORIES</Title>
+        <Title style={{ color: fontColor }}>CATEGORIES</Title>
         {cards.category.map((c) => {
           return (
             <PointTracker
               key={c._id}
               title={c.name}
               points={c.points}
-              progressColor={_cardColor}
+              progressColor={fontColor}
               total={100}
             />
           );

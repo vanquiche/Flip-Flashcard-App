@@ -22,7 +22,7 @@ const Stats = () => {
 
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
-  const titleColor = theme.fontColor
+  const titleColor = fontColorContrast(theme.bgColor, 0.6)
 
   const dt = DateTime;
 

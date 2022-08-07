@@ -34,7 +34,7 @@ const Shop = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const titleColor = theme.fontColor;
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
   const purchaseColor = useCallback(
     (c: string, p: number) => {

@@ -19,7 +19,7 @@ const SignUp = () => {
   const createUser = () => {
     const createUser = {
       type: 'user',
-      username: newUser,
+      username: newUser ? newUser : 'user',
       xp: 0,
       heartcoin: 75,
       achievements: [],
@@ -69,7 +69,7 @@ const SignUp = () => {
           labelStyle={{ color: 'white', fontSize: 16 }}
           onPress={createUser}
           disabled={
-            !newUser && newUser.length > 3 ? true : false
+            !newUser || newUser.length < 3
           }
         >
           CREATE
