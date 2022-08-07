@@ -7,6 +7,7 @@ import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import FavoriteCard from '../FavoriteCard';
 
 import { Set, StackNavigationTypes } from '../types';
+import fontColorContrast from 'font-color-contrast';
 
 import LoginGoal from '../LoginGoal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +20,7 @@ import swatchContext from '../../contexts/swatchContext';
 interface Props extends StackNavigationTypes {}
 
 const Home = ({ navigation }: Props) => {
-  const { user, favoriteSets } = useSelector(
+  const { user, favoriteSets, loading } = useSelector(
     (state: RootState) => state.store
   );
   const { theme } = useContext(swatchContext);
@@ -27,8 +28,9 @@ const Home = ({ navigation }: Props) => {
 
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
-  const navigateToFavorite = (set: Set) => {
+  const navigateToFavorite = useCallback((set: Set) => {
     navigation.dispatch({
       ...CommonActions.reset({
         index: 0,
@@ -61,9 +63,10 @@ const Home = ({ navigation }: Props) => {
         ],
       }),
     });
-  };
+  }, []);
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+
   useFocusEffect(
     useCallback(() => {
       if (!isSameDay) {
@@ -79,61 +82,63 @@ const Home = ({ navigation }: Props) => {
   );
 
   return (
-    <View style={s.screenWrapper}>
-      <Suspense fallback={<ActivityIndicator />}>
-        <View
-          style={{
-            ...styles.infoCardContainer,
-            backgroundColor: _cardColor,
-          }}
-        >
-          <Button
-            color={_fontColor}
-            labelStyle={{ fontSize: 20 }}
-            onPress={() => navigation.navigate('Stats')}
-          >
-            STATISTICS
-          </Button>
-        </View>
-
-        <LoginGoal dates={user.login} streak={user.streak} />
-
-        <Title style={{ textAlign: 'center', color: _cardColor }}>
-          FAVORITE SETS
-        </Title>
-
-        {favoriteSets.length === 0 && (
-          <Text
+    <>
+      <View style={s.screenWrapper}>
+        <Suspense fallback={<ActivityIndicator />}>
+          <View
             style={{
-              color: _cardColor,
-              ...styles.favoriteMessage,
+              ...styles.infoCardContainer,
+              backgroundColor: _cardColor,
             }}
           >
-            NO FAVORITES
-          </Text>
-        )}
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[
-            styles.favoritesContainer,
-            { width: 180 * favoriteSets.length },
-          ]}
-        >
-          {favoriteSets
-            .filter((fav) => fav.favorite === true)
-            .map((set) => {
-              return (
-                <FavoriteCard
-                  key={set._id}
-                  card={set}
-                  onPress={() => navigateToFavorite(set)}
-                />
-              );
-            })}
-        </ScrollView>
-      </Suspense>
-    </View>
+            <Button
+              color={_fontColor}
+              labelStyle={{ fontSize: 20 }}
+              onPress={() => navigation.navigate('Stats')}
+            >
+              STATISTICS
+            </Button>
+          </View>
+
+          <LoginGoal dates={user.login} streak={user.streak} />
+
+          <Title style={{ textAlign: 'center', color: titleColor }}>
+            FAVORITE SETS
+          </Title>
+
+          {favoriteSets.length === 0 && (
+            <Text
+              style={{
+                color: titleColor,
+                ...styles.favoriteMessage,
+              }}
+            >
+              NO FAVORITES
+            </Text>
+          )}
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.favoritesContainer,
+              { width: 180 * favoriteSets.length },
+            ]}
+          >
+            {favoriteSets
+              .filter((fav) => fav.favorite === true)
+              .map((set) => {
+                return (
+                  <FavoriteCard
+                    key={set._id}
+                    card={set}
+                    onPress={() => navigateToFavorite(set)}
+                  />
+                );
+              })}
+          </ScrollView>
+        </Suspense>
+      </View>
+    </>
   );
 };
 

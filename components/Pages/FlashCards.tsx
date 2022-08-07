@@ -5,6 +5,7 @@ import React, {
   Suspense,
   useRef,
   useContext,
+  useCallback,
 } from 'react';
 import { Button } from 'react-native-paper';
 import { DateTime } from 'luxon';
@@ -34,6 +35,7 @@ import swatchContext from '../../contexts/swatchContext';
 import useRenderCounter from '../../hooks/useRenderCounter';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
+import { useFocusEffect } from '@react-navigation/native';
 
 const INITIAL_STATE: Flashcard = {
   _id: '',
@@ -140,15 +142,17 @@ const FlashCards = ({ navigation, route }: Props) => {
     setMultiSelectMode(true);
   };
 
-  useEffect(() => {
-    // fetch data from db
-    dispatch(
-      getCards({
-        type: 'flashcard',
-        query: { type: 'flashcard', setRef: setRef },
-      })
-    );
-  }, [setRef]);
+  useFocusEffect(
+    useCallback(() => {
+      // fetch data from db
+      dispatch(
+        getCards({
+          type: 'flashcard',
+          query: { type: 'flashcard', setRef: setRef },
+        })
+      );
+    }, [setRef])
+  );
 
   useEffect(() => {
     // set title

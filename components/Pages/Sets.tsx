@@ -1,8 +1,5 @@
 import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import {
-  IconButton,
-  Title,
-} from 'react-native-paper';
+import { IconButton, Title } from 'react-native-paper';
 import React, {
   useState,
   useEffect,
@@ -41,6 +38,7 @@ import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
+import { useFocusEffect } from '@react-navigation/native';
 
 const INITIAL_STATE: Set = {
   _id: '',
@@ -168,22 +166,24 @@ const Sets = ({ navigation, route }: Props) => {
     setMultiSelectMode(true);
   };
 
-  useEffect(() => {
-    // find cards within the parent category
-    dispatch(
-      getCards({
-        type: 'set',
-        query: { type: 'set', categoryRef: categoryRef },
-      })
-    );
-    // set title of screen to category name
-    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
-      if (err) console.log(err);
-      navigation.setOptions({
-        title: doc.name,
+  useFocusEffect(
+    useCallback(() => {
+      // find cards within the parent category
+      dispatch(
+        getCards({
+          type: 'set',
+          query: { type: 'set', categoryRef: categoryRef },
+        })
+      );
+      // set title of screen to category name
+      db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
+        if (err) console.log(err);
+        navigation.setOptions({
+          title: doc.name,
+        });
       });
-    });
-  }, [categoryRef]);
+    }, [categoryRef])
+  );
 
   return (
     <View>
