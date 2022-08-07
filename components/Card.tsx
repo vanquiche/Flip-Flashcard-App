@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     tintColor: 'white',
     height: 160,
     width: 226,
-    opacity: 0.25,
+    opacity: 0.35,
     borderRadius: 10
   },
 });

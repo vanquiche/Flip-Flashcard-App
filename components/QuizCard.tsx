@@ -137,7 +137,16 @@ const Card = ({
               style={styles.cardPattern}
               source={patternList[pattern]}
             />
-            <Title style={{ ...styles.cardTitle, color: _fontColor }}>
+            <Title
+              style={{
+                ...styles.cardTitle,
+                color: _fontColor,
+                position: 'absolute',
+                top: -5,
+                left: 0,
+                fontSize: 26,
+              }}
+            >
               Q .
             </Title>
             <Text style={{ ...styles.text, color: _fontColor }}>
@@ -161,6 +170,10 @@ const Card = ({
                 ...styles.cardBackText,
                 ...styles.cardTitle,
                 color: _fontColor,
+                position: 'absolute',
+                bottom: -5,
+                left: 0,
+                fontSize: 26,
               }}
             >
               A .
@@ -241,7 +254,7 @@ const styles = StyleSheet.create({
   },
   image: {
     tintColor: 'white',
-    opacity: 0.3,
+    opacity: 0.35,
     borderRadius: 10,
   },
   points: {

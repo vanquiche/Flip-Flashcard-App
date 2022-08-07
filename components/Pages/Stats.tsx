@@ -7,6 +7,7 @@ import { Stats as StatsType } from '../types';
 import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
 import { Button, Title } from 'react-native-paper';
 import swatchContext from '../../contexts/swatchContext';
+import fontColorContrast from 'font-color-contrast';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen');
 
@@ -21,6 +22,7 @@ const Stats = () => {
 
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
   const dt = DateTime;
 
@@ -98,7 +100,7 @@ const Stats = () => {
         >
           avg.
         </Button>
-        <Title style={{ ...styles.chartTitle, color: _cardColor }}>
+        <Title style={{ ...styles.chartTitle, color: titleColor }}>
           {dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'}
         </Title>
         <Button

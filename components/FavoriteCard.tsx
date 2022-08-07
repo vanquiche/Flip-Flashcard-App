@@ -1,9 +1,8 @@
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, ImageBackground } from 'react-native';
 import { Title } from 'react-native-paper';
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import React, { useContext } from 'react';
 import fontColorContrast from 'font-color-contrast';
+import swatchContext from '../contexts/swatchContext';
 
 interface Collection {
   _id: string;
@@ -17,12 +16,12 @@ interface Collection {
 
 interface Props {
   card: Collection;
-  color?: string;
   onPress?: () => void;
 }
 
 const FavoriteCard = ({ card, onPress }: Props) => {
   const _fontColor = fontColorContrast(card.color, 0.6);
+  const { patterns } = useContext(swatchContext);
 
   return (
     <Pressable
@@ -32,6 +31,13 @@ const FavoriteCard = ({ card, onPress }: Props) => {
       <Title style={[styles.textContent, { color: _fontColor }]}>
         {card.name}
       </Title>
+      {card.design && (
+        <ImageBackground
+          source={patterns[card.design]}
+          style={styles.patternWrapper}
+          imageStyle={styles.pattern}
+        />
+      )}
     </Pressable>
   );
 };
@@ -39,7 +45,7 @@ const FavoriteCard = ({ card, onPress }: Props) => {
 const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
-    // width: '45%',
+    alignItems: 'center',
     height: 125,
     width: 160,
     padding: 15,
@@ -51,6 +57,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontSize: 20,
+    zIndex: 100,
   },
   cardCount: {
     position: 'absolute',
@@ -58,13 +65,28 @@ const styles = StyleSheet.create({
     top: 5,
     right: 10,
   },
+  patternWrapper: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 0,
+    overflow: 'hidden',
+    borderRadius: 8,
+  },
+  pattern: {
+    height: '100%',
+    width: '100%',
+    tintColor: 'white',
+    opacity: 0.35,
+    resizeMode: 'contain',
+  },
 });
 export default React.memo(FavoriteCard, (prevProps, nextProps) => {
   if (
     prevProps.card.name === nextProps.card.name &&
-    prevProps.card.favorite === nextProps.card.favorite &&
     prevProps.card.color === nextProps.card.color &&
-    prevProps.card.design === nextProps.card.design
+    prevProps.card.design === nextProps.card.design &&
+    prevProps.card.favorite === nextProps.card.favorite
   )
     return true;
   return false;

@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     tintColor: 'white',
-    opacity: 0.25,
+    opacity: 0.35,
     resizeMode: 'contain',
 
   },

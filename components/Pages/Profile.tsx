@@ -1,11 +1,11 @@
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import React, { useContext } from 'react';
-import { Button, IconButton, Title } from 'react-native-paper';
+import { IconButton, Title } from 'react-native-paper';
 
-import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { deleteUser } from '../../redux/userThunkActions';
+import fontColorContrast from 'font-color-contrast';
 
 import PointTracker from '../PointTracker';
 import s from '../styles/styles';
@@ -26,7 +26,7 @@ const Profile = ({ navigation }: Props) => {
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const _cardColor = theme.cardColor;
+  const _cardColor = fontColorContrast(theme.bgColor, 0.6)
 
   // const lastLoginDate = DateTime.fromISO(
   //   user.login[user.login.length - 1]
@@ -48,7 +48,7 @@ const Profile = ({ navigation }: Props) => {
         themes
       </IconButton>
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
-{/* 
+{/*
       <Button
       mode='text'
       color='tomato'

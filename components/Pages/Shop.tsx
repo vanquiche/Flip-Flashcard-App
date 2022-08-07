@@ -19,6 +19,7 @@ import { CountUp } from 'use-count-up';
 
 import { Theme } from '../types';
 import swatchContext from '../../contexts/swatchContext';
+import fontColorContrast from 'font-color-contrast';
 
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
@@ -33,7 +34,7 @@ const Shop = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const _cardColor = theme.cardColor;
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
   const purchaseColor = useCallback(
     (c: string, p: number) => {
@@ -152,7 +153,7 @@ const Shop = () => {
     <>
       <View style={{ padding: 10, paddingHorizontal: 20 }}>
         <Title
-          style={{ color: _cardColor, textAlign: 'right', marginRight: 20 }}
+          style={{ color: titleColor, textAlign: 'right', marginRight: 20 }}
         >
           <CountUp
             duration={1.2}
@@ -166,13 +167,13 @@ const Shop = () => {
         <FontAwesome5
           name='coins'
           size={20}
-          color={_cardColor}
+          color={titleColor}
           style={{ position: 'absolute', right: 15, top: 15 }}
         />
       </View>
       <ScrollView>
         {/* SWATCH COLORS */}
-        <ShopCatalogue title='CARD COLORS' titleColor={_cardColor}>
+        <ShopCatalogue title='CARD COLORS' titleColor={titleColor}>
           {STORE_SWATCH_LIST.map((d, i) => (
             <ShopSwatchColor
               key={i}
@@ -184,7 +185,7 @@ const Shop = () => {
         </ShopCatalogue>
 
         {/* SWATCH PATTERNS */}
-        <ShopCatalogue title='CARD PATTERNS' titleColor={_cardColor}>
+        <ShopCatalogue title='CARD PATTERNS' titleColor={titleColor}>
           {Object.entries(STORE_PATTERNS).map((p, i) => {
             return (
               <ShopSwatchPattern
@@ -197,7 +198,7 @@ const Shop = () => {
           })}
         </ShopCatalogue>
 
-        <ShopCatalogue title='THEMES' titleColor={_cardColor}>
+        <ShopCatalogue title='THEMES' titleColor={titleColor}>
           {STORE_THEMES.map((t, i) => {
             return (
               <ShopTheme
