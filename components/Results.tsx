@@ -26,7 +26,7 @@ interface Props {
 
 const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
   const { user, cards } = useSelector((state: RootState) => state.store);
-  const {theme} = useContext(swatchContext)
+  const { theme } = useContext(swatchContext);
 
   // color variables
   const _fontColor = theme.fontColor;
@@ -41,10 +41,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
     [cards.category]
   );
 
-  const setCompleted = useMemo(
-    () => user.completedQuiz.includes(set._id),
-    [user.completedQuiz]
-  );
+  const setCompleted = useMemo(() => user.completedQuiz.includes(set._id), []);
 
   const points = category ? category.points : 0;
 
@@ -106,21 +103,20 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
         <Title style={{ color: _fontColor }}>
           {category?.name.toUpperCase()} XP:
         </Title>
-        {!setCompleted && (
-          <Title style={{ color: _fontColor }}>
-            <CountUp start={xpStart} end={xpEnd} duration={1.6} isCounting />/
-            100
-          </Title>
-        )}
-        {setCompleted && (
-          <Title style={{ color: _fontColor }}>{getXPpercent} / 100</Title>
-        )}
+        <Title style={{ color: _fontColor }}>
+          {setCompleted ? (
+            getXPpercent
+          ) : (
+            <CountUp start={xpStart} end={xpEnd} duration={2.4} isCounting />
+          )}{' '}
+          / 100
+        </Title>
       </View>
 
       {/* XP BAR */}
 
       <View style={[styles.progressBar, { borderColor: theme.fontColor }]}>
-        {!setCompleted && (
+        {!setCompleted ? (
           <Animated.View
             style={[
               styles.pointBar,
@@ -131,9 +127,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
               progressBarAnim,
             ]}
           />
-        )}
-
-        {setCompleted && (
+        ) : (
           <View
             style={[
               styles.pointBar,
@@ -145,6 +139,9 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
           />
         )}
       </View>
+      <Text style={{ textAlign: 'center', color: _fontColor }}>
+        {setCompleted ? 'daily points reached for this set' : ''}
+      </Text>
 
       <Button
         mode='contained'
