@@ -49,7 +49,7 @@ const Profile = ({ navigation }: Props) => {
       </IconButton>
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
 
-      <Button
+      {/* <Button
       mode='text'
       color='tomato'
       style={{ margin: 25, elevation: 0 }}
@@ -57,7 +57,7 @@ const Profile = ({ navigation }: Props) => {
       onPress={deleteCurrentUser}
     >
       Delete User
-    </Button>
+    </Button> */}
 
       {/* USER PROFILE INFO */}
       <View style={styles.profileContainer}>

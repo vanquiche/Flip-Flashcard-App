@@ -29,7 +29,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { defaultTheme } from '../components/types';
 import Loader from '../components/Loader';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,7 +40,9 @@ const SCALE_START = 1;
 const SCALE_END = 1.2;
 
 const IndexScreen = () => {
-  const { user, notification, loading } = useSelector((state: RootState) => state.store);
+  const { user, notification, loading } = useSelector(
+    (state: RootState) => state.store
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   const homeIconSpin = useSharedValue(SPIN_START);
@@ -76,7 +78,7 @@ const IndexScreen = () => {
   const profileAnimate = useAnimatedStyle(() => {
     return {
       transform: [
-        { rotateY: profileIconFlip.value + 'deg'},
+        { rotateY: profileIconFlip.value + 'deg' },
         { scale: profileIconScale.value },
       ],
     };
@@ -93,9 +95,13 @@ const IndexScreen = () => {
 
   // swatch colors and patterns for swatch selector
   // passed through context
-  const colors = user ? DEFAULT_SWATCH_LIST.concat(user.collection.colors) : DEFAULT_SWATCH_LIST;
-  const patterns = user ? { ...DEFAULT_PATTERNS, ...user.collection.patterns } : DEFAULT_PATTERNS;
-  const theme = user ? user.theme : defaultTheme
+  const colors = user
+    ? DEFAULT_SWATCH_LIST.concat(user.collection.colors)
+    : DEFAULT_SWATCH_LIST;
+  const patterns = user
+    ? { ...DEFAULT_PATTERNS, ...user.collection.patterns }
+    : DEFAULT_PATTERNS;
+  const theme = user ? user.theme : defaultTheme;
 
   const clearNotification = () => {
     dispatch(dismissNotification());
@@ -108,156 +114,151 @@ const IndexScreen = () => {
 
   return (
     <swatchContext.Provider value={{ colors, patterns, theme }}>
-      <AlertNotification
-        dismiss={clearNotification}
-        visible={notification.show}
-        message={notification.message}
-        bgColor={theme.cardColor}
-        textColor={theme.fontColor}
-      />
-      <Loader visible={loading}/>
-      <StatusBar hidden />
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: {
-            backgroundColor: theme.tabColor,
-            height: 70,
-          },
-          tabBarShowLabel: false,
-          headerShown: false,
-        }}
-      >
-        {/* if there is no user then render Signup page, else render normal screens */}
-        {/* if user is undefined or if user object exist but has not been initialized yet */}
-        {!user || (user && !user._id) ? (
-          <Tab.Screen
-            name='SignUp'
-            component={SignUp}
-            options={{
-              tabBarIconStyle: { display: 'none' },
-              tabBarStyle: { display: 'none' },
-            }}
-          />
-        ) : (
-          <>
-            <Tab.Screen
-              name='Home-page'
-              component={HomeScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <Animated.View style={homeAnimate}>
-                    <TabIcon
-                      icon='home-variant'
-                      color={
-                        focused
-                          ? theme.actionIconColor
-                          : theme.iconColor
-                      }
-                    />
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.headerColor }}>
+        <AlertNotification
+          dismiss={clearNotification}
+          visible={notification.show}
+          message={notification.message}
+          bgColor={theme.cardColor}
+          textColor={theme.fontColor}
+        />
+        <Loader visible={loading} />
 
-                  </Animated.View>
-                ),
-              }}
-              listeners={{
-                focus: () => {
-                  homeIconSpin.value = withSpring(SPIN_END);
-                  homeIconScale.value = withSpring(SCALE_END);
-                },
-                blur: () => {
-                  homeIconSpin.value = SPIN_START;
-                  homeIconScale.value = withSpring(SCALE_START);
-                },
-              }}
-            />
+        <StatusBar  />
+
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {
+              backgroundColor: theme.tabColor,
+              height: 70,
+            },
+            tabBarShowLabel: false,
+            headerShown: false,
+          }}
+        >
+          {/* if there is no user then render Signup page, else render normal screens */}
+          {/* if user is undefined or if user object exist but has not been initialized yet */}
+          {!user || (user && !user._id) ? (
             <Tab.Screen
-              name='flashcards'
-              component={CategoryScreen}
+              name='SignUp'
+              component={SignUp}
               options={{
-                tabBarIcon: ({ focused }) => (
-                  <Animated.View style={cardAnimate}>
-                    <TabIcon
-                      icon='cards'
-                      color={
-                        focused
-                          ? theme.actionIconColor
-                          : theme.iconColor
-                      }
-                    />
-                  </Animated.View>
-                ),
-              }}
-              listeners={{
-                focus: () => {
-                  cardIconFlip.value = withSpring(SPIN_END);
-                  cardIconScale.value = withSpring(SCALE_END);
-                },
-                blur: () => {
-                  cardIconFlip.value = withSpring(SPIN_START);
-                  cardIconScale.value = withSpring(SCALE_START);
-                },
+                tabBarIconStyle: { display: 'none' },
+                tabBarStyle: { display: 'none' },
               }}
             />
-            <Tab.Screen
-              name='store'
-              component={ShopScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <Animated.View style={shopAnimate}>
-                    <TabIcon
-                      icon='circle'
-                      focused={focused}
-                      color={
-                        focused
-                          ? theme.actionIconColor
-                          : theme.iconColor
-                      }
-                    />
-                  </Animated.View>
-                ),
-              }}
-              listeners={{
-                focus: () => {
-                  shopIconFlip.value = withSpring(SPIN_END);
-                  shopIconScale.value = withSpring(SCALE_END);
-                },
-                blur: () => {
-                  shopIconFlip.value = SPIN_START;
-                  shopIconScale.value = withSpring(SCALE_START);
-                },
-              }}
-            />
-            <Tab.Screen
-              name='Profile-page'
-              component={ProfileScreen}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <Animated.View style={profileAnimate}>
-                    <TabIcon
-                      icon='heart'
-                      focused={focused}
-                      color={
-                        focused
-                          ? theme.actionIconColor
-                          : theme.iconColor
-                      }
-                    />
-                  </Animated.View>
-                ),
-              }}
-              listeners={{
-                focus: () => {
-                  profileIconFlip.value = withSpring(SPIN_END);
-                  profileIconScale.value = withSpring(SCALE_END);
-                },
-                blur: () => {
-                  profileIconFlip.value = SPIN_START;
-                  profileIconScale.value = withSpring(SCALE_START);
-                },
-              }}
-            />
-          </>
-        )}
-      </Tab.Navigator>
+          ) : (
+            <>
+              <Tab.Screen
+                name='Home-page'
+                component={HomeScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => (
+                    <Animated.View style={homeAnimate}>
+                      <TabIcon
+                        icon='home-variant'
+                        color={
+                          focused ? theme.actionIconColor : theme.iconColor
+                        }
+                      />
+                    </Animated.View>
+                  ),
+                }}
+                listeners={{
+                  focus: () => {
+                    homeIconSpin.value = withSpring(SPIN_END);
+                    homeIconScale.value = withSpring(SCALE_END);
+                  },
+                  blur: () => {
+                    homeIconSpin.value = SPIN_START;
+                    homeIconScale.value = withSpring(SCALE_START);
+                  },
+                }}
+              />
+              <Tab.Screen
+                name='flashcards'
+                component={CategoryScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => (
+                    <Animated.View style={cardAnimate}>
+                      <TabIcon
+                        icon='cards'
+                        color={
+                          focused ? theme.actionIconColor : theme.iconColor
+                        }
+                      />
+                    </Animated.View>
+                  ),
+                }}
+                listeners={{
+                  focus: () => {
+                    cardIconFlip.value = withSpring(SPIN_END);
+                    cardIconScale.value = withSpring(SCALE_END);
+                  },
+                  blur: () => {
+                    cardIconFlip.value = withSpring(SPIN_START);
+                    cardIconScale.value = withSpring(SCALE_START);
+                  },
+                }}
+              />
+              <Tab.Screen
+                name='store'
+                component={ShopScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => (
+                    <Animated.View style={shopAnimate}>
+                      <TabIcon
+                        icon='circle'
+                        focused={focused}
+                        color={
+                          focused ? theme.actionIconColor : theme.iconColor
+                        }
+                      />
+                    </Animated.View>
+                  ),
+                }}
+                listeners={{
+                  focus: () => {
+                    shopIconFlip.value = withSpring(SPIN_END);
+                    shopIconScale.value = withSpring(SCALE_END);
+                  },
+                  blur: () => {
+                    shopIconFlip.value = SPIN_START;
+                    shopIconScale.value = withSpring(SCALE_START);
+                  },
+                }}
+              />
+              <Tab.Screen
+                name='Profile-page'
+                component={ProfileScreen}
+                options={{
+                  tabBarIcon: ({ focused }) => (
+                    <Animated.View style={profileAnimate}>
+                      <TabIcon
+                        icon='heart'
+                        focused={focused}
+                        color={
+                          focused ? theme.actionIconColor : theme.iconColor
+                        }
+                      />
+                    </Animated.View>
+                  ),
+                }}
+                listeners={{
+                  focus: () => {
+                    profileIconFlip.value = withSpring(SPIN_END);
+                    profileIconScale.value = withSpring(SCALE_END);
+                  },
+                  blur: () => {
+                    profileIconFlip.value = SPIN_START;
+                    profileIconScale.value = withSpring(SCALE_START);
+                  },
+                }}
+              />
+            </>
+          )}
+        </Tab.Navigator>
+      </SafeAreaView>
     </swatchContext.Provider>
   );
 };

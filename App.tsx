@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ActivityIndicator, StyleSheet, Image, View, Text } from 'react-native';
+import { ActivityIndicator, StyleSheet, Image, View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
@@ -12,8 +12,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 // COMPONENTS
 import IndexScreen from './screens/IndexScreen';
-
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 declare global {
   namespace ReactNativePaper {
@@ -86,14 +85,18 @@ export default function App() {
   }, []);
 
   if (assetIsLoading) {
-    return null
+    return null;
   }
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <PaperProvider theme={theme}>
-          <IndexScreen />
+          <SafeAreaProvider>
+
+              <IndexScreen />
+
+          </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>
     </Provider>
