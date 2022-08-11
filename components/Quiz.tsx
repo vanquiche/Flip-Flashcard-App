@@ -16,16 +16,16 @@ import Results from './Results';
 import QuizStartPage from './QuizStartPage';
 import AlertDialog from './AlertDialog';
 
-import { Category, Flashcard, StackNavigationTypes } from './types';
+import { Category, Flashcard } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import db from '../db-services';
 import { updateUser } from '../redux/userThunkActions';
 import { updateCard } from '../redux/cardThunkActions';
-import { showNotification } from '../redux/storeSlice';
 import checkForLevelUp from '../utility/checkForLevelUp';
 import swatchContext from '../contexts/swatchContext';
 import { DateTime } from 'luxon';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   navigation: any;
@@ -61,6 +61,7 @@ const Quiz = ({
   const [showAlert, setShowAlert] = useState(false);
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
+  const insets = useSafeAreaInsets();
   const textfieldRef = useRef<TI>(null)
   const dt = DateTime;
 
@@ -152,9 +153,6 @@ const Quiz = ({
           }
         }
       );
-      // add points to user
-      // add set to reference
-      // can only earn points once/day
       dispatch(
         updateUser({
           completedQuiz: update,
@@ -226,7 +224,7 @@ const Quiz = ({
             <IconButton
               icon='close-box'
               onPress={() => setShowAlert(true)}
-              style={{ position: 'absolute', top: -10, left: -25 }}
+              style={{ position: 'absolute', top: insets.top - 10, left: -25 }}
             />
           )}
 

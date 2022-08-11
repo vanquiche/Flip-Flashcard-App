@@ -30,6 +30,7 @@ import Animated, {
 import { defaultTheme } from '../components/types';
 import Loader from '../components/Loader';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import fontColorContrast from 'font-color-contrast';
 
 const Tab = createBottomTabNavigator();
 
@@ -112,6 +113,8 @@ const IndexScreen = () => {
     dispatch(hydrateData());
   }, []);
 
+  const statusBarColor = fontColorContrast(theme.headerColor, 0.5);
+
   return (
     <swatchContext.Provider value={{ colors, patterns, theme }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.headerColor }}>
@@ -124,7 +127,11 @@ const IndexScreen = () => {
         />
         <Loader visible={loading} />
 
-        <StatusBar  />
+        <StatusBar
+          barStyle={
+            statusBarColor === '#000000' ? 'dark-content' : 'light-content'
+          }
+        />
 
         <Tab.Navigator
           screenOptions={{
