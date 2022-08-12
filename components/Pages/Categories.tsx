@@ -1,21 +1,50 @@
-import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import React, { useState, Suspense, useCallback, useContext } from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
+import React, {
+  useState,
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+} from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
+import Animated, { runOnJS, useSharedValue } from 'react-native-reanimated';
 
 // UTILITIES
 import checkDuplicate from '../../utility/checkDuplicate';
 import useMarkSelection from '../../hooks/useMarkSelection';
+import {
+  createPositionList,
+  moveObject,
+  removeFromPositions,
+  addToPositions,
+  measureOffset,
+  removeManyFromPositions,
+  getCardPosition,
+  saveCardPosition,
+} from '../../utility/dragAndSort';
 
 // COMPONENTS
 import ActionDialog from '../ActionDialog';
 import TitleCard from '../TitleCard';
 import AlertDialog from '../AlertDialog';
 import SwatchSelector from '../SwatchSelector';
+import CustomTextInput from '../CustomTextInput';
+import ModifcationBar from '../ModifcationBar';
+import DragSortList from '../DragSortList';
+import DraggableWrapper from '../DraggableWrapper';
 
 // TYPES
-import { Category } from '../types';
+import { CardPosition, Category } from '../types';
 import { StackNavigationTypes } from '../types';
+
+// REDUX AND CONTEXTS
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
@@ -26,8 +55,11 @@ import {
 import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
-import CustomTextInput from '../CustomTextInput';
-import ModifcationBar from '../ModifcationBar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+
+const CATEGORY_ID = '1ebca23gh94dd56webcjk';
+const SCROLLVIEW_ITEM_HEIGHT = 165;
 
 const INITIAL_STATE: Category = {
   _id: '',
@@ -40,20 +72,23 @@ const INITIAL_STATE: Category = {
 
 interface Props extends StackNavigationTypes {}
 
-const Categories = ({ navigation, route }: Props) => {
+const Categories = ({ navigation }: Props) => {
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
-  // const [showSwatch, setShowSwatch] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   // edit state
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [sortCardMode, setSortCardMode] = useState(false);
 
+  const [scrollViewOffset, setScrollViewOffset] = useState(0);
   const { cards } = useSelector((state: RootState) => state.store);
   const { colors, theme } = useContext(swatchContext);
-
   const { selection, selectItem, clearSelection } = useMarkSelection();
+  const cardPosition = useSharedValue(createPositionList(cards.category));
+  const scrollY = useSharedValue(0);
+  const insets = useSafeAreaInsets();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -69,14 +104,16 @@ const Categories = ({ navigation, route }: Props) => {
     const exist = checkDuplicate(category.name, 'name', cards.category);
 
     if (!exist) {
+      const id = uuid.v4().toString();
       const newDoc: Category = {
-        _id: uuid.v4().toString(),
+        _id: id,
         name: category.name,
         color: category.color,
         type: 'category',
         createdAt: DateTime.now().toISO(),
         points: 0,
       };
+      cardPosition.value = addToPositions(cardPosition.value, id);
 
       dispatch(addCategoryCard(newDoc));
     }
@@ -98,6 +135,7 @@ const Categories = ({ navigation, route }: Props) => {
   };
 
   const deleteCategory = (id: string) => {
+    cardPosition.value = removeFromPositions(cardPosition.value, id);
     dispatch(removeCard({ id, type: 'category' }));
     dispatch(removeFavorite(id));
   };
@@ -120,14 +158,12 @@ const Categories = ({ navigation, route }: Props) => {
   };
 
   const deleteSelection = () => {
-    // cycle through selection and delete each ID
+    cancelMultiDeletion();
     for (let i = 0; i < selection.length; i++) {
       dispatch(removeCard({ id: selection[i], type: 'category' }));
-      // remove all favorites that belong to
-      // delete category
       dispatch(removeFavorite(selection[i]));
     }
-    cancelMultiDeletion();
+    cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
   };
 
   const startMultiSelectMode = () => {
@@ -135,8 +171,43 @@ const Categories = ({ navigation, route }: Props) => {
     setMultiSelectMode(true);
   };
 
+  const toggleSortMode = () => {
+    setSortCardMode((prev) => !prev);
+  };
+
+  const getPositionsFromDB = async () => {
+    const dbPositions = await getCardPosition('categories');
+    if (dbPositions) {
+      cardPosition.value = dbPositions.positions;
+    }
+  };
+
+  const onEndSort = () => {
+    'worklet';
+    const list = {
+      _id: CATEGORY_ID,
+      ref: 'categories',
+      type: 'position',
+      positions: cardPosition.value,
+    };
+    saveCardPosition(list);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setSortCardMode(false);
+        setMultiSelectMode(false);
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    getPositionsFromDB();
+  }, []);
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {/* button wrapper */}
       <ModifcationBar
         selections={selection}
@@ -148,6 +219,8 @@ const Categories = ({ navigation, route }: Props) => {
         onPressNew={() => setShowDialog(true)}
         onPressSelect={startMultiSelectMode}
         onConfirmSelection={confirmAlert}
+        onSort={toggleSortMode}
+        sortMode={sortCardMode}
       />
 
       <AlertDialog
@@ -158,12 +231,26 @@ const Categories = ({ navigation, route }: Props) => {
       />
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
-        <ScrollView>
-          <View style={s.cardListContainer}>
-            {cards.category?.map((category: Category) => {
-              return (
+        <DragSortList
+          scrollViewHeight={cards.category.length * SCROLLVIEW_ITEM_HEIGHT}
+          onLayout={(e) => measureOffset(e, setScrollViewOffset)}
+          scrollY={scrollY}
+        >
+          {cards.category.map((category: Category) => {
+            return (
+              <DraggableWrapper
+                key={category._id}
+                itemHeight={165}
+                dataLength={cards.category.length}
+                id={category._id}
+                positions={cardPosition}
+                moveObject={moveObject}
+                scrollY={scrollY}
+                yOffset={scrollViewOffset - insets.top}
+                enableTouch={sortCardMode}
+                onEnd={onEndSort}
+              >
                 <TitleCard
-                  key={category._id}
                   card={category}
                   multiSelect={multiSelectMode}
                   handleEdit={editCategory}
@@ -171,16 +258,17 @@ const Categories = ({ navigation, route }: Props) => {
                   handleDelete={deleteCategory}
                   shouldAnimateEntry={true}
                   selectedForDeletion={selection.includes(category._id)}
+                  disableActions={multiSelectMode || sortCardMode}
                   onPress={() => {
                     navigation.navigate('Sets', {
                       categoryRef: category._id,
                     });
                   }}
                 />
-              );
-            })}
-          </View>
-        </ScrollView>
+              </DraggableWrapper>
+            );
+          })}
+        </DragSortList>
       </Suspense>
 
       {/* ADD NEW CATEGORY DIALOG */}

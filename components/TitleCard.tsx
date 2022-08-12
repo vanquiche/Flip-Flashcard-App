@@ -38,6 +38,7 @@ interface Props {
   handleEdit: (card: any) => void;
   handleDelete: (docId: string) => void;
   markForDelete: (id: any, state: boolean) => void;
+  disableActions?: boolean;
 }
 
 const TitleCard = ({
@@ -45,6 +46,7 @@ const TitleCard = ({
   multiSelect,
   shouldAnimateEntry,
   selectedForDeletion,
+  disableActions,
   onPress,
   handleEdit,
   handleDelete,
@@ -91,7 +93,9 @@ const TitleCard = ({
           cardScaleAnimatedStyle,
         ]}
         // disable navigation when canMark is true
-        onPress={multiSelect ? toggleSelection : onPress}
+        onPress={
+          multiSelect ? toggleSelection : disableActions ? null : onPress
+        }
         exiting={ZoomOut}
         entering={
           shouldAnimateEntry ? SlideInLeft.delay(200).duration(350) : undefined
@@ -117,7 +121,7 @@ const TitleCard = ({
           size={20}
           style={styles.deleteBtn}
           onPress={() => setShowAlert(true)}
-          disabled={multiSelect}
+          disabled={disableActions}
         />
         <IconButton
           icon='dots-horizontal'
@@ -125,7 +129,7 @@ const TitleCard = ({
           size={25}
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
-          disabled={multiSelect}
+          disabled={disableActions}
         />
         {card.design && card.design !== 'default' && (
           <ImageBackground
@@ -151,10 +155,10 @@ const styles = StyleSheet.create({
   card: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '45%',
-    aspectRatio: 1 / 1.2,
-    minHeight: 135,
-    maxHeight: 150,
+    width: 200,
+    // aspectRatio: 1 / 1.2,
+    // minHeight: 135,
+    height: 150,
     padding: 15,
     margin: 5,
     borderRadius: 12,
@@ -175,7 +179,6 @@ const styles = StyleSheet.create({
     tintColor: 'white',
     opacity: 0.35,
     resizeMode: 'contain',
-
   },
   favicon: {
     position: 'absolute',
@@ -214,6 +217,7 @@ export default React.memo(TitleCard, (prev, next) => {
     prev.multiSelect === next.multiSelect &&
     prev.card?.design === next.card?.design &&
     prev.card?.favorite === next.card?.favorite &&
+    prev.disableActions === next.disableActions &&
     prev.selectedForDeletion === next.selectedForDeletion
   )
     return true;
