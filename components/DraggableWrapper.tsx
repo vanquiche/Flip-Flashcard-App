@@ -83,12 +83,13 @@ const DraggableWrapper = ({
     return Math.max(lowerBound, Math.min(value, upperBound));
   };
 
-
   const gestureHandler = useAnimatedGestureHandler({
-    onStart() {
+    onStart(_, ctx: any) {
       isMoving.value = true;
+      ctx.startPos = positions.value[id];
+      ctx.endPos = ctx.startPos;
     },
-    onActive(e) {
+    onActive(e, ctx) {
       const positionY = e.absoluteY + scrollY.value - yOffset;
 
       if (positionY <= scrollY.value + itemHeight + yOffset) {
@@ -129,16 +130,22 @@ const DraggableWrapper = ({
           newPosition
         );
       }
+
+      ctx.endPos = newPosition;
     },
-    onFinish() {
+    onFinish(_, ctx) {
       isMoving.value = false;
       itemPosition.value = positions.value[id] * itemHeight;
-      onEnd && onEnd()
+      if (ctx.startPos !== ctx.endPos) {
+        onEnd && runOnJS(onEnd)();
+      }
     },
   });
   return (
     <PanGestureHandler onGestureEvent={gestureHandler} enabled={enableTouch}>
-      <Animated.View style={[styles.wrapper, wrapperAnimatedStyle]}>{children}</Animated.View>
+      <Animated.View style={[styles.wrapper, wrapperAnimatedStyle]}>
+        {children}
+      </Animated.View>
     </PanGestureHandler>
   );
 };
@@ -148,10 +155,8 @@ const styles = StyleSheet.create({
     // borderWidth: 2,
     // maxWidth: '85%',
     width: 200,
-    transform:[
-      {translateX: -100}
-    ]
-  }
-})
+    transform: [{ translateX: -100 }],
+  },
+});
 
 export default DraggableWrapper;

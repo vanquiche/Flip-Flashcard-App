@@ -182,8 +182,7 @@ const Categories = ({ navigation }: Props) => {
     }
   };
 
-  const onEndSort = () => {
-    'worklet';
+  const onEndSort = useCallback(() => {
     const list = {
       _id: CATEGORY_ID,
       ref: 'categories',
@@ -191,7 +190,7 @@ const Categories = ({ navigation }: Props) => {
       positions: cardPosition.value,
     };
     saveCardPosition(list);
-  };
+  }, [cardPosition.value]);
 
   useFocusEffect(
     useCallback(() => {

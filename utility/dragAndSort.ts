@@ -116,13 +116,7 @@ export const saveCardPosition = (obj: any) => {
     { _id: obj._id, type: 'position', ref: obj.ref },
     (err: Error, count: number) => {
       if (count > 0) {
-        db.update(
-          { _id: obj._id },
-          { $set: { positions: obj.positions } },
-          (err: Error, numReplaced: number) => {
-            if (!err) console.log('positions updated!');
-          }
-        );
+        db.update({ _id: obj._id }, { $set: { positions: obj.positions } });
       } else {
         db.insert(obj, (err: Error, doc: any) => {
           if (err) console.log(err);
