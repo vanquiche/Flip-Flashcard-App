@@ -66,6 +66,13 @@ export interface Flashcard {
   categoryRef: string;
 }
 
+export interface CardPosition {
+  _id: string;
+  type: 'position',
+  ref: string;
+  positions: Record<string, number>;
+}
+
 export interface Theme {
   name: string;
   fontColor: string;
