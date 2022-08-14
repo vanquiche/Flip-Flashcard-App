@@ -63,6 +63,7 @@ const Sets = ({ navigation, route }: Props) => {
   // edit state
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [sortMode, setSortMode] = useState(false)
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { categoryRef } = route.params;
@@ -166,6 +167,10 @@ const Sets = ({ navigation, route }: Props) => {
     setMultiSelectMode(true);
   };
 
+  const toggleSortMode = () => {
+    setSortMode(prev => !prev)
+  }
+
   useFocusEffect(
     useCallback(() => {
       // find cards within the parent category
@@ -198,6 +203,8 @@ const Sets = ({ navigation, route }: Props) => {
         onPressNew={() => setShowDialog(true)}
         onPressSelect={startMultiSelectMode}
         onConfirmSelection={confirmAlert}
+        onSort={toggleSortMode}
+        sortMode={sortMode}
       />
 
       {/* ALERT USER OF DELETION */}
