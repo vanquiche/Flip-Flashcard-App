@@ -1,4 +1,10 @@
-import { View, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  StyleSheet,
+} from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import React, {
   useState,
@@ -22,8 +28,10 @@ import ActionDialog from '../ActionDialog';
 import AlertDialog from '../AlertDialog';
 import SwatchSelector from '../SwatchSelector';
 import PatternSelector from '../PatternSelector';
+import DraggableWrapper from '../DraggableWrapper';
+import DragSortList from '../DragSortList';
 
-import { Set, StackNavigationTypes } from '../types';
+import { Collection, Set, StackNavigationTypes } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
@@ -39,6 +47,16 @@ import swatchContext from '../../contexts/swatchContext';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSharedValue } from 'react-native-reanimated';
+import {
+  createPositionList,
+  measureOffset,
+  moveObject,
+} from '../../utility/dragAndSort';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PayloadAction } from '@reduxjs/toolkit';
+
+const SCROLLVIEW_ITEM_HEIGHT = 170;
 
 const INITIAL_STATE: Set = {
   _id: '',
@@ -63,7 +81,7 @@ const Sets = ({ navigation, route }: Props) => {
   // edit state
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
-  const [sortMode, setSortMode] = useState(false)
+  const [sortMode, setSortMode] = useState(false);
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
   const { categoryRef } = route.params;
@@ -71,6 +89,11 @@ const Sets = ({ navigation, route }: Props) => {
   const { cards } = useSelector((state: RootState) => state.store);
   const { colors, patterns, theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
+
+  const [scrollViewOffset, setScrollViewOffset] = useState(0);
+  const setCardPositions = useSharedValue({});
+  const scrollY = useSharedValue(0);
+  const insets = useSafeAreaInsets();
 
   const { renderCount } = useRenderCounter();
   renderCount.current++;
@@ -168,8 +191,8 @@ const Sets = ({ navigation, route }: Props) => {
   };
 
   const toggleSortMode = () => {
-    setSortMode(prev => !prev)
-  }
+    setSortMode((prev) => !prev);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -191,7 +214,7 @@ const Sets = ({ navigation, route }: Props) => {
   );
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {/* ACTION BUTTONS */}
       <ModifcationBar
         buttonColor={theme.cardColor}
@@ -216,10 +239,26 @@ const Sets = ({ navigation, route }: Props) => {
       />
 
       <Suspense fallback={<ActivityIndicator size='large' />}>
-        <ScrollView>
-          <View style={s.cardListContainer}>
-            {cards.set.map((set: Set) => {
-              return (
+        <DragSortList
+          scrollY={scrollY}
+          scrollViewHeight={cards.set.length * SCROLLVIEW_ITEM_HEIGHT}
+          onLayout={(e) => measureOffset(e, setScrollViewOffset)}
+        >
+          {cards.set.map((set: Set, i) => {
+            console.log(setCardPositions.value)
+            return (
+              <DraggableWrapper
+                key={set._id}
+                itemHeight={165}
+                dataLength={cards.set.length}
+                id={set._id}
+                positions={setCardPositions}
+                moveObject={moveObject}
+                scrollY={scrollY}
+                yOffset={scrollViewOffset - insets.top}
+                enableTouch={sortMode}
+                // onEnd={onEndSort}
+              >
                 <TitleCard
                   key={set._id}
                   card={set}
@@ -238,10 +277,13 @@ const Sets = ({ navigation, route }: Props) => {
                     })
                   }
                 />
-              );
-            })}
-          </View>
-        </ScrollView>
+                {/* <View style={{height: 150, width: 200, backgroundColor: 'lightblue'}}>
+                  <Text>{i}</Text>
+                </View> */}
+              </DraggableWrapper>
+            );
+          })}
+        </DragSortList>
       </Suspense>
 
       {/* ADD/EDIT CATEGORY DIALOG */}
