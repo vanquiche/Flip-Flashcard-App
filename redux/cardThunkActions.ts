@@ -7,7 +7,9 @@ import {
   Set,
   Collection,
   CardType,
+  CardPosition,
 } from '../components/types';
+import { createPositionList } from '../utility/dragAndSort';
 
 export const addCategoryCard = createAsyncThunk(
   'store/addCategoryCard',
@@ -85,17 +87,46 @@ export const updateCard = createAsyncThunk(
   }
 );
 
+interface Query {
+  type: CardType;
+  [key: string]: string;
+}
+
+interface CardsPayload {
+  type: CardType;
+  cards: Collection[];
+  positions: Record<string, number>;
+}
+
 export const getCards = createAsyncThunk(
   'store/getCardsByQuery',
-  (payload: { query: Object; type: 'category' | 'set' | 'flashcard' }) => {
-    return new Promise<{
-      type: 'category' | 'set' | 'flashcard';
-      cards: Collection[];
-    }>((resolve, reject) => {
-      db.find(payload.query, (err: Error, docs: Collection[]) => {
-        if (err) reject(err.message);
-        resolve({ type: payload.type, cards: docs });
-      });
+  (payload: { query: Query; type: CardType }) => {
+    return new Promise<CardsPayload>(async (resolve, reject) => {
+      try {
+        const data: CardsPayload = {
+          type: payload.type,
+          cards: [],
+          positions: {},
+        };
+
+        await db.find(payload.query, (err: Error, docs: Collection[]) => {
+          if (!err) data.cards = docs;
+        });
+
+        await db.findOne(
+          { type: 'position', ref: payload.query.ref },
+          (err: Error, doc: CardPosition) => {
+            if (!err && doc) {
+              data.positions = doc.positions;
+            } else {
+              data.positions = createPositionList(data.cards);
+            }
+          }
+        );
+        resolve(data);
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 );
@@ -108,5 +139,3 @@ export const getFavoriteSets = createAsyncThunk('store/getFavoriteSets', () => {
     });
   });
 });
-
-

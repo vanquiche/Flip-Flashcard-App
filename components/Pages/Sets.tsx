@@ -31,7 +31,7 @@ import PatternSelector from '../PatternSelector';
 import DraggableWrapper from '../DraggableWrapper';
 import DragSortList from '../DragSortList';
 
-import { Collection, Set, StackNavigationTypes } from '../types';
+import { CardType, Collection, Set, StackNavigationTypes } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
@@ -49,6 +49,7 @@ import ModifcationBar from '../ModifcationBar';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSharedValue } from 'react-native-reanimated';
 import {
+  addToPositions,
   createPositionList,
   measureOffset,
   moveObject,
@@ -73,7 +74,7 @@ interface Props extends StackNavigationTypes {}
 
 const Sets = ({ navigation, route }: Props) => {
   // data state
-
+  const [isLoading, setIsLoading] = useState(true);
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -113,8 +114,9 @@ const Sets = ({ navigation, route }: Props) => {
 
     // create payload to dispatch into db
     if (!exist) {
+      const id = uuid.v4().toString();
       const newSet: Set = {
-        _id: uuid.v4().toString(),
+        _id: id,
         type: 'set',
         name: cardSet.name,
         color: cardSet.color,
@@ -124,9 +126,9 @@ const Sets = ({ navigation, route }: Props) => {
         categoryRef: categoryRef,
       };
       dispatch(addSetCard(newSet));
-
-      closeDialog();
+      setCardPositions.value = addToPositions(setCardPositions.value, id);
     }
+    closeDialog();
   };
 
   const deleteSet = (id: string) => {
@@ -194,22 +196,24 @@ const Sets = ({ navigation, route }: Props) => {
     setSortMode((prev) => !prev);
   };
 
+  const initData = async () => {
+    const data: any = await dispatch(
+      getCards({
+        type: 'set',
+        query: { type: 'set', categoryRef: categoryRef },
+      })
+    );
+    setCardPositions.value = data.payload.positions;
+    setIsLoading(false);
+  };
+
   useFocusEffect(
     useCallback(() => {
-      // find cards within the parent category
-      dispatch(
-        getCards({
-          type: 'set',
-          query: { type: 'set', categoryRef: categoryRef },
-        })
-      );
-      // set title of screen to category name
-      db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
-        if (err) console.log(err);
-        navigation.setOptions({
-          title: doc.name,
-        });
-      });
+      initData();
+      return () => {
+        setSortMode(false);
+        setMultiSelectMode(false);
+      };
     }, [categoryRef])
   );
 
@@ -238,14 +242,14 @@ const Sets = ({ navigation, route }: Props) => {
         message='DELETE SELECTED SETS?'
       />
 
-      <Suspense fallback={<ActivityIndicator size='large' />}>
+      {!isLoading && (
         <DragSortList
           scrollY={scrollY}
           scrollViewHeight={cards.set.length * SCROLLVIEW_ITEM_HEIGHT}
           onLayout={(e) => measureOffset(e, setScrollViewOffset)}
         >
           {cards.set.map((set: Set, i) => {
-            console.log(setCardPositions.value)
+            // console.log(setCardPositions.value)
             return (
               <DraggableWrapper
                 key={set._id}
@@ -284,7 +288,7 @@ const Sets = ({ navigation, route }: Props) => {
             );
           })}
         </DragSortList>
-      </Suspense>
+      )}
 
       {/* ADD/EDIT CATEGORY DIALOG */}
       <ActionDialog
