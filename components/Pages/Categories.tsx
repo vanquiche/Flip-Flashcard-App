@@ -1,20 +1,22 @@
 import {
   View,
   Text,
-  ActivityIndicator,
-  ScrollView,
+
   StyleSheet,
 } from 'react-native';
 import React, {
   useState,
-  Suspense,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
 } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
-import Animated, { runOnJS, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  runOnJS,
+  useAnimatedReaction,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 // UTILITIES
 import checkDuplicate from '../../utility/checkDuplicate';
@@ -57,6 +59,7 @@ import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import useRenderCounter from '../../hooks/useRenderCounter';
 
 const CATEGORY_ID = '1ebca23gh94dd56webcjk';
 const SCROLLVIEW_ITEM_HEIGHT = 165;
@@ -73,6 +76,7 @@ const INITIAL_STATE: Category = {
 interface Props extends StackNavigationTypes {}
 
 const Categories = ({ navigation }: Props) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [category, setCategory] = useState(INITIAL_STATE);
   // view state
   const [showDialog, setShowDialog] = useState(false);
@@ -89,6 +93,8 @@ const Categories = ({ navigation }: Props) => {
   const cardPosition = useSharedValue(createPositionList(cards.category));
   const scrollY = useSharedValue(0);
   const insets = useSafeAreaInsets();
+  const { renderCount } = useRenderCounter();
+  renderCount.current++;
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -175,22 +181,33 @@ const Categories = ({ navigation }: Props) => {
     setSortCardMode((prev) => !prev);
   };
 
-  const getPositionsFromDB = async () => {
-    const dbPositions = await getCardPosition('categories');
-    if (dbPositions) {
-      cardPosition.value = dbPositions.positions;
-    }
-  };
-
-  const onEndSort = useCallback(() => {
+  const savePositions = () => {
+    console.log('saved positions list');
     const list = {
-      _id: CATEGORY_ID,
       ref: 'categories',
       type: 'position',
       positions: cardPosition.value,
     };
     saveCardPosition(list);
-  }, [cardPosition.value]);
+  };
+
+  const initData = async () => {
+    const dbPositions = await getCardPosition('categories');
+    if (dbPositions) {
+      cardPosition.value = dbPositions.positions;
+    }
+    setIsLoading(false);
+  };
+
+  useAnimatedReaction(
+    () => cardPosition.value,
+    (curPositions, prevPositions) => {
+      if (curPositions !== prevPositions && !isLoading) {
+        runOnJS(savePositions)();
+      }
+    },
+    []
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -201,8 +218,8 @@ const Categories = ({ navigation }: Props) => {
     }, [])
   );
 
-  useEffect(() => {
-    getPositionsFromDB();
+  useLayoutEffect(() => {
+    initData();
   }, []);
 
   return (
@@ -229,7 +246,7 @@ const Categories = ({ navigation }: Props) => {
         message='DELETE SELECTED CATEGORIES?'
       />
 
-      <Suspense fallback={<ActivityIndicator size='large' />}>
+      {!isLoading && (
         <DragSortList
           scrollViewHeight={cards.category.length * SCROLLVIEW_ITEM_HEIGHT}
           onLayout={(e) => measureOffset(e, setScrollViewOffset)}
@@ -247,7 +264,7 @@ const Categories = ({ navigation }: Props) => {
                 scrollY={scrollY}
                 yOffset={scrollViewOffset - insets.top}
                 enableTouch={sortCardMode}
-                onEnd={onEndSort}
+                onEnd={savePositions}
               >
                 <TitleCard
                   card={category}
@@ -261,6 +278,7 @@ const Categories = ({ navigation }: Props) => {
                   onPress={() => {
                     navigation.navigate('Sets', {
                       categoryRef: category._id,
+                      screenTitle: category.name,
                     });
                   }}
                 />
@@ -268,7 +286,7 @@ const Categories = ({ navigation }: Props) => {
             );
           })}
         </DragSortList>
-      </Suspense>
+      )}
 
       {/* ADD NEW CATEGORY DIALOG */}
       <ActionDialog

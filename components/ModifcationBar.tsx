@@ -3,6 +3,7 @@ import { Button } from 'react-native-paper';
 import React from 'react';
 import s from './styles/styles';
 import Animated, { SlideInLeft, SlideOutRight } from 'react-native-reanimated';
+import useRenderCounter from '../hooks/useRenderCounter';
 
 interface Props {
   buttonColor?: string;
@@ -35,6 +36,8 @@ const ModifcationBar = ({
 }: Props) => {
   const _cardColor = buttonColor;
   const _fontColor = labelColor;
+  const { renderCount } = useRenderCounter();
+  renderCount.current++;
 
   const handleNewItem = () => {
     onPressNew();
@@ -49,7 +52,7 @@ const ModifcationBar = ({
       {!enableSelection ? (
         <Animated.View
           style={s.cardButtonWrapper}
-          entering={SlideInLeft}
+          entering={renderCount.current > 1 ? SlideInLeft : undefined}
           exiting={SlideOutRight}
           key={1}
         >

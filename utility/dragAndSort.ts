@@ -103,7 +103,7 @@ export const measureOffset = (
 
 export const getCardPosition = (id: string) => {
   return new Promise<CardPosition>((resolve, reject) =>
-    db.findOne({ ref: id }, (err: Error, doc: CardPosition) => {
+    db.findOne({ type: 'position', ref: id }, (err: Error, doc: CardPosition) => {
       if (!err) resolve(doc);
       else reject(null);
     })
@@ -111,12 +111,12 @@ export const getCardPosition = (id: string) => {
 };
 
 export const saveCardPosition = (obj: any) => {
-  'worklet';
+  // 'worklet';
   db.count(
-    { _id: obj._id, type: 'position', ref: obj.ref },
+    { type: 'position', ref: obj.ref },
     (err: Error, count: number) => {
       if (count > 0) {
-        db.update({ _id: obj._id }, { $set: { positions: obj.positions } });
+        db.update({ type: 'position', ref: obj.ref }, { $set: { positions: obj.positions } });
       } else {
         db.insert(obj, (err: Error, doc: any) => {
           if (err) console.log(err);

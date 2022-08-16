@@ -1,23 +1,15 @@
-import {
-  View,
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import React, {
   useState,
-  useEffect,
-  Suspense,
   useCallback,
   useContext,
+  useLayoutEffect,
 } from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
-import db from '../../db-services';
 import useMarkSelection from '../../hooks/useMarkSelection';
 import checkDuplicate from '../../utility/checkDuplicate';
 // REDUCER
@@ -31,7 +23,7 @@ import PatternSelector from '../PatternSelector';
 import DraggableWrapper from '../DraggableWrapper';
 import DragSortList from '../DragSortList';
 
-import { CardType, Collection, Set, StackNavigationTypes } from '../types';
+import { Set, StackNavigationTypes } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
@@ -50,12 +42,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSharedValue } from 'react-native-reanimated';
 import {
   addToPositions,
-  createPositionList,
   measureOffset,
   moveObject,
+  removeFromPositions,
+  saveCardPosition,
 } from '../../utility/dragAndSort';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PayloadAction } from '@reduxjs/toolkit';
+import { useAnimatedReaction, runOnJS } from 'react-native-reanimated';
 
 const SCROLLVIEW_ITEM_HEIGHT = 170;
 
@@ -85,14 +78,14 @@ const Sets = ({ navigation, route }: Props) => {
   const [sortMode, setSortMode] = useState(false);
 
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  const { categoryRef } = route.params;
+  const { categoryRef, screenTitle } = route.params;
 
   const { cards } = useSelector((state: RootState) => state.store);
   const { colors, patterns, theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
 
   const [scrollViewOffset, setScrollViewOffset] = useState(0);
-  const setCardPositions = useSharedValue({});
+  const cardPosition = useSharedValue({});
   const scrollY = useSharedValue(0);
   const insets = useSafeAreaInsets();
 
@@ -126,13 +119,14 @@ const Sets = ({ navigation, route }: Props) => {
         categoryRef: categoryRef,
       };
       dispatch(addSetCard(newSet));
-      setCardPositions.value = addToPositions(setCardPositions.value, id);
+      cardPosition.value = addToPositions(cardPosition.value, id);
     }
     closeDialog();
   };
 
   const deleteSet = (id: string) => {
     dispatch(removeCard({ id, type: 'set' }));
+    cardPosition.value = removeFromPositions(cardPosition.value, id);
   };
 
   const editSet = (set: Set) => {
@@ -196,26 +190,53 @@ const Sets = ({ navigation, route }: Props) => {
     setSortMode((prev) => !prev);
   };
 
+  const savePositions = () => {
+    console.log('saved positions list');
+    const list = {
+      ref: categoryRef,
+      type: 'position',
+      positions: cardPosition.value,
+    };
+    saveCardPosition(list);
+  };
+
   const initData = async () => {
+    navigation.setOptions({
+      title: screenTitle,
+    });
     const data: any = await dispatch(
       getCards({
         type: 'set',
         query: { type: 'set', categoryRef: categoryRef },
       })
     );
-    setCardPositions.value = data.payload.positions;
+    cardPosition.value = data.payload.positions;
     setIsLoading(false);
   };
 
+  useAnimatedReaction(
+    () => cardPosition.value,
+    (curPositions, prevPositions) => {
+      if (!isLoading && !sortMode) {
+        if (curPositions !== prevPositions) {
+          runOnJS(savePositions)();
+        }
+      }
+    }
+  );
+
   useFocusEffect(
     useCallback(() => {
-      initData();
       return () => {
         setSortMode(false);
         setMultiSelectMode(false);
       };
-    }, [categoryRef])
+    }, [])
   );
+
+  useLayoutEffect(() => {
+    initData();
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -256,12 +277,12 @@ const Sets = ({ navigation, route }: Props) => {
                 itemHeight={165}
                 dataLength={cards.set.length}
                 id={set._id}
-                positions={setCardPositions}
+                positions={cardPosition}
                 moveObject={moveObject}
                 scrollY={scrollY}
                 yOffset={scrollViewOffset - insets.top}
                 enableTouch={sortMode}
-                // onEnd={onEndSort}
+                onEnd={savePositions}
               >
                 <TitleCard
                   key={set._id}
@@ -270,8 +291,9 @@ const Sets = ({ navigation, route }: Props) => {
                   handleEdit={editSet}
                   markForDelete={selectItem}
                   handleDelete={deleteSet}
-                  shouldAnimateEntry={renderCount.current > 2 ? true : false}
+                  shouldAnimateEntry={renderCount.current > 4 ? true : false}
                   selectedForDeletion={selection.includes(set._id)}
+                  disableActions={multiSelectMode || sortMode}
                   onPress={() =>
                     navigation.navigate('Cards', {
                       color: set.color,
@@ -281,9 +303,6 @@ const Sets = ({ navigation, route }: Props) => {
                     })
                   }
                 />
-                {/* <View style={{height: 150, width: 200, backgroundColor: 'lightblue'}}>
-                  <Text>{i}</Text>
-                </View> */}
               </DraggableWrapper>
             );
           })}

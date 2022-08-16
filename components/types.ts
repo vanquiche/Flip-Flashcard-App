@@ -11,8 +11,7 @@ export interface StackNavigationTypes {
         color?: string;
         setRef: string;
         design?: string;
-        // categoryTitle: string;
-        // setTitle: string;
+        screenTitle?: string;
       };
     },
     'params'

@@ -114,7 +114,7 @@ export const getCards = createAsyncThunk(
         });
 
         await db.findOne(
-          { type: 'position', ref: payload.query.ref },
+          { type: 'position', ref: Object.values(payload.query)[1] },
           (err: Error, doc: CardPosition) => {
             if (!err && doc) {
               data.positions = doc.positions;
