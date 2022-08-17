@@ -47,25 +47,23 @@ export const addFlashCard = createAsyncThunk(
 export const removeCard = createAsyncThunk(
   'store/removeCardByID',
   (payload: { id: string; type: CardType }) => {
-    return new Promise<{ id: string; type: CardType}>(
-      (resolve, reject) => {
-        db.remove({ _id: payload.id }, {}, (err: Error, numRemoved: any) => {
-          if (err) reject(err.message);
-        });
-        //  delete sets and cards connected to category
-        if (payload.type !== 'flashcard') {
-          db.remove(
-            { categoryRef: payload.id },
-            { multi: true },
-            (err: Error, numRemoved: number) => {
-              if (err) reject(err.message);
-              // console.log(numRemoved)
-            }
-          );
-        }
-        resolve(payload);
+    return new Promise<{ id: string; type: CardType }>((resolve, reject) => {
+      db.remove({ _id: payload.id }, {}, (err: Error, numRemoved: any) => {
+        if (err) reject(err.message);
+      });
+      //  delete sets and cards connected to category
+      if (payload.type !== 'flashcard') {
+        db.remove(
+          { categoryRef: payload.id },
+          { multi: true },
+          (err: Error, numRemoved: number) => {
+            if (err) reject(err.message);
+            // console.log(numRemoved)
+          }
+        );
       }
-    );
+      resolve(payload);
+    });
   }
 );
 
@@ -103,6 +101,10 @@ export const getCards = createAsyncThunk(
   (payload: { query: Query; type: CardType }) => {
     return new Promise<CardsPayload>(async (resolve, reject) => {
       try {
+        const keyRef = Object.values(payload.query)
+          .filter((p) => p !== 'type')
+          .toString();
+
         const data: CardsPayload = {
           type: payload.type,
           cards: [],
@@ -114,7 +116,7 @@ export const getCards = createAsyncThunk(
         });
 
         await db.findOne(
-          { type: 'position', ref: Object.values(payload.query)[1] },
+          { type: 'position', ref: keyRef },
           (err: Error, doc: CardPosition) => {
             if (!err && doc) {
               data.positions = doc.positions;

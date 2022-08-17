@@ -143,15 +143,15 @@ export const deleteChildPosition = (id: string) => {
 
 export const multiDeleteChildPosition = (ids: string[]) => {
   'worklet';
-  let removed = 0;
+  // let removed = 0;
   for (let i = 0; i < ids.length; i++) {
     db.remove(
       { type: 'position', root: ids[i] },
       { multi: true },
       (err: Error, numRemoved: number) => {
-        if (numRemoved) removed += numRemoved;
+        // if (numRemoved) removed += numRemoved;
+        console.log(numRemoved)
       }
     );
   }
-  console.log(removed);
 };

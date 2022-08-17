@@ -42,8 +42,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSharedValue } from 'react-native-reanimated';
 import {
   addToPositions,
+  deleteChildPosition,
   measureOffset,
   moveObject,
+  multiDeleteChildPosition,
   removeFromPositions,
   removeManyFromPositions,
   saveCardPosition,
@@ -128,6 +130,7 @@ const Sets = ({ navigation, route }: Props) => {
   const deleteSet = (id: string) => {
     dispatch(removeCard({ id, type: 'set' }));
     cardPosition.value = removeFromPositions(cardPosition.value, id);
+    deleteChildPosition(id)
   };
 
   const editSet = (set: Set) => {
@@ -166,14 +169,14 @@ const Sets = ({ navigation, route }: Props) => {
     }
   };
 
-  const deleteSelection = () => {
-    // cycle through selection and delete each ID
+  const deleteSelection = useCallback(() => {
+    cancelMultiDeletion();
     for (let i = 0; i < selection.length; i++) {
       dispatch(removeCard({ id: selection[i], type: 'set' }));
     }
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
-    cancelMultiDeletion();
-  };
+    multiDeleteChildPosition(selection)
+  }, [selection])
 
   const selectPattern = useCallback((design) => {
     setCardSet((prev) => ({ ...prev, design }));

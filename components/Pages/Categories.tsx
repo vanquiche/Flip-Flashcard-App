@@ -52,7 +52,7 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import { removeFavorite } from '../../redux/storeSlice';
+import { removeFavorite, toggleLoading } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -141,7 +141,7 @@ const Categories = ({ navigation }: Props) => {
     cardPosition.value = removeFromPositions(cardPosition.value, id);
     dispatch(removeCard({ id, type: 'category' }));
     dispatch(removeFavorite(id));
-    deleteChildPosition(id)
+    deleteChildPosition(id);
   };
 
   const selectColor = useCallback((color: string) => {
@@ -161,15 +161,15 @@ const Categories = ({ navigation }: Props) => {
     }
   };
 
-  const deleteSelection = () => {
-    cancelMultiDeletion();
+  const deleteSelection = useCallback(() => {
     for (let i = 0; i < selection.length; i++) {
       dispatch(removeCard({ id: selection[i], type: 'category' }));
       dispatch(removeFavorite(selection[i]));
     }
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
-    multiDeleteChildPosition(selection)
-  };
+    multiDeleteChildPosition(selection);
+    cancelMultiDeletion();
+  }, [selection]);
 
   const startMultiSelectMode = () => {
     clearSelection();
