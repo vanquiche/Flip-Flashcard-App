@@ -4,7 +4,7 @@ import React, {
   useState,
   useCallback,
   useContext,
-  useLayoutEffect,
+  useEffect,
 } from 'react';
 
 // UTILITIES
@@ -23,7 +23,7 @@ import PatternSelector from '../PatternSelector';
 import DraggableWrapper from '../DraggableWrapper';
 import DragSortList from '../DragSortList';
 
-import { Set, StackNavigationTypes } from '../types';
+import { CardPosition, Set, StackNavigationTypes } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import {
@@ -45,6 +45,7 @@ import {
   measureOffset,
   moveObject,
   removeFromPositions,
+  removeManyFromPositions,
   saveCardPosition,
 } from '../../utility/dragAndSort';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -170,6 +171,7 @@ const Sets = ({ navigation, route }: Props) => {
     for (let i = 0; i < selection.length; i++) {
       dispatch(removeCard({ id: selection[i], type: 'set' }));
     }
+    cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
     cancelMultiDeletion();
   };
 
@@ -191,10 +193,11 @@ const Sets = ({ navigation, route }: Props) => {
   };
 
   const savePositions = () => {
-    console.log('saved positions list');
-    const list = {
+    // console.log('saved positions list');
+    const list: CardPosition = {
       ref: categoryRef,
       type: 'position',
+      root: categoryRef,
       positions: cardPosition.value,
     };
     saveCardPosition(list);
@@ -234,8 +237,14 @@ const Sets = ({ navigation, route }: Props) => {
     }, [])
   );
 
-  useLayoutEffect(() => {
-    initData();
+  useEffect(() => {
+    let unsubscribe = false;
+    if (!unsubscribe) {
+      initData();
+    }
+    return () => {
+      unsubscribe = true;
+    };
   }, []);
 
   return (

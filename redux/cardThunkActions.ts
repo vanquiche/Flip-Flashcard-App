@@ -46,8 +46,8 @@ export const addFlashCard = createAsyncThunk(
 
 export const removeCard = createAsyncThunk(
   'store/removeCardByID',
-  (payload: { id: string; type: 'category' | 'set' | 'flashcard' }) => {
-    return new Promise<{ id: string; type: 'category' | 'set' | 'flashcard' }>(
+  (payload: { id: string; type: CardType }) => {
+    return new Promise<{ id: string; type: CardType}>(
       (resolve, reject) => {
         db.remove({ _id: payload.id }, {}, (err: Error, numRemoved: any) => {
           if (err) reject(err.message);

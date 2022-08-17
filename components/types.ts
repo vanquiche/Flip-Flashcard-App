@@ -66,9 +66,10 @@ export interface Flashcard {
 }
 
 export interface CardPosition {
-  _id: string;
+  _id?: string;
   type: 'position',
   ref: string;
+  root: string | null;
   positions: Record<string, number>;
 }
 

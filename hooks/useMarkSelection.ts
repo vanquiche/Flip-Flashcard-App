@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 // import db from '../db-services'
 
 const useMarkSelection = () => {
   const [selection, setSelection] = useState<string[]>([]);
 
-  const selectItem = (item: string, notSelected: boolean) => {
+  const selectItem = useCallback((item: string, notSelected: boolean) => {
     // if id has not been selected already then pushed to array
     if (notSelected) {
       setSelection(prev => [...prev, item])
@@ -12,11 +12,11 @@ const useMarkSelection = () => {
       // remove id that has already been selected
       setSelection(prev => prev.filter(i => i !== item))
     }
-  };
+  }, [])
 
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelection([])
-  };
+  }, [])
 
 
   return {

@@ -103,25 +103,55 @@ export const measureOffset = (
 
 export const getCardPosition = (id: string) => {
   return new Promise<CardPosition>((resolve, reject) =>
-    db.findOne({ type: 'position', ref: id }, (err: Error, doc: CardPosition) => {
-      if (!err) resolve(doc);
-      else reject(null);
-    })
+    db.findOne(
+      { type: 'position', ref: id },
+      (err: Error, doc: CardPosition) => {
+        if (!err) resolve(doc);
+        else reject(null);
+      }
+    )
   );
 };
 
-export const saveCardPosition = (obj: any) => {
+export const saveCardPosition = (obj: CardPosition) => {
   // 'worklet';
-  db.count(
-    { type: 'position', ref: obj.ref },
-    (err: Error, count: number) => {
-      if (count > 0) {
-        db.update({ type: 'position', ref: obj.ref }, { $set: { positions: obj.positions } });
-      } else {
-        db.insert(obj, (err: Error, doc: any) => {
-          if (err) console.log(err);
-        });
-      }
+  db.count({ type: 'position', ref: obj.ref }, (err: Error, count: number) => {
+    if (count > 0) {
+      db.update(
+        { type: 'position', ref: obj.ref },
+        { $set: { positions: obj.positions } }
+      );
+    } else {
+      db.insert(obj, (err: Error, doc: any) => {
+        if (err) console.log(err);
+      });
+    }
+  });
+};
+
+export const deleteChildPosition = (id: string) => {
+  'worklet';
+  db.remove(
+    { type: 'position', root: id },
+    { multi: true },
+    (err: Error, numRemoved: number) => {
+      if (err) console.log(err);
+      console.log('child positions removed: ' + numRemoved);
     }
   );
+};
+
+export const multiDeleteChildPosition = (ids: string[]) => {
+  'worklet';
+  let removed = 0;
+  for (let i = 0; i < ids.length; i++) {
+    db.remove(
+      { type: 'position', root: ids[i] },
+      { multi: true },
+      (err: Error, numRemoved: number) => {
+        if (numRemoved) removed += numRemoved;
+      }
+    );
+  }
+  console.log(removed);
 };

@@ -1,14 +1,10 @@
-import {
-  View,
-  Text,
-
-  StyleSheet,
-} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React, {
   useState,
   useCallback,
   useContext,
   useLayoutEffect,
+  useEffect,
 } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
@@ -30,6 +26,8 @@ import {
   removeManyFromPositions,
   getCardPosition,
   saveCardPosition,
+  deleteChildPosition,
+  multiDeleteChildPosition,
 } from '../../utility/dragAndSort';
 
 // COMPONENTS
@@ -61,7 +59,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import useRenderCounter from '../../hooks/useRenderCounter';
 
-const CATEGORY_ID = '1ebca23gh94dd56webcjk';
 const SCROLLVIEW_ITEM_HEIGHT = 165;
 
 const INITIAL_STATE: Category = {
@@ -144,6 +141,7 @@ const Categories = ({ navigation }: Props) => {
     cardPosition.value = removeFromPositions(cardPosition.value, id);
     dispatch(removeCard({ id, type: 'category' }));
     dispatch(removeFavorite(id));
+    deleteChildPosition(id)
   };
 
   const selectColor = useCallback((color: string) => {
@@ -170,6 +168,7 @@ const Categories = ({ navigation }: Props) => {
       dispatch(removeFavorite(selection[i]));
     }
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
+    multiDeleteChildPosition(selection)
   };
 
   const startMultiSelectMode = () => {
@@ -182,31 +181,33 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const savePositions = () => {
-    console.log('saved positions list');
-    const list = {
+    // console.log('saved positions list');
+    const list: CardPosition = {
       ref: 'categories',
       type: 'position',
+      root: null,
       positions: cardPosition.value,
     };
     saveCardPosition(list);
   };
 
-  const initData = async () => {
+  const initData = useCallback(async () => {
     const dbPositions = await getCardPosition('categories');
     if (dbPositions) {
       cardPosition.value = dbPositions.positions;
     }
     setIsLoading(false);
-  };
+  }, []);
 
   useAnimatedReaction(
     () => cardPosition.value,
     (curPositions, prevPositions) => {
-      if (curPositions !== prevPositions && !isLoading) {
-        runOnJS(savePositions)();
+      if (!isLoading && !sortCardMode) {
+        if (curPositions !== prevPositions) {
+          runOnJS(savePositions)();
+        }
       }
-    },
-    []
+    }
   );
 
   useFocusEffect(
@@ -218,9 +219,15 @@ const Categories = ({ navigation }: Props) => {
     }, [])
   );
 
-  useLayoutEffect(() => {
-    initData();
-  }, []);
+  useEffect(() => {
+    let unsubscribe = false;
+    if (!unsubscribe) {
+      initData();
+    }
+    return () => {
+      unsubscribe = true;
+    };
+  }, [initData]);
 
   return (
     <View style={{ flex: 1 }}>
