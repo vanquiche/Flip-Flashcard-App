@@ -188,6 +188,7 @@ const FlashCards = ({ navigation, route }: Props) => {
   };
 
   const syncData = useCallback(async () => {
+    // console.log(setRef)
     if (screenTitle) {
       navigation.setOptions({
         title: screenTitle,
@@ -259,9 +260,14 @@ const FlashCards = ({ navigation, route }: Props) => {
           mode='contained'
           color={theme.cardColor}
           style={[s.cardActionButton]}
-          labelStyle={{ color: theme.fontColor }}
+          labelStyle={{
+            color:
+              cards.flashcard.length === 0 || sortMode
+                ? 'grey'
+                : theme.fontColor,
+          }}
           onPress={() => setStartQuiz(true)}
-          disabled={cards.flashcard.length === 0}
+          disabled={cards.flashcard.length === 0 || sortMode}
         >
           QUIZ
         </Button>

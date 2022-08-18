@@ -101,9 +101,14 @@ export const getCards = createAsyncThunk(
   (payload: { query: Query; type: CardType }) => {
     return new Promise<CardsPayload>(async (resolve, reject) => {
       try {
-        const keyRef = Object.values(payload.query)
-          .filter((p) => p !== 'type')
-          .toString();
+        // console.log(payload.query)
+        const refId = (obj: Query) => {
+          for (const [key, val] of Object.entries(obj)) {
+            if (key !== 'type') {
+              return val;
+            }
+          }
+        };
 
         const data: CardsPayload = {
           type: payload.type,
@@ -116,7 +121,7 @@ export const getCards = createAsyncThunk(
         });
 
         await db.findOne(
-          { type: 'position', ref: keyRef },
+          { type: 'position', ref: refId(payload.query) },
           (err: Error, doc: CardPosition) => {
             if (!err && doc) {
               data.positions = doc.positions;

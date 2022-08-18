@@ -60,6 +60,7 @@ const Home = ({ navigation }: Props) => {
                     design: set.design,
                     setRef: set._id,
                     categoryRef: set.categoryRef,
+                    screenTitle: set.name
                   },
                 },
               ],

@@ -36,6 +36,7 @@ const ModifcationBar = ({
 }: Props) => {
   const _cardColor = buttonColor;
   const _fontColor = labelColor;
+  const disableFontColor = 'grey'
   const { renderCount } = useRenderCounter();
   renderCount.current++;
 
@@ -59,7 +60,7 @@ const ModifcationBar = ({
           <Button
             mode='contained'
             style={s.cardActionButton}
-            labelStyle={{ color: _fontColor }}
+            labelStyle={{ color: sortMode ? disableFontColor : _fontColor }}
             color={_cardColor}
             onPress={handleNewItem}
             disabled={sortMode}
@@ -69,7 +70,7 @@ const ModifcationBar = ({
           <Button
             mode='contained'
             style={s.cardActionButton}
-            labelStyle={{ color: _fontColor }}
+            labelStyle={{ color: disableSelection ? disableFontColor : _fontColor }}
             color={_cardColor}
             onPress={onSort}
             disabled={disableSelection}
@@ -80,7 +81,7 @@ const ModifcationBar = ({
           <Button
             mode='contained'
             style={s.cardActionButton}
-            labelStyle={[{ color: _fontColor }]}
+            labelStyle={[{ color: disableSelection || sortMode ? disableFontColor : _fontColor }]}
             color={_cardColor}
             onPress={handleSelection}
             disabled={disableSelection || sortMode}
