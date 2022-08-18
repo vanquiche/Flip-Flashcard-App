@@ -1,5 +1,5 @@
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { DateTime } from 'luxon';
@@ -22,7 +22,8 @@ const Stats = () => {
 
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
-  const titleColor = fontColorContrast(theme.bgColor, 0.6)
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
+  const disableFontColor = 'grey';
 
   const dt = DateTime;
 
@@ -93,7 +94,9 @@ const Stats = () => {
         <Button
           mode='contained'
           color={_cardColor}
-          labelStyle={{ color: _fontColor }}
+          labelStyle={{
+            color: dataType === 'avg' ? disableFontColor : _fontColor,
+          }}
           onPress={() => setDataType('avg')}
           disabled={dataType === 'avg'}
           style={styles.button}
@@ -106,7 +109,9 @@ const Stats = () => {
         <Button
           mode='contained'
           color={_cardColor}
-          labelStyle={{ color: _fontColor }}
+          labelStyle={{
+            color: dataType === 'sets' ? disableFontColor : _fontColor,
+          }}
           onPress={() => setDataType('sets')}
           disabled={dataType === 'sets'}
           style={styles.button}
@@ -137,7 +142,9 @@ const Stats = () => {
       <View style={styles.btnContainer}>
         <Button
           mode='contained'
-          labelStyle={{ color: _fontColor }}
+          labelStyle={{
+            color: currentWeek >= 12 ? disableFontColor : _fontColor,
+          }}
           color={_cardColor}
           style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev + 1)}
@@ -147,7 +154,9 @@ const Stats = () => {
         </Button>
         <Button
           mode='contained'
-          labelStyle={{ color: _fontColor }}
+          labelStyle={{
+            color: currentWeek === 0 ? disableFontColor : _fontColor,
+          }}
           color={_cardColor}
           style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev - 1)}

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const ThemeDisplay= ({ theme, style }: Props) => {
-  const exampleIcons = ['home', 'card', 'cart', 'heart'];
+  const exampleIcons = ['home', 'cards', 'cart', 'heart'];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}>
@@ -30,7 +30,7 @@ const ThemeDisplay= ({ theme, style }: Props) => {
           <IconButton
             icon={icon}
             key={icon}
-            style={index === 1 ? {transform: [{translateY: -5}]} : {}}
+            style={index === 1 ? {transform: [{scale: 1.1}]} : {}}
             size={18}
             color={index === 1 ? theme.actionIconColor : theme.iconColor}
           />

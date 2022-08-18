@@ -151,7 +151,7 @@ const Shop = () => {
 
   return (
     <>
-      <View style={{ padding: 10, paddingHorizontal: 20 }}>
+      <View style={{ padding: 5, paddingHorizontal: 20 }}>
         <Title
           style={{ color: titleColor, textAlign: 'right', marginRight: 20 }}
         >
@@ -168,7 +168,7 @@ const Shop = () => {
           name='coins'
           size={20}
           color={titleColor}
-          style={{ position: 'absolute', right: 15, top: 15 }}
+          style={{ position: 'absolute', right: 15, top: 12 }}
         />
       </View>
       <ScrollView>

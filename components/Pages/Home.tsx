@@ -1,4 +1,9 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import React, { Suspense, useCallback, useContext } from 'react';
 import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
 
@@ -20,15 +25,15 @@ import swatchContext from '../../contexts/swatchContext';
 interface Props extends StackNavigationTypes {}
 
 const Home = ({ navigation }: Props) => {
-  const { user, favoriteSets, loading } = useSelector(
-    (state: RootState) => state.store
-  );
+  const { user, favoriteSets } = useSelector((state: RootState) => state.store);
   const { theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
 
+  const dimension = useWindowDimensions();
+
   const _cardColor = theme.cardColor;
   const _fontColor = theme.fontColor;
-  const titleColor = fontColorContrast(theme.bgColor, 0.6)
+  const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
   const navigateToFavorite = useCallback((set: Set) => {
     navigation.dispatch({
@@ -82,48 +87,58 @@ const Home = ({ navigation }: Props) => {
   );
 
   return (
-    <>
-      <View style={s.screenWrapper}>
-        <Suspense fallback={<ActivityIndicator />}>
-          <View
-            style={{
-              ...styles.infoCardContainer,
-              backgroundColor: _cardColor,
-            }}
+    <View style={s.screenWrapper}>
+      <Suspense fallback={<ActivityIndicator />}>
+        <View
+          style={{
+            ...styles.infoCardContainer,
+            backgroundColor: _cardColor,
+          }}
+        >
+          <Button
+            color={_fontColor}
+            labelStyle={{ fontSize: 20 }}
+            onPress={() => navigation.navigate('Stats')}
           >
-            <Button
-              color={_fontColor}
-              labelStyle={{ fontSize: 20 }}
-              onPress={() => navigation.navigate('Stats')}
-            >
-              STATISTICS
-            </Button>
-          </View>
+            STATISTICS
+          </Button>
+        </View>
 
-          <LoginGoal dates={user.login} streak={user.streak} />
+        <LoginGoal dates={user.login} streak={user.streak} />
 
-          <Title style={{ textAlign: 'center', color: titleColor }}>
-            FAVORITE SETS
-          </Title>
+        <Title style={{ textAlign: 'center', color: titleColor, height: '6%' }}>
+          FAVORITE SETS
+        </Title>
 
-          {favoriteSets.length === 0 && (
-            <Text
-              style={{
-                color: titleColor,
-                ...styles.favoriteMessage,
-              }}
-            >
-              NO FAVORITES
-            </Text>
-          )}
+        <View
+          style={{
+            height: '34%',
+            // alignItems: favoriteSets.length === 1 ? 'center' : undefined,
+          }}
+        >
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={[
               styles.favoritesContainer,
-              { width: 180 * favoriteSets.length },
+              {
+                width:
+                  favoriteSets.length === 0
+                    ? '100%'
+                    : (dimension.width / 2) * favoriteSets.length,
+              },
             ]}
           >
+            {favoriteSets.length === 0 && (
+              <Text
+                style={{
+                  color: titleColor,
+                  ...styles.favoriteMessage,
+                }}
+              >
+                NO FAVORITES
+              </Text>
+            )}
             {favoriteSets
               .filter((fav) => fav.favorite === true)
               .map((set) => {
@@ -132,13 +147,14 @@ const Home = ({ navigation }: Props) => {
                     key={set._id}
                     card={set}
                     onPress={() => navigateToFavorite(set)}
+                    width={dimension.width * 0.45}
                   />
                 );
               })}
           </ScrollView>
-        </Suspense>
-      </View>
-    </>
+        </View>
+      </Suspense>
+    </View>
   );
 };
 
@@ -146,6 +162,8 @@ const styles = StyleSheet.create({
   favoritesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    // height: '40%',
+    // borderWidth: 2,
   },
   infoCardContainer: {
     flexDirection: 'row',
@@ -159,7 +177,7 @@ const styles = StyleSheet.create({
   },
   favoriteMessage: {
     textAlign: 'center',
-    paddingTop: 60,
+    // paddingTop: 60,
   },
 });
 

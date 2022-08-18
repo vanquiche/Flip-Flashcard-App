@@ -80,9 +80,9 @@ const LoginGoal = ({ dates, streak }: Props) => {
               <Title
                 style={[
                   { position: 'absolute' },
-                  loggedInDay?.loggedIn
-                    ? { color: theme.cardColor }
-                    : { color: theme.fontColor },
+                  // loggedInDay?.loggedIn
+                  //   ? { color: theme.cardColor }
+                  //   : { color: theme.fontColor },
                 ]}
               >
                 {d.name}

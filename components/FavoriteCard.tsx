@@ -17,15 +17,17 @@ interface Collection {
 interface Props {
   card: Collection;
   onPress?: () => void;
+  height?: number | string;
+  width?: number | string;
 }
 
-const FavoriteCard = ({ card, onPress }: Props) => {
+const FavoriteCard = ({ card, onPress, height, width }: Props) => {
   const _fontColor = fontColorContrast(card.color, 0.6);
   const { patterns } = useContext(swatchContext);
 
   return (
     <Pressable
-      style={[styles.card, { backgroundColor: card.color }]}
+      style={[styles.card, { backgroundColor: card.color, width: width, aspectRatio: 1.2 }]}
       onPress={onPress}
     >
       <Title style={[styles.textContent, { color: _fontColor }]}>
