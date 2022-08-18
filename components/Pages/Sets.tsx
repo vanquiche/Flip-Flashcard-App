@@ -1,11 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
-import React, {
-  useState,
-  useCallback,
-  useContext,
-  useEffect,
-} from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
@@ -69,29 +64,30 @@ const INITIAL_STATE: Set = {
 interface Props extends StackNavigationTypes {}
 
 const Sets = ({ navigation, route }: Props) => {
-  // data state
-  const [isLoading, setIsLoading] = useState(true);
+  const { categoryRef, screenTitle } = route.params;
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
+
   // view state
-  const [showDialog, setShowDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
-  // edit state
+  const [showDialog, setShowDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [sortMode, setSortMode] = useState(false);
 
-  const { selection, selectItem, clearSelection } = useMarkSelection();
-  const { categoryRef, screenTitle } = route.params;
-
   const { cards } = useSelector((state: RootState) => state.store);
-  const { colors, patterns, theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
+  const { colors, patterns, theme } = useContext(swatchContext);
 
+  // drag and sort values
   const [scrollViewOffset, setScrollViewOffset] = useState(0);
   const cardPosition = useSharedValue({});
   const scrollY = useSharedValue(0);
   const insets = useSafeAreaInsets();
 
+  // hooks
+  const { selection, selectItem, clearSelection } = useMarkSelection();
+  // track renders to dictate whether card and control bar should animate onMount
   const { renderCount } = useRenderCounter();
   renderCount.current++;
 
@@ -130,7 +126,7 @@ const Sets = ({ navigation, route }: Props) => {
   const deleteSet = (id: string) => {
     dispatch(removeCard({ id, type: 'set' }));
     cardPosition.value = removeFromPositions(cardPosition.value, id);
-    deleteChildPosition(id)
+    deleteChildPosition(id);
   };
 
   const editSet = (set: Set) => {
@@ -175,8 +171,8 @@ const Sets = ({ navigation, route }: Props) => {
       dispatch(removeCard({ id: selection[i], type: 'set' }));
     }
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
-    multiDeleteChildPosition(selection)
-  }, [selection])
+    multiDeleteChildPosition(selection);
+  }, [selection]);
 
   const selectPattern = useCallback((design) => {
     setCardSet((prev) => ({ ...prev, design }));
@@ -206,7 +202,7 @@ const Sets = ({ navigation, route }: Props) => {
     saveCardPosition(list);
   };
 
-  const initData = async () => {
+  const syncData = useCallback(async () => {
     navigation.setOptions({
       title: screenTitle,
     });
@@ -218,7 +214,7 @@ const Sets = ({ navigation, route }: Props) => {
     );
     cardPosition.value = data.payload.positions;
     setIsLoading(false);
-  };
+  }, [screenTitle, categoryRef]);
 
   useAnimatedReaction(
     () => cardPosition.value,
@@ -243,12 +239,12 @@ const Sets = ({ navigation, route }: Props) => {
   useEffect(() => {
     let unsubscribe = false;
     if (!unsubscribe) {
-      initData();
+      syncData();
     }
     return () => {
       unsubscribe = true;
     };
-  }, []);
+  }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -287,6 +283,7 @@ const Sets = ({ navigation, route }: Props) => {
               <DraggableWrapper
                 key={set._id}
                 itemHeight={165}
+                itemWidth={100}
                 dataLength={cards.set.length}
                 id={set._id}
                 positions={cardPosition}
@@ -312,6 +309,7 @@ const Sets = ({ navigation, route }: Props) => {
                       setRef: set._id,
                       design: set.design,
                       categoryRef: categoryRef,
+                      screenTitle: set.name,
                     })
                   }
                 />

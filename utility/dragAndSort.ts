@@ -114,7 +114,7 @@ export const getCardPosition = (id: string) => {
 };
 
 export const saveCardPosition = (obj: CardPosition) => {
-  // 'worklet';
+  'worklet';
   db.count({ type: 'position', ref: obj.ref }, (err: Error, count: number) => {
     if (count > 0) {
       db.update(
@@ -123,7 +123,7 @@ export const saveCardPosition = (obj: CardPosition) => {
       );
     } else {
       db.insert(obj, (err: Error, doc: any) => {
-        if (err) console.log(err);
+        // if (err) console.log(err);
       });
     }
   });

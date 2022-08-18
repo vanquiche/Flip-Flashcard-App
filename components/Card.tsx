@@ -43,6 +43,7 @@ interface Props {
   handleColor?: () => void;
   onPress?: () => void;
   markForDelete: (id: any, state: boolean) => void;
+  disableActions?: boolean;
 }
 
 const Card = ({
@@ -56,6 +57,7 @@ const Card = ({
   handleEdit,
   handleDelete,
   markForDelete,
+  disableActions,
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
@@ -99,16 +101,18 @@ const Card = ({
   });
 
   const flipCard = () => {
-    if (cardFacingFront === true) {
-      cardFlip.value = withSpring(180, { damping: 20 });
-      frontCardPosition.value = withTiming(180);
-      backCardPosition.value = withTiming(0);
-    } else {
-      cardFlip.value = withSpring(0, { damping: 20 });
-      frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
-      backCardPosition.value = withTiming(BACK_CARD_POSITION_DEFAULT);
+    if (!disableActions) {
+      if (cardFacingFront === true) {
+        cardFlip.value = withSpring(180, { damping: 20 });
+        frontCardPosition.value = withTiming(180);
+        backCardPosition.value = withTiming(0);
+      } else {
+        cardFlip.value = withSpring(0, { damping: 20 });
+        frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
+        backCardPosition.value = withTiming(BACK_CARD_POSITION_DEFAULT);
+      }
+      setCardFacingFront((prev) => !prev);
     }
-    setCardFacingFront((prev) => !prev);
   };
 
   const toggleSelection = () => {
@@ -157,7 +161,7 @@ const Card = ({
               size={25}
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
-              disabled={multiSelect}
+              disabled={disableActions}
             />
             <IconButton
               icon='dots-horizontal'
@@ -165,7 +169,7 @@ const Card = ({
               size={25}
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
-              disabled={multiSelect}
+              disabled={disableActions}
             />
           </Animated.View>
         )}
@@ -310,7 +314,7 @@ const styles = StyleSheet.create({
     height: 160,
     width: 226,
     opacity: 0.35,
-    borderRadius: 10
+    borderRadius: 10,
   },
 });
 export default React.memo(Card, (prev, next) => {
@@ -318,6 +322,7 @@ export default React.memo(Card, (prev, next) => {
     prev.card.prompt === next.card.prompt &&
     prev.card.solution === next.card.solution &&
     prev.multiSelect === next.multiSelect &&
+    prev.disableActions === next.disableActions &&
     prev.selectedForDeletion === next.selectedForDeletion
   )
     return true;

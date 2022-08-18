@@ -85,7 +85,7 @@ const ModifcationBar = ({
             onPress={handleSelection}
             disabled={disableSelection || sortMode}
           >
-            SELECT
+            EDIT
           </Button>
         </Animated.View>
       ) : (

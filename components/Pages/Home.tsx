@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   infoCardContainer: {
     flexDirection: 'row',
     marginHorizontal: 15,
-    marginTop: 20,
+    marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 13,

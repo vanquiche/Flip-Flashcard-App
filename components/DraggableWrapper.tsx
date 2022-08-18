@@ -23,6 +23,7 @@ interface Props {
   ) => Record<string, number>;
   positions: SharedValue<Record<string, number>>;
   itemHeight: number;
+  itemWidth?: number;
   scrollY: SharedValue<number>;
   dataLength: number;
   id: string;
@@ -35,6 +36,7 @@ const DraggableWrapper = ({
   children,
   positions,
   itemHeight,
+  itemWidth,
   scrollY,
   dataLength,
   yOffset,
@@ -143,7 +145,7 @@ const DraggableWrapper = ({
   });
   return (
     <PanGestureHandler onGestureEvent={gestureHandler} enabled={enableTouch}>
-      <Animated.View style={[styles.wrapper, wrapperAnimatedStyle]}>
+      <Animated.View style={[styles.wrapper, wrapperAnimatedStyle, {transform: [{translateX: itemWidth && -itemWidth || 0}]}]}>
         {children}
       </Animated.View>
     </PanGestureHandler>
@@ -152,10 +154,8 @@ const DraggableWrapper = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    // borderWidth: 2,
-    // maxWidth: '85%',
+
     width: 200,
-    transform: [{ translateX: -100 }],
   },
 });
 

@@ -1,14 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, {
-  useState,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useEffect,
-} from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
-import Animated, {
+import {
   runOnJS,
   useAnimatedReaction,
   useSharedValue,
@@ -52,7 +46,7 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import { removeFavorite, toggleLoading } from '../../redux/storeSlice';
+import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -73,27 +67,31 @@ const INITIAL_STATE: Category = {
 interface Props extends StackNavigationTypes {}
 
 const Categories = ({ navigation }: Props) => {
-  const [isLoading, setIsLoading] = useState(true);
   const [category, setCategory] = useState(INITIAL_STATE);
-  // view state
-  const [showDialog, setShowDialog] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  // edit state
-  const [editMode, setEditMode] = useState(false);
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
-  const [sortCardMode, setSortCardMode] = useState(false);
 
-  const [scrollViewOffset, setScrollViewOffset] = useState(0);
+  // view state
+  const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [sortCardMode, setSortCardMode] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+
+  // redux store and contexts
   const { cards } = useSelector((state: RootState) => state.store);
+  const dispatch = useDispatch<AppDispatch>();
   const { colors, theme } = useContext(swatchContext);
-  const { selection, selectItem, clearSelection } = useMarkSelection();
+
+  // drag and sort values
+  const [scrollViewOffset, setScrollViewOffset] = useState(0);
   const cardPosition = useSharedValue(createPositionList(cards.category));
   const scrollY = useSharedValue(0);
   const insets = useSafeAreaInsets();
+
+  // hooks
+  const { selection, selectItem, clearSelection } = useMarkSelection();
   const { renderCount } = useRenderCounter();
   renderCount.current++;
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -191,7 +189,7 @@ const Categories = ({ navigation }: Props) => {
     saveCardPosition(list);
   };
 
-  const initData = useCallback(async () => {
+  const syncData = useCallback(async () => {
     const dbPositions = await getCardPosition('categories');
     if (dbPositions) {
       cardPosition.value = dbPositions.positions;
@@ -222,12 +220,12 @@ const Categories = ({ navigation }: Props) => {
   useEffect(() => {
     let unsubscribe = false;
     if (!unsubscribe) {
-      initData();
+      syncData();
     }
     return () => {
       unsubscribe = true;
     };
-  }, [initData]);
+  }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -264,6 +262,7 @@ const Categories = ({ navigation }: Props) => {
               <DraggableWrapper
                 key={category._id}
                 itemHeight={165}
+                itemWidth={100}
                 dataLength={cards.category.length}
                 id={category._id}
                 positions={cardPosition}
