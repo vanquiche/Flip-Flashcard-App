@@ -47,7 +47,6 @@ const DraggableWrapper = ({
   const isMoving = useSharedValue(false);
   const itemPosition = useSharedValue(positions.value[id] * itemHeight);
   const dimensions = useWindowDimensions();
-  const scrollAnimationDuration = 200 * dataLength;
 
   useAnimatedReaction(
     () => positions.value[id],
@@ -55,7 +54,7 @@ const DraggableWrapper = ({
       if (currentPosition !== previousPosition) {
         if (!isMoving.value) {
           itemPosition.value = withSpring(currentPosition * itemHeight, {
-            damping: 20,
+            damping: 30,
           });
         }
       }
@@ -96,20 +95,18 @@ const DraggableWrapper = ({
 
       if (positionY <= scrollY.value + itemHeight + yOffset) {
         // scroll up
-        scrollY.value = withTiming(0, { duration: scrollAnimationDuration });
+        scrollY.value = withTiming(0);
         // console.log('top!')
       } else if (
         positionY >=
         scrollY.value + dimensions.height - itemHeight - yOffset
       ) {
         // scroll down
-        // console.log('bottom')
+        // console.log('bottom');
         const contentHeight = dataLength * itemHeight;
         const screenHeight = dimensions.height;
-        const maxScroll = contentHeight - screenHeight + itemHeight + yOffset;
-        scrollY.value = withTiming(maxScroll, {
-          duration: scrollAnimationDuration,
-        });
+        const maxScroll = contentHeight - screenHeight + itemHeight - yOffset;
+        scrollY.value = withTiming(maxScroll);
       } else {
         cancelAnimation(scrollY);
       }
@@ -145,7 +142,13 @@ const DraggableWrapper = ({
   });
   return (
     <PanGestureHandler onGestureEvent={gestureHandler} enabled={enableTouch}>
-      <Animated.View style={[styles.wrapper, wrapperAnimatedStyle, {transform: [{translateX: itemWidth && -itemWidth || 0}]}]}>
+      <Animated.View
+        style={[
+          styles.wrapper,
+          wrapperAnimatedStyle,
+          { transform: [{ translateX: (itemWidth && -itemWidth) || 0 }] },
+        ]}
+      >
         {children}
       </Animated.View>
     </PanGestureHandler>
@@ -154,7 +157,6 @@ const DraggableWrapper = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-
     width: 200,
   },
 });
