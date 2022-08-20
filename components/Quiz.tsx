@@ -163,6 +163,11 @@ const Quiz = ({
     }
   };
 
+  const clearTextField = () => {
+    textfieldRef.current && textfieldRef.current.clear()
+    setAnswer('')
+  }
+
   // ANIMATION VALUES
   const inputAnimate = useRef<any>(new Animated.Value(0)).current;
 
@@ -225,6 +230,9 @@ const Quiz = ({
               icon='close-box'
               onPress={() => setShowAlert(true)}
               style={{ position: 'absolute', top: insets.top - 10, left: -25 }}
+              accessible
+              accessibilityRole='imagebutton'
+              accessibilityHint='cancel and close quiz'
             />
           )}
 
@@ -288,8 +296,7 @@ const Quiz = ({
                     outlineColor='lightgrey'
                     label='ANSWER'
                     maxLength={42}
-                    // value={answer}
-                    onChange={({nativeEvent: {text}}) => setAnswer(text)}
+                    onChange={({ nativeEvent: { text } }) => setAnswer(text)}
                     disabled={submitted}
                   />
                   <View
@@ -304,8 +311,14 @@ const Quiz = ({
                       mode='text'
                       color={themeColors.secondary}
                       labelStyle={{ fontSize: 16 }}
-                      onPress={() => setAnswer('')}
+                      onPress={clearTextField}
                       disabled={!answer ? true : submitted ? true : false}
+                      accessible
+                      accessibilityRole='button'
+                      accessibilityHint='clear text field'
+                      accessibilityState={{
+                        disabled: !answer ? true : submitted ? true : false,
+                      }}
                     >
                       Clear
                     </Button>
@@ -316,6 +329,9 @@ const Quiz = ({
                         color={themeColors.secondary}
                         labelStyle={{ fontSize: 16 }}
                         onPress={submitResults}
+                        accessible
+                        accessibilityRole='button'
+                        accessibilityHint='show results of quiz'
                       >
                         Results
                       </Button>
@@ -327,6 +343,9 @@ const Quiz = ({
                       labelStyle={{ fontSize: 16 }}
                       disabled={!answer ? true : submitted ? true : false}
                       onPress={checkAnswer}
+                      accessible
+                      accessibilityRole='button'
+                      accessibilityHint='submit answer'
                     >
                       Submit
                     </Button>

@@ -101,6 +101,10 @@ const TitleCard = ({
           shouldAnimateEntry ? SlideInLeft.delay(200).duration(350) : undefined
         }
         layout={Layout.springify().damping(15).delay(200)}
+        accessible
+        accessibilityRole='button'
+        accessibilityLabel={card.name}
+        accessibilityHint={`navigate to ${card.name}`}
       >
         {/* indicator of card selection */}
         {selectedForDeletion && (
@@ -109,10 +113,17 @@ const TitleCard = ({
             size={42}
             color={'white'}
             style={{ position: 'absolute', zIndex: 100 }}
+            accessible
+            accessibilityRole='image'
+            accessibilityLabel='selected for deletion'
           />
         )}
 
-        <Text style={[styles.textContent, { color: _fontColor }]}>
+        <Text
+          style={[styles.textContent, { color: _fontColor }]}
+          accessible
+          accessibilityRole='text'
+        >
           {card.name}
         </Text>
         <IconButton
@@ -122,6 +133,11 @@ const TitleCard = ({
           style={styles.deleteBtn}
           onPress={() => setShowAlert(true)}
           disabled={disableActions}
+          accessible
+          accessibilityRole='imagebutton'
+          accessibilityLabel='delete card'
+          accessibilityHint='open modal to confirm delete'
+          accessibilityState={{ disabled: disableActions }}
         />
         <IconButton
           icon='dots-horizontal'
@@ -130,6 +146,11 @@ const TitleCard = ({
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
           disabled={disableActions}
+          accessible
+          accessibilityRole='imagebutton'
+          accessibilityLabel='edit card'
+          accessibilityHint='open modal to edit card'
+          accessibilityState={{ disabled: disableActions }}
         />
         {card.design && card.design !== 'default' && (
           <ImageBackground
@@ -144,6 +165,10 @@ const TitleCard = ({
             size={20}
             color={_fontColor}
             style={styles.favicon}
+            accessible
+            accessibilityRole='imagebutton'
+            accessibilityLabel='favorite'
+            accessibilityHint='toggle favorite'
           />
         )}
       </AnimatedPressable>

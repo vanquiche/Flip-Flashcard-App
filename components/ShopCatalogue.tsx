@@ -1,10 +1,8 @@
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   Dimensions,
-  Image,
 } from 'react-native';
 import React from 'react';
 import { Title } from 'react-native-paper';
@@ -50,14 +48,36 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
 
   return (
     <View>
-      <Title style={{ ...styles.title, color: titleColor }}>{title}</Title>
+      <Title
+        style={{ ...styles.title, color: titleColor }}
+        accessible
+        accessibilityRole='text'
+      >
+        {title}
+      </Title>
 
       <Animated.View style={[styles.rightArrow, arrowRightFade]}>
-        <AntDesign name='caretright' size={24} color='black' />
+        <AntDesign
+          name='caretright'
+          size={24}
+          color='black'
+          accessible
+          accessibilityRole='image'
+          accessibilityLabel='more content on right'
+        />
       </Animated.View>
 
-      <Animated.View style={[styles.leftArrow, arrowLeftFade, arrowLeftVisible]}>
-        <AntDesign name='caretleft' size={24} color='black' />
+      <Animated.View
+        style={[styles.leftArrow, arrowLeftFade, arrowLeftVisible]}
+      >
+        <AntDesign
+          name='caretleft'
+          size={24}
+          color='black'
+          accessible
+          accessibilityRole='image'
+          accessibilityLabel='more content on left'
+        />
       </Animated.View>
       <ScrollView
         horizontal
@@ -83,6 +103,8 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
           arrowLeftOpacity.value = 1;
           scrollPosition.value = e.nativeEvent.contentOffset.x;
         }}
+        accessible
+        accessibilityRole='menu'
       >
         {children}
       </ScrollView>
@@ -104,16 +126,12 @@ const styles = StyleSheet.create({
     right: 5,
     top: '46%',
     zIndex: 100,
-    // width: 16,
-    // height: 16,
   },
   leftArrow: {
     position: 'absolute',
     left: 5,
     top: '46%',
     zIndex: 100,
-    // width: 16,
-    // height: 16,
   },
 });
 export default ShopCatalogue;

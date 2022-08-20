@@ -2,11 +2,7 @@ import { View, Text } from 'react-native';
 import React, { useContext } from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
-import AppBar from './AppBar';
 import uuid from 'react-native-uuid';
-import { useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 import swatchContext from '../contexts/swatchContext';
 
 const Stack = createStackNavigator();
@@ -19,11 +15,10 @@ interface Screen {
 
 interface Props {
   screens: Screen[];
-  title?: string;
   id?: string;
 }
 
-const StackNavigator = ({ screens, title, id }: Props) => {
+const StackNavigator = ({ screens, id }: Props) => {
   const { theme } = useContext(swatchContext);
 
   return (
@@ -32,7 +27,7 @@ const StackNavigator = ({ screens, title, id }: Props) => {
       screenOptions={{
         headerStyle: {
           backgroundColor: theme.headerColor,
-          height: 70,
+          // height: 70,
         },
         headerTintColor: 'white',
         headerTitleStyle: {

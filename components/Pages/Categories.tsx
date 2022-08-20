@@ -210,22 +210,29 @@ const Categories = ({ navigation }: Props) => {
 
   useFocusEffect(
     useCallback(() => {
+      // let unsubscribe = false;
+      // if (!unsubscribe && renderCount.current < 4) {
+        //   console.log('sync categories')
+        //   syncData();
+        // }
+
       return () => {
+        // unsubscribe = true;
         setSortCardMode(false);
         setMultiSelectMode(false);
       };
-    }, [])
+    }, [syncData])
   );
 
-  useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData();
-    }
-    return () => {
-      unsubscribe = true;
-    };
-  }, [syncData]);
+  // useEffect(() => {
+  //   let unsubscribe = false;
+  //   if (!unsubscribe) {
+  //     syncData();
+  //   }
+  //   return () => {
+  //     unsubscribe = true;
+  //   };
+  // }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>

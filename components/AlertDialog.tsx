@@ -54,7 +54,12 @@ const AlertDialog = ({
         visible={visible}
         dismissable={false}
       >
-        <Title style={[styles.title, { color: theme.fontColor }]}>
+        <Title
+          style={[styles.title, { color: theme.fontColor }]}
+          accessible={true}
+          accessibilityRole='text'
+          accessibilityLabel={message}
+        >
           {message.toUpperCase()}
         </Title>
         <View style={styles.buttonContainer}>
@@ -64,6 +69,10 @@ const AlertDialog = ({
             size={50}
             color={theme.fontColor}
             onPress={onDismiss}
+            accessible={true}
+            accessibilityRole='imagebutton'
+            accessibilityLabel='cancel action and close dialog window'
+            accessibilityState={{disabled: false}}
           />
 
           <IconButton
@@ -73,6 +82,10 @@ const AlertDialog = ({
             color={theme.fontColor}
             onPress={onConfirm}
             disabled={disable}
+            accessible={true}
+            accessibilityRole='imagebutton'
+            accessibilityLabel='confirm action and close dialog window'
+            accessibilityState={{disabled: disable}}
           />
         </View>
       </Dialog>

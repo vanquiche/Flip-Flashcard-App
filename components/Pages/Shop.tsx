@@ -154,6 +154,9 @@ const Shop = () => {
       <View style={{ padding: 5, paddingHorizontal: 20 }}>
         <Title
           style={{ color: titleColor, textAlign: 'right', marginRight: 20 }}
+          accessible={true}
+          accessibilityLabel={`${countUpValue.end} coins`}
+          accessibilityRole='text'
         >
           <CountUp
             duration={1.2}
@@ -215,10 +218,24 @@ const Shop = () => {
           color='black'
           onPress={resetPurchase}
           disabled={!emptyCollection}
+          accessible={true}
+          accessibilityLabel='reset'
+          accessibilityHint='reset all purchases'
+          accessibilityRole='button'
+          accessibilityState={{ disabled: false }}
         >
           reset purchases
         </Button>
-        <Button color='black' onPress={addCoins} disabled={delayButton}>
+        <Button
+          color='black'
+          onPress={addCoins}
+          disabled={delayButton}
+          accessible={true}
+          accessibilityLabel='get coints'
+          accessibilityHint='acquire more coins'
+          accessibilityRole='button'
+          accessibilityState={{ disabled: false }}
+        >
           get coins
         </Button>
         <Text

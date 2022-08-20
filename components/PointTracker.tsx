@@ -27,6 +27,8 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
           <Title
             style={{ color: progressColor, width: 65, flex: 1, fontSize: 14 }}
             numberOfLines={1}
+            accessible={true}
+            accessibilityRole='text'
           >
             {title.toUpperCase()}
           </Title>
@@ -34,7 +36,13 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
       </View>
 
       {/* current level */}
-      <Title style={{ color: progressColor, marginRight: 0 }}>{level}</Title>
+      <Title
+        style={{ color: progressColor, marginRight: 0 }}
+        accessible={true}
+        accessibilityRole='text'
+      >
+        {level}
+      </Title>
 
       {/* progress bar container */}
       <View
@@ -50,11 +58,19 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
             styles.progress,
             { backgroundColor: progressColor, width: `${progress}%` },
           ]}
+          accessible={true}
+          accessibilityRole='progressbar'
         />
       </View>
 
       {/* next level */}
-      <Title style={{ color: progressColor, marginLeft: 0 }}>{level + 1}</Title>
+      <Title
+        style={{ color: progressColor, marginLeft: 0 }}
+        accessible={true}
+        accessibilityRole='text'
+      >
+        {level + 1}
+      </Title>
     </View>
   );
 };

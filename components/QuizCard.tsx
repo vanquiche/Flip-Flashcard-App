@@ -112,7 +112,9 @@ const Card = ({
       {showSolution && (
         <Animated.Text
           style={{ ...styles.points, color: result ? 'green' : 'tomato' }}
-          entering={FadeInDown.delay(700)}
+          entering={FadeInDown.delay(600)}
+          accessible
+          accessibilityRole='text'
         >
           {result ? 'CORRECT!' : 'INCORRECT!'}
         </Animated.Text>
@@ -149,7 +151,11 @@ const Card = ({
             >
               Q .
             </Title>
-            <Text style={{ ...styles.text, color: _fontColor }}>
+            <Text
+              style={{ ...styles.text, color: _fontColor }}
+              accessible
+              accessibilityRole='text'
+            >
               {card.prompt}
             </Text>
           </Animated.View>
@@ -162,6 +168,8 @@ const Card = ({
                 ...styles.cardBackText,
                 color: _fontColor,
               }}
+              accessible
+              accessibilityRole='text'
             >
               {card.solution}
             </Text>
@@ -187,6 +195,11 @@ const Card = ({
           color='white'
           onPress={flipCard}
           disabled={!canFlip}
+          accessible
+          accessibilityRole='imagebutton'
+          accessibilityLabel='flip'
+          accessibilityHint='flip to other side of card'
+          accessibilityState={{ disabled: !canFlip }}
         />
         {!slideRemaining && (
           <IconButton
@@ -196,6 +209,11 @@ const Card = ({
             size={26}
             onPress={nextCard}
             disabled={!next}
+            accessible
+            accessibilityRole='imagebutton'
+            accessibilityLabel='next'
+            accessibilityHint='go to next card'
+            accessibilityState={{ disabled: !next }}
           />
         )}
       </Animated.View>

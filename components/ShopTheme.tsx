@@ -41,7 +41,12 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
         }
         disable={!canAfford}
       />
-      <Pressable onPress={() => setShowAlert(true)} disabled={alreadyPurchased}>
+      <Pressable
+        onPress={() => setShowAlert(true)}
+        disabled={alreadyPurchased}
+        accessible
+        accessibilityRole='menu'
+      >
         {alreadyPurchased ? (
           <IconButton
             icon='check-circle'

@@ -138,11 +138,17 @@ const Card = ({
           rStyles_card_container,
           cardOpacityAnimatedStyle,
         ]}
-        // onPress={onPress}
         onPress={multiSelect ? toggleSelection : flipCard}
         exiting={ZoomOut}
         entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
         layout={Layout.springify().damping(15).delay(200)}
+        accessible={true}
+        accessibilityRole='imagebutton'
+        accessibilityLabel='flashcard'
+        accessibilityHint={
+          multiSelect ? 'select card to delete' : 'flip card to otherside'
+        }
+        accessibilityState={{ disabled: false }}
       >
         {/* indicator of card selection */}
         {multiSelect && (
@@ -151,6 +157,9 @@ const Card = ({
             size={58}
             color={selectedForDeletion ? 'white' : 'transparent'}
             style={{ position: 'absolute', left: '35%', zIndex: 80 }}
+            accessible={true}
+            accessibilityRole='image'
+            accessibilityLabel='selected for deletion'
           />
         )}
         {cardFacingFront && (
@@ -162,6 +171,11 @@ const Card = ({
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
               disabled={disableActions}
+              accessible={true}
+              accessibilityRole='imagebutton'
+              accessibilityLabel='delete card'
+              accessibilityHint='open up dialog to confirm action'
+              accessibilityState={{ disabled: disableActions }}
             />
             <IconButton
               icon='dots-horizontal'
@@ -170,6 +184,11 @@ const Card = ({
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
               disabled={disableActions}
+              accessible={true}
+              accessibilityRole='imagebutton'
+              accessibilityLabel='edit card'
+              accessibilityHint='open up dialog to edit card'
+              accessibilityState={{ disabled: disableActions }}
             />
           </Animated.View>
         )}
@@ -194,6 +213,10 @@ const Card = ({
               color: _fontColor,
             }}
             numberOfLines={3}
+            accessible={true}
+            accessibilityRole='text'
+            accessibilityLabel='prompt'
+            accessibilityHint={card.prompt}
           >
             {card.prompt}
           </Text>
@@ -213,6 +236,10 @@ const Card = ({
               ...styles.cardBackText,
               color: _fontColor,
             }}
+            accessible={true}
+            accessibilityRole='text'
+            accessibilityLabel='answer'
+            accessibilityHint={card.solution}
           >
             {card.solution}
           </Text>

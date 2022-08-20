@@ -229,22 +229,29 @@ const Sets = ({ navigation, route }: Props) => {
 
   useFocusEffect(
     useCallback(() => {
+      let unsubscribe = false;
+      if (!unsubscribe) {
+        console.log('sync sets');
+        syncData();
+      }
+
       return () => {
+        unsubscribe = true;
         setSortMode(false);
         setMultiSelectMode(false);
       };
-    }, [])
+    }, [syncData])
   );
 
-  useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData();
-    }
-    return () => {
-      unsubscribe = true;
-    };
-  }, [syncData]);
+  // useEffect(() => {
+  //   let unsubscribe = false;
+  //   if (!unsubscribe) {
+  //     syncData();
+  //   }
+  //   return () => {
+  //     unsubscribe = true;
+  //   };
+  // }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -341,13 +348,23 @@ const Sets = ({ navigation, route }: Props) => {
               setColor={selectColor}
               swatches={colors}
             />
-            <Title style={{ color: theme.fontColor, marginLeft: 10 }}>
+            <Title
+              style={{ color: theme.fontColor, marginLeft: 10 }}
+              accessible={true}
+              accessibilityLabel='color'
+              accessibilityRole='text'
+            >
               COLOR
             </Title>
           </View>
 
           <View style={styles.swatchContainer}>
-            <Title style={{ color: theme.fontColor, marginRight: 10 }}>
+            <Title
+              style={{ color: theme.fontColor, marginRight: 10 }}
+              accessible={true}
+              accessibilityLabel='design'
+              accessibilityRole='text'
+            >
               DESIGN
             </Title>
             <PatternSelector
@@ -367,6 +384,11 @@ const Sets = ({ navigation, route }: Props) => {
           onPress={() =>
             setCardSet((prev) => ({ ...prev, favorite: !prev.favorite }))
           }
+          accessible={true}
+          accessibilityRole='imagebutton'
+          accessibilityLabel='favorite set'
+          accessibilityHint='toggle favorite'
+          accessibilityState={{ disabled: true }}
         />
       </ActionDialog>
     </View>

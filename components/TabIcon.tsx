@@ -8,7 +8,14 @@ interface Props {
 
 const TabIcon = ({ icon, color, focused }: Props) => {
   return (
-    <IconButton icon={icon} size={27} color={color} style={{ marginTop: 5 }} />
+    <IconButton
+      icon={icon}
+      size={26}
+      color={color}
+      style={{ marginTop: 5 }}
+      accessible
+      accessibilityRole='tab'
+    />
   );
 };
 

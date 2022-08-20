@@ -77,6 +77,9 @@ const ActionDialog = ({
               color: theme.fontColor,
             },
           ]}
+          accessible={true}
+          accessibilityRole='text'
+          accessibilityLabel={title}
         >
           {title}
         </Dialog.Title>
@@ -88,6 +91,11 @@ const ActionDialog = ({
             size={50}
             color={theme.fontColor}
             onPress={onCancel}
+            accessible={true}
+            accessibilityRole='imagebutton'
+            accessibilityLabel='cancel'
+            accessibilityHint='cancel action and close dialog window'
+            accessibilityState={{ disabled: false }}
           />
 
           <IconButton
@@ -97,6 +105,11 @@ const ActionDialog = ({
             color={theme.fontColor}
             onPress={onSubmit}
             disabled={disableSubmit}
+            accessible={true}
+            accessibilityRole='imagebutton'
+            accessibilityLabel='confirm'
+            accessibilityHint='confirm action and close dialog window'
+            accessibilityState={{ disabled: disableSubmit }}
           />
         </View>
       </Dialog>

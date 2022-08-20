@@ -49,6 +49,9 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
         ]}
         onPress={() => setShowAlert(true)}
         disabled={alreadyPurchased}
+        accessible
+        accessibilityRole='menuitem'
+        accessibilityLabel='swatch color'
       >
         {alreadyPurchased ? (
           <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.icon}>
@@ -56,11 +59,17 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
               name='checkmark-circle'
               size={72}
               color='white'
+              accessible
+              accessibilityRole='image'
+              accessibilityLabel='color selected'
             />
           </Animated.View>
         ) : (
           <Title
             style={{ ...styles.price, color: fontColorContrast(color, 0.6) }}
+            accessible
+            accessibilityRole='text'
+            accessibilityLabel={`price ${price}`}
           >
             {price}
           </Title>

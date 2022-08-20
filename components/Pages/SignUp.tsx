@@ -45,6 +45,9 @@ const SignUp = () => {
       <View style={[]}>
         <Title
           style={{ textAlign: 'center', color: colors.secondary, fontSize: 22 }}
+          accessible={true}
+          accessibilityRole='text'
+          accessibilityLabel='create your account'
         >
           CREATE YOUR ACCOUNT
         </Title>
@@ -71,6 +74,10 @@ const SignUp = () => {
           disabled={
             !newUser || newUser.length < 3
           }
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='create'
+          accessibilityHint='confirm and create new user'
         >
           CREATE
         </Button>
@@ -83,11 +90,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 25,
-    // paddingTop: 40,
     justifyContent: 'center',
   },
   input: {
-    // height: 40
     marginVertical: 10,
   },
   icon: {

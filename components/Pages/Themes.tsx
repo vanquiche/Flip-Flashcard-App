@@ -53,13 +53,24 @@ const Themes = () => {
               key={i}
               style={{ marginHorizontal: SCREEN_WIDTH * 0.2 }}
               onPress={() => changeTheme(t)}
+              disabled={i === userThemeIndex}
+              accessible={true}
+              accessibilityRole='button'
+              accessibilityLabel='select theme'
+              accessibilityHint='change app appearance'
+              accessibilityState={{ disabled: i === userThemeIndex }}
             >
               {userThemeIndex === i && (
                 <IconButton
                   icon='check-circle-outline'
                   size={80}
                   color='black'
-                  style={{ position: 'absolute', zIndex: 30, top: SCREEN_HEIGHT * 0.2, left: SCREEN_WIDTH * 0.13 }}
+                  style={{
+                    position: 'absolute',
+                    zIndex: 30,
+                    top: SCREEN_HEIGHT * 0.2,
+                    left: SCREEN_WIDTH * 0.13,
+                  }}
                 />
               )}
               <ThemeDisplay key={i} theme={t} />
@@ -70,7 +81,5 @@ const Themes = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default Themes;

@@ -108,6 +108,8 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
             <ScrollView
               persistentScrollbar={true}
               showsVerticalScrollIndicator={true}
+              accessible
+              accessibilityRole='menu'
             >
               <View style={styles.list} onStartShouldSetResponder={() => true}>
                 {swatches.map((swatch) => (

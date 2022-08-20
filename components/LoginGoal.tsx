@@ -1,9 +1,7 @@
 import { View, StyleSheet } from 'react-native';
-import { Text, IconButton, useTheme, Title } from 'react-native-paper';
+import { Title } from 'react-native-paper';
 import React, { useContext, useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 import { AntDesign } from '@expo/vector-icons';
 import swatchContext from '../contexts/swatchContext';
 
@@ -62,7 +60,7 @@ const LoginGoal = ({ dates, streak }: Props) => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.cardColor }]}>
-      <Title style={{ color: theme.fontColor }}>DAYS LOGGED IN</Title>
+      <Title style={{ color: theme.fontColor }} accessible={true} accessibilityRole='text' accessibilityLabel='days logged in'>DAYS LOGGED IN</Title>
 
       <View style={styles.weekContainer}>
         {displayWeek.map((d, index) => {
@@ -84,6 +82,9 @@ const LoginGoal = ({ dates, streak }: Props) => {
                     ? { color: theme.cardColor }
                     : { color: theme.fontColor },
                 ]}
+                accessible={true}
+                accessibilityRole='text'
+                accessibilityLabel={d.name}
               >
                 {d.name}
               </Title>
@@ -91,7 +92,7 @@ const LoginGoal = ({ dates, streak }: Props) => {
           );
         })}
       </View>
-      <Title style={{ color: theme.fontColor }}>LOGIN STREAK: {streak}</Title>
+      <Title style={{ color: theme.fontColor }} accessible={true} accessibilityRole='text' accessibilityLabel={`login streak ${streak}`} >LOGIN STREAK: {streak}</Title>
     </View>
   );
 };

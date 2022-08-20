@@ -119,7 +119,12 @@ const PatternSelector = ({
               persistentScrollbar={true}
               showsVerticalScrollIndicator={true}
             >
-              <View style={styles.list} onStartShouldSetResponder={() => true}>
+              <View
+                style={styles.list}
+                onStartShouldSetResponder={() => true}
+                accessible={true}
+                accessibilityRole='menu'
+              >
                 <Pattern
                   isNull={true}
                   name='default'

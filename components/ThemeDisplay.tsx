@@ -7,21 +7,33 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 interface Props {
   theme: Theme;
-  style?: Object
+  style?: Object;
 }
 
-const ThemeDisplay= ({ theme, style }: Props) => {
+const ThemeDisplay = ({ theme, style }: Props) => {
   const exampleIcons = ['home', 'cards', 'cart', 'heart'];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}
+      accessible
+      accessibilityRole='image'
+    >
       <Title style={[styles.title, { color: 'white' }]}>
         {theme.name.toUpperCase()}
       </Title>
       <View style={[styles.header, { backgroundColor: theme.headerColor }]} />
       <View style={[styles.card1, { backgroundColor: theme.accentColor }]} />
-      <View style={[styles.card4, { backgroundColor: theme.cardColor }]} >
-        <Title style={{textAlign: 'center', color: theme.fontColor, paddingTop: 60}}>FLIP</Title>
+      <View style={[styles.card4, { backgroundColor: theme.cardColor }]}>
+        <Title
+          style={{
+            textAlign: 'center',
+            color: theme.fontColor,
+            paddingTop: 60,
+          }}
+        >
+          FLIP
+        </Title>
       </View>
       <View style={[styles.card2, { backgroundColor: theme.cardColor }]} />
       <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
@@ -30,7 +42,7 @@ const ThemeDisplay= ({ theme, style }: Props) => {
           <IconButton
             icon={icon}
             key={icon}
-            style={index === 1 ? {transform: [{scale: 1.1}]} : {}}
+            style={index === 1 ? { transform: [{ scale: 1.1 }] } : {}}
             size={18}
             color={index === 1 ? theme.actionIconColor : theme.iconColor}
           />
@@ -49,16 +61,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'grey'
-    // marginHorizontal: SCREEN_WIDTH * 0.25
+    borderColor: 'grey',
   },
   title: {
     position: 'absolute',
     width: '100%',
     zIndex: 20,
-    // left: '25%',
     top: 8,
-    // borderWidth: 2,
     textAlign: 'center',
   },
   header: {
@@ -87,7 +96,7 @@ const styles = StyleSheet.create({
     top: '65%',
     left: '10%',
     borderRadius: 10,
-    zIndex: 20
+    zIndex: 20,
   },
   card2: {
     width: '42%',
@@ -97,7 +106,7 @@ const styles = StyleSheet.create({
     top: '18%',
     right: '6%',
     borderRadius: 10,
-    zIndex: 20
+    zIndex: 20,
   },
   card3: {
     width: '42%',
@@ -116,7 +125,7 @@ const styles = StyleSheet.create({
     top: '42%',
     left: '5%',
     borderRadius: 10,
-    zIndex: 10
+    zIndex: 10,
   },
 });
 export default React.memo(ThemeDisplay);

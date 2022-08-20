@@ -137,7 +137,7 @@ const IndexScreen = () => {
           screenOptions={{
             tabBarStyle: {
               backgroundColor: theme.tabColor,
-              height: 70,
+              // height: 70,
             },
             tabBarShowLabel: false,
             headerShown: false,

@@ -100,10 +100,22 @@ const Stats = () => {
           onPress={() => setDataType('avg')}
           disabled={dataType === 'avg'}
           style={styles.button}
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='average'
+          accessibilityHint='show average scores'
+          accessibilityState={{ disabled: dataType === 'avg' }}
         >
           avg.
         </Button>
-        <Title style={{ ...styles.chartTitle, color: titleColor }}>
+
+        <Title
+          style={{ ...styles.chartTitle, color: titleColor }}
+          accessible={true}
+          accessibilityLabel={
+            dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'
+          }
+        >
           {dataType === 'avg' ? 'AVERAGE SCORE' : 'COMPLETED SET'}
         </Title>
         <Button
@@ -115,12 +127,21 @@ const Stats = () => {
           onPress={() => setDataType('sets')}
           disabled={dataType === 'sets'}
           style={styles.button}
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='sets'
+          accessibilityHint='show number of completed sets'
         >
           sets
         </Button>
       </View>
 
-      <View style={styles.chartContainer}>
+      <View
+        style={styles.chartContainer}
+        accessible={true}
+        accessibilityRole='progressbar'
+        accessibilityHint='graph chart of user stats'
+      >
         <VictoryChart
           width={SCREEN_WIDTH}
           height={340}
@@ -149,6 +170,11 @@ const Stats = () => {
           style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev + 1)}
           disabled={currentWeek >= 12}
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='previous week'
+          accessibilityHint='show previous week statistics'
+          accessibilityState={{ disabled: currentWeek >= 12 }}
         >
           Prev
         </Button>
@@ -161,6 +187,11 @@ const Stats = () => {
           style={styles.button}
           onPress={() => setCurrentWeek((prev) => prev - 1)}
           disabled={currentWeek === 0}
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='next week'
+          accessibilityHint='show next week statistics'
+          accessibilityState={{ disabled: currentWeek === 0 }}
         >
           Next
         </Button>

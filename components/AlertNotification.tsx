@@ -9,19 +9,29 @@ interface Props {
   bgColor?: string;
   dismiss: () => void;
 }
-const AlertNotification = ({ message, visible, textColor, bgColor, dismiss }: Props) => {
-
+const AlertNotification = ({
+  message,
+  visible,
+  textColor,
+  bgColor,
+  dismiss,
+}: Props) => {
   return (
     <Portal>
       <Modal
         visible={visible}
         onDismiss={dismiss}
-        contentContainerStyle={[
-          styles.container,
-          { backgroundColor: bgColor },
-        ]}
+        contentContainerStyle={[styles.container, { backgroundColor: bgColor }]}
+        overlayAccessibilityLabel='dismiss alert'
       >
-        <Title style={{ color: textColor }}>{message.toUpperCase()}</Title>
+        <Title
+          style={{ color: textColor }}
+          accessible={true}
+          accessibilityRole='text'
+          accessibilityLabel={message}
+        >
+          {message.toUpperCase()}
+        </Title>
       </Modal>
     </Portal>
   );
@@ -35,7 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     minHeight: 150,
     alignItems: 'center',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
 });
 

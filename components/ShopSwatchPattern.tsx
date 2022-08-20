@@ -47,6 +47,9 @@ const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
         style={[styles.container]}
         onPress={() => setShowAlert(true)}
         disabled={alreadyPurchased}
+        accessible
+        accessibilityRole='menuitem'
+        accessibilityLabel='swatch pattern'
       >
         <Image source={pattern[1]} style={styles.image} />
         {alreadyPurchased ? (
@@ -55,9 +58,19 @@ const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
             size={72}
             color='white'
             style={styles.icon}
+            accessible
+            accessibilityRole='image'
+            accessibilityLabel='color selected'
           />
         ) : (
-          <Title style={styles.price}>{price}</Title>
+          <Title
+            style={styles.price}
+            accessible
+            accessibilityRole='text'
+            accessibilityLabel={`price ${price}`}
+          >
+            {price}
+          </Title>
         )}
       </Pressable>
     </>

@@ -223,22 +223,28 @@ const FlashCards = ({ navigation, route }: Props) => {
   // reset state onblur
   useFocusEffect(
     useCallback(() => {
+      let unsubscribe = false;
+      if (!unsubscribe) {
+        // console.log('sync flashcards')
+        syncData();
+      }
       return () => {
+        unsubscribe = true;
         setSortMode(false);
         setMultiSelectMode(false);
       };
-    }, [])
+    }, [syncData])
   );
 
-  useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData();
-    }
-    return () => {
-      unsubscribe = true;
-    };
-  }, [syncData]);
+  // useEffect(() => {
+  //   let unsubscribe = false;
+  //   if (!unsubscribe) {
+  //     syncData();
+  //   }
+  //   return () => {
+  //     unsubscribe = true;
+  //   };
+  // }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -268,6 +274,13 @@ const FlashCards = ({ navigation, route }: Props) => {
           }}
           onPress={() => setStartQuiz(true)}
           disabled={cards.flashcard.length === 0 || sortMode}
+          accessible={true}
+          accessibilityRole='button'
+          accessibilityLabel='quiz'
+          accessibilityHint='start quiz'
+          accessibilityState={{
+            disabled: cards.flashcard.length === 0 || sortMode,
+          }}
         >
           QUIZ
         </Button>

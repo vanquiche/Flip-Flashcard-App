@@ -44,6 +44,11 @@ const Profile = ({ navigation }: Props) => {
         icon='brush-variant'
         color={fontColor}
         onPress={() => navigation.navigate('Themes')}
+        accessible={true}
+        accessibilityRole='button'
+        accessibilityHint='navigate to themes screen'
+        accessibilityLabel='change themes'
+        accessibilityState={{disabled: false}}
       >
         themes
       </IconButton>

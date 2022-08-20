@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 import fontColorContrast from 'font-color-contrast';
 import swatchContext from '../contexts/swatchContext';
 
-interface Collection {
+interface FavoriteCard {
   _id: string;
   name: string;
   color: string;
@@ -15,22 +15,33 @@ interface Collection {
 }
 
 interface Props {
-  card: Collection;
+  card: FavoriteCard;
   onPress?: () => void;
-  height?: number | string;
   width?: number | string;
 }
 
-const FavoriteCard = ({ card, onPress, height, width }: Props) => {
+const FavoriteCard = ({ card, onPress, width }: Props) => {
   const _fontColor = fontColorContrast(card.color, 0.6);
   const { patterns } = useContext(swatchContext);
 
   return (
     <Pressable
-      style={[styles.card, { backgroundColor: card.color, width: width, aspectRatio: 1.2 }]}
+      style={[
+        styles.card,
+        { backgroundColor: card.color, width: width, aspectRatio: 1.2 },
+      ]}
       onPress={onPress}
+      accessible={true}
+      accessibilityRole='imagebutton'
+      accessibilityLabel='favorite card'
+      accessibilityHint='navigate to favorite set'
     >
-      <Title style={[styles.textContent, { color: _fontColor }]}>
+      <Title
+        style={[styles.textContent, { color: _fontColor }]}
+        accessible={true}
+        accessibilityRole='text'
+        accessibilityLabel={card.name}
+      >
         {card.name}
       </Title>
       {card.design && (

@@ -60,7 +60,7 @@ const Home = ({ navigation }: Props) => {
                     design: set.design,
                     setRef: set._id,
                     categoryRef: set.categoryRef,
-                    screenTitle: set.name
+                    screenTitle: set.name,
                   },
                 },
               ],
@@ -100,6 +100,13 @@ const Home = ({ navigation }: Props) => {
             color={_fontColor}
             labelStyle={{ fontSize: 20 }}
             onPress={() => navigation.navigate('Stats')}
+            accessible={true}
+            accessibilityRole='button'
+            accessibilityLabel='statistics'
+            accessibilityHint='navigate to stats screen'
+            accessibilityState={{
+              disabled: false,
+            }}
           >
             STATISTICS
           </Button>
@@ -107,14 +114,17 @@ const Home = ({ navigation }: Props) => {
 
         <LoginGoal dates={user.login} streak={user.streak} />
 
-        <Title style={{ textAlign: 'center', color: titleColor, height: '6%' }}>
+        <Title
+          style={{ textAlign: 'center', color: titleColor, height: '6%' }}
+          accessible={true}
+          accessibilityRole='text'
+        >
           FAVORITE SETS
         </Title>
 
         <View
           style={{
             height: '34%',
-            // alignItems: favoriteSets.length === 1 ? 'center' : undefined,
           }}
         >
           <ScrollView
@@ -136,6 +146,9 @@ const Home = ({ navigation }: Props) => {
                   color: titleColor,
                   ...styles.favoriteMessage,
                 }}
+                accessible={true}
+                accessibilityLabel='no favorite sets'
+                accessibilityHint='text'
               >
                 NO FAVORITES
               </Text>
@@ -163,8 +176,6 @@ const styles = StyleSheet.create({
   favoritesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    // height: '40%',
-    // borderWidth: 2,
   },
   infoCardContainer: {
     flexDirection: 'row',
@@ -178,7 +189,6 @@ const styles = StyleSheet.create({
   },
   favoriteMessage: {
     textAlign: 'center',
-    // paddingTop: 60,
   },
 });
 
