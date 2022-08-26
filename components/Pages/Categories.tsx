@@ -71,7 +71,6 @@ const Categories = ({ navigation }: Props) => {
 
   // view state
   const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [sortCardMode, setSortCardMode] = useState(false);
@@ -199,7 +198,7 @@ const Categories = ({ navigation }: Props) => {
   useAnimatedReaction(
     () => cardPosition.value,
     (curPositions, prevPositions) => {
-      if (!isLoading && !sortCardMode) {
+      if (!sortCardMode) {
         if (curPositions !== prevPositions) {
           runOnJS(savePositions)();
         }
@@ -246,7 +245,6 @@ const Categories = ({ navigation }: Props) => {
         message='DELETE SELECTED CATEGORIES?'
       />
 
-      {/* {!isLoading && ( */}
       <DragSortList
         scrollViewHeight={cards.category.length * SCROLLVIEW_ITEM_HEIGHT}
         onLayout={(e) => measureOffset(e, setScrollViewOffset)}
@@ -287,7 +285,6 @@ const Categories = ({ navigation }: Props) => {
           );
         })}
       </DragSortList>
-      {/* )} */}
 
       {/* ADD NEW CATEGORY DIALOG */}
       <ActionDialog
