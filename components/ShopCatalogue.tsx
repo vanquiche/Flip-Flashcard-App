@@ -103,8 +103,6 @@ const ShopCatalogue = ({ children, title, titleColor }: Props) => {
           arrowLeftOpacity.value = 1;
           scrollPosition.value = e.nativeEvent.contentOffset.x;
         }}
-        accessible
-        accessibilityRole='menu'
       >
         {children}
       </ScrollView>

@@ -33,7 +33,7 @@ const PatternSelector = ({
   patternList,
 }: Props) => {
   const [showPalette, setShowPalette] = useState(false);
-  const PATTERNS = useMemo(() => Object.keys(patternList), [patternList])
+  const PATTERNS = useMemo(() => Object.keys(patternList), [patternList]);
 
   // popup tooltip coordinates
   const swatchRef = useRef<View>(null);
@@ -72,6 +72,17 @@ const PatternSelector = ({
       });
     }
   };
+
+  const patternActionsList = useMemo(() => {
+    const list = [
+      { name: 'close', label: 'close window' },
+      { name: 'default', label: 'select default' },
+    ];
+    for (const [key, val] of Object.entries(patternList)) {
+      list.push({ name: key, label: 'select ' + key });
+    }
+    return list;
+  }, [patternList]);
 
   // move popup along keyboard opening/closing
   useEffect(() => {
@@ -113,6 +124,7 @@ const PatternSelector = ({
             { transform: [{ translateY: swatchAnimation }] },
             { ...swatchPosition.value },
           ]}
+          dismissable
         >
           <View style={styles.container}>
             <ScrollView
@@ -124,6 +136,14 @@ const PatternSelector = ({
                 onStartShouldSetResponder={() => true}
                 accessible={true}
                 accessibilityRole='menu'
+                accessibilityActions={patternActionsList}
+                onAccessibilityAction={(e) => {
+                  if (e.nativeEvent.actionName === 'close') {
+                    setShowPalette(false);
+                  } else {
+                    setPattern(e.nativeEvent.actionName);
+                  }
+                }}
               >
                 <Pattern
                   isNull={true}
@@ -163,6 +183,10 @@ const PatternSelector = ({
         style={[styles.swatch, { backgroundColor: color }]}
         onPress={openSwatchDialog}
         onLayout={measureSwatch}
+        accessible
+        accessibilityRole='button'
+        accessibilityLabel='pattern swatch'
+        accessibilityHint='select pattern'
       >
         {patternList[pattern] && (
           <ImageBackground

@@ -1,8 +1,13 @@
-import { View, StyleSheet, Animated } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  AccessibilityInfo,
+  Text,
+  findNodeHandle,
+} from 'react-native';
 import { Dialog, Portal, Title, IconButton } from 'react-native-paper';
 import React, { useRef, useEffect, useContext } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 import swatchContext from '../contexts/swatchContext';
 
 interface Props {
@@ -22,6 +27,7 @@ const AlertDialog = ({
 }: Props) => {
   const { theme } = useContext(swatchContext);
   const scaleAnimation = useRef<any>(new Animated.Value(0)).current;
+  const messageRef = useRef<Text>(null);
 
   const expand = () => {
     Animated.spring(scaleAnimation, {
@@ -37,10 +43,24 @@ const AlertDialog = ({
     }).start();
   };
 
+  const focusOnMessage = () => {
+    if (messageRef && messageRef.current) {
+      const reactTag = findNodeHandle(messageRef.current);
+      if (reactTag) {
+        AccessibilityInfo.setAccessibilityFocus(reactTag);
+      }
+    }
+  };
+
   useEffect(() => {
     if (visible) {
       expand();
-    } else close();
+      var focusDelay = setTimeout(focusOnMessage, 300);
+    }
+    return () => {
+      close();
+      clearTimeout(focusDelay);
+    };
   }, [visible]);
 
   return (
@@ -54,14 +74,15 @@ const AlertDialog = ({
         visible={visible}
         dismissable={false}
       >
-        <Title
+        <Text
           style={[styles.title, { color: theme.fontColor }]}
           accessible={true}
           accessibilityRole='text'
           accessibilityLabel={message}
+          ref={messageRef}
         >
           {message.toUpperCase()}
-        </Title>
+        </Text>
         <View style={styles.buttonContainer}>
           <IconButton
             style={styles.button}
@@ -72,7 +93,7 @@ const AlertDialog = ({
             accessible={true}
             accessibilityRole='imagebutton'
             accessibilityLabel='cancel action and close dialog window'
-            accessibilityState={{disabled: false}}
+            accessibilityState={{ disabled: false }}
           />
 
           <IconButton
@@ -85,7 +106,7 @@ const AlertDialog = ({
             accessible={true}
             accessibilityRole='imagebutton'
             accessibilityLabel='confirm action and close dialog window'
-            accessibilityState={{disabled: disable}}
+            accessibilityState={{ disabled: disable }}
           />
         </View>
       </Dialog>

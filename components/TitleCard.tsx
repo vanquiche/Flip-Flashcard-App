@@ -103,8 +103,26 @@ const TitleCard = ({
         layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityRole='button'
-        accessibilityLabel={card.name}
-        accessibilityHint={`navigate to ${card.name}`}
+        accessibilityLabel={`card for ${card.name}`}
+        accessibilityHint={`navigate to: ${card.name} cardset`}
+        accessibilityActions={
+          multiSelect
+            ? undefined
+            : [
+                { name: 'delete', label: 'delete card' },
+                { name: 'edit', label: 'edit card' },
+              ]
+        }
+        onAccessibilityAction={(e) => {
+          switch (e.nativeEvent.actionName) {
+            case 'delete':
+              setShowAlert(true);
+              break;
+            case 'edit':
+              handleEdit(card);
+              break;
+          }
+        }}
       >
         {/* indicator of card selection */}
         {selectedForDeletion && (
@@ -133,11 +151,11 @@ const TitleCard = ({
           style={styles.deleteBtn}
           onPress={() => setShowAlert(true)}
           disabled={disableActions}
-          accessible
-          accessibilityRole='imagebutton'
-          accessibilityLabel='delete card'
-          accessibilityHint='open modal to confirm delete'
-          accessibilityState={{ disabled: disableActions }}
+          // accessible
+          // accessibilityRole='imagebutton'
+          // accessibilityLabel='delete card'
+          // accessibilityHint='open modal to confirm delete'
+          // accessibilityState={{ disabled: disableActions }}
         />
         <IconButton
           icon='dots-horizontal'
@@ -146,11 +164,11 @@ const TitleCard = ({
           style={styles.editBtn}
           onPress={() => handleEdit(card)}
           disabled={disableActions}
-          accessible
-          accessibilityRole='imagebutton'
-          accessibilityLabel='edit card'
-          accessibilityHint='open modal to edit card'
-          accessibilityState={{ disabled: disableActions }}
+          // accessible
+          // accessibilityRole='imagebutton'
+          // accessibilityLabel='edit card'
+          // accessibilityHint='open modal to edit card'
+          // accessibilityState={{ disabled: disableActions }}
         />
         {card.design && card.design !== 'default' && (
           <ImageBackground
@@ -185,7 +203,7 @@ const styles = StyleSheet.create({
     // minHeight: 135,
     height: 150,
     padding: 15,
-    margin: 5,
+    // margin: 5,
     borderRadius: 12,
     backgroundColor: 'white',
   },

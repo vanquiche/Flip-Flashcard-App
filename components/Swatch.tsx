@@ -19,7 +19,6 @@ const Swatch = ({ color, onChange, isSelected }: Props) => {
       onPress={handlePress}
       accessible
       accessibilityRole='menuitem'
-      accessibilityHint='select color'
     >
       {isSelected && (
         <FontAwesome5
@@ -27,9 +26,6 @@ const Swatch = ({ color, onChange, isSelected }: Props) => {
           size={45}
           color='black'
           style={styles.checkmark}
-          accessible
-          accessibilityRole='image'
-          accessibilityLabel='color selected'
         />
       )}
     </Pressable>

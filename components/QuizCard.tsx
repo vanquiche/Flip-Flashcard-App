@@ -1,5 +1,12 @@
-import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  findNodeHandle,
+  AccessibilityInfo,
+} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   IconButton,
   Text,
@@ -52,9 +59,19 @@ const Card = ({
   slideRemaining,
 }: Props) => {
   const [cardFacingFront, setCardFacingFront] = useState(true);
+  const resultsRef = useRef<Animated.Text>(null);
 
   const { colors } = useTheme();
   const _fontColor = fontColorContrast(color, 0.6);
+
+  const focusResults = () => {
+    if (resultsRef && resultsRef.current) {
+      const reactTag = findNodeHandle(resultsRef.current);
+      if (reactTag) {
+        AccessibilityInfo.setAccessibilityFocus(reactTag);
+      }
+    }
+  };
 
   const cardFlip = useSharedValue(0);
   const frontCardPosition = useSharedValue(FRONT_CARD_POSITION_DEFAULT);
@@ -89,6 +106,7 @@ const Card = ({
       cardFlip.value = withSpring(180, { damping: 20 });
       frontCardPosition.value = withTiming(180);
       backCardPosition.value = withTiming(0);
+      focusResults();
     } else {
       cardFlip.value = withSpring(0, { damping: 20 });
       frontCardPosition.value = withTiming(FRONT_CARD_POSITION_DEFAULT);
@@ -99,11 +117,10 @@ const Card = ({
 
   // flip card when solution is submitted
   useEffect(() => {
-    if (showSolution)
-      setTimeout(() => {
-        flipCard();
-      }, 275);
-    else return;
+    if (showSolution) var flip = setTimeout(flipCard, 275);
+    return () => {
+      clearTimeout(flip);
+    };
   }, [showSolution]);
 
   return (
@@ -113,7 +130,7 @@ const Card = ({
         <Animated.Text
           style={{ ...styles.points, color: result ? 'green' : 'tomato' }}
           entering={FadeInDown.delay(600)}
-          accessible
+          ref={resultsRef}
           accessibilityRole='text'
         >
           {result ? 'CORRECT!' : 'INCORRECT!'}
@@ -130,46 +147,53 @@ const Card = ({
             { backgroundColor: color },
             rStyles_card_container,
           ]}
+          accessible
+          accessibilityLabel={
+            cardFacingFront
+              ? 'card prompt:' + card.prompt
+              : 'card answer:' + card.solution
+          }
         >
           {/* front of card - prompt */}
-          <Animated.View style={[styles.textContainer, rStyles_card_front]}>
+          <Animated.View
+            style={[styles.textContainer, rStyles_card_front]}
+            accessibilityElementsHidden={true}
+          >
             <ImageBackground
               resizeMode='repeat'
               imageStyle={[styles.image]}
               style={styles.cardPattern}
               source={patternList[pattern]}
-            />
-            <Title
-              style={{
-                ...styles.cardTitle,
-                color: _fontColor,
-                position: 'absolute',
-                top: -5,
-                left: 0,
-                fontSize: 26,
-              }}
             >
-              Q .
-            </Title>
-            <Text
-              style={{ ...styles.text, color: _fontColor }}
-              accessible
-              accessibilityRole='text'
-            >
-              {card.prompt}
-            </Text>
+              <Title
+                style={{
+                  ...styles.cardTitle,
+                  color: _fontColor,
+                  position: 'absolute',
+                  top: -5,
+                  left: 0,
+                  fontSize: 26,
+                }}
+              >
+                Q .
+              </Title>
+              <Text style={{ ...styles.text, color: _fontColor }}>
+                {card.prompt}
+              </Text>
+            </ImageBackground>
           </Animated.View>
 
           {/* back of card - solution */}
-          <Animated.View style={[styles.textContainer, rStyles_card_back]}>
+          <Animated.View
+            style={[styles.textContainer, rStyles_card_back]}
+            accessibilityElementsHidden={true}
+          >
             <Text
               style={{
                 ...styles.text,
                 ...styles.cardBackText,
                 color: _fontColor,
               }}
-              accessible
-              accessibilityRole='text'
             >
               {card.solution}
             </Text>
@@ -195,7 +219,6 @@ const Card = ({
           color='white'
           onPress={flipCard}
           disabled={!canFlip}
-          accessible
           accessibilityRole='imagebutton'
           accessibilityLabel='flip'
           accessibilityHint='flip to other side of card'
@@ -209,7 +232,6 @@ const Card = ({
             size={26}
             onPress={nextCard}
             disabled={!next}
-            accessible
             accessibilityRole='imagebutton'
             accessibilityLabel='next'
             accessibilityHint='go to next card'
@@ -268,7 +290,7 @@ const styles = StyleSheet.create({
   cardPattern: {
     width: '100%',
     height: '100%',
-    position: 'absolute',
+    justifyContent: 'center',
   },
   image: {
     tintColor: 'white',

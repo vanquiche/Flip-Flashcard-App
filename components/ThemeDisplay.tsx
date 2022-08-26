@@ -18,6 +18,8 @@ const ThemeDisplay = ({ theme, style }: Props) => {
       style={[styles.container, { backgroundColor: theme.bgColor, ...style }]}
       accessible
       accessibilityRole='image'
+      accessibilityLabel={`${theme.name} theme`}
+      accessibilityElementsHidden={true}
     >
       <Title style={[styles.title, { color: 'white' }]}>
         {theme.name.toUpperCase()}

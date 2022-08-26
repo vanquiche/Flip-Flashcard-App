@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Portal, Dialog, IconButton } from 'react-native-paper';
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { GetColorName } from 'hex-color-to-color-name';
 
 import uuid from 'react-native-uuid';
 
@@ -91,6 +92,23 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
     };
   }, []);
 
+  const swatchActionList = useMemo(() => {
+    interface AccessibleSwatchList {
+      name: string;
+      label: string;
+    }
+    const list: AccessibleSwatchList[] = [
+      { name: 'close', label: 'close window' },
+    ];
+    swatches.forEach((s) => {
+      list.push({
+        name: s,
+        label: s === 'tomato' ? 'tomato' : 'select ' + GetColorName(s),
+      });
+    });
+    return list;
+  }, [swatches]);
+
   return (
     <>
       <Portal theme={{ colors: { backdrop: 'transparent' } }}>
@@ -108,10 +126,21 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
             <ScrollView
               persistentScrollbar={true}
               showsVerticalScrollIndicator={true}
-              accessible
-              accessibilityRole='menu'
             >
-              <View style={styles.list} onStartShouldSetResponder={() => true}>
+              <View
+                style={styles.list}
+                onStartShouldSetResponder={() => true}
+                accessible
+                accessibilityRole='menu'
+                accessibilityActions={swatchActionList}
+                onAccessibilityAction={(e) => {
+                  if (e.nativeEvent.actionName === 'close') {
+                    setShowPalette(false);
+                  } else {
+                    setColor(e.nativeEvent.actionName);
+                  }
+                }}
+              >
                 {swatches.map((swatch) => (
                   <Swatch
                     key={uuid.v4().toString()}
@@ -140,6 +169,10 @@ const SwatchSelector = ({ color, setColor, swatches }: Props) => {
         style={[styles.swatch, { backgroundColor: color }]}
         onPress={openSwatchDialog}
         onLayout={measureSwatch}
+        accessible
+        accessibilityRole='button'
+        accessibilityLabel='color swatch'
+        accessibilityHint='select color'
       />
     </>
   );

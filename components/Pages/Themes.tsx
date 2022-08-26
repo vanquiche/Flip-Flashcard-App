@@ -21,10 +21,12 @@ const Themes = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch<AppDispatch>();
 
-  const ALL_THEMES = THEMES.concat(user.collection.themes)
+  const ALL_THEMES = THEMES.concat(user.collection.themes);
 
   // set content offset based on selection
-  const userThemeIndex = ALL_THEMES.findIndex((t) => t.name === user.theme.name);
+  const userThemeIndex = ALL_THEMES.findIndex(
+    (t) => t.name === user.theme.name
+  );
 
   const changeTheme = useCallback((t: Theme) => {
     dispatch(updateUser({ theme: t }));
@@ -55,10 +57,12 @@ const Themes = () => {
               onPress={() => changeTheme(t)}
               disabled={i === userThemeIndex}
               accessible={true}
-              accessibilityRole='button'
-              accessibilityLabel='select theme'
-              accessibilityHint='change app appearance'
-              accessibilityState={{ disabled: i === userThemeIndex }}
+              accessibilityLabel={'theme: ' + t.name}
+              accessibilityHint={
+                i === userThemeIndex
+                  ? t.name + 'theme currently selected'
+                  : 'set theme to ' + t.name
+              }
             >
               {userThemeIndex === i && (
                 <IconButton

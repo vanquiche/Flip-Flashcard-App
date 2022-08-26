@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import React, { useContext } from 'react';
 import { IconButton, Title, Button } from 'react-native-paper';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -26,7 +27,7 @@ const Profile = ({ navigation }: Props) => {
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
 
-  const fontColor = fontColorContrast(theme.bgColor, 0.6)
+  const fontColor = fontColorContrast(theme.bgColor, 0.6);
 
   // const lastLoginDate = DateTime.fromISO(
   //   user.login[user.login.length - 1]
@@ -38,20 +39,24 @@ const Profile = ({ navigation }: Props) => {
 
   return (
     <View style={s.screenWrapper}>
-      <IconButton
+      <Button
         style={{ position: 'absolute', right: 0 }}
-        size={32}
-        icon='brush-variant'
-        color={fontColor}
         onPress={() => navigation.navigate('Themes')}
         accessible={true}
         accessibilityRole='button'
         accessibilityHint='navigate to themes screen'
-        accessibilityLabel='change themes'
-        accessibilityState={{disabled: false}}
+        accessibilityLabel='themes'
       >
-        themes
-      </IconButton>
+        {/* <IconButton
+          style={{ position: 'absolute', right: 0 }}
+          size={32}
+          icon='brush-variant'
+          color={fontColor}
+        /> */}
+
+        <FontAwesome5 name='paint-roller' size={24} color={fontColor} />
+      </Button>
+
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
 
       {/* <Button

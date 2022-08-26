@@ -6,7 +6,8 @@ import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
 import fontColorContrast from 'font-color-contrast';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { BounceIn, FadeIn, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
+import Animated, { ZoomIn, ZoomOut } from 'react-native-reanimated';
+import { GetColorName } from 'hex-color-to-color-name';
 
 interface Props {
   color: string;
@@ -49,19 +50,20 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
         ]}
         onPress={() => setShowAlert(true)}
         disabled={alreadyPurchased}
-        accessible
-        accessibilityRole='menuitem'
-        accessibilityLabel='swatch color'
       >
         {alreadyPurchased ? (
-          <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.icon}>
+          <Animated.View
+            entering={ZoomIn}
+            exiting={ZoomOut}
+            style={styles.icon}
+          >
             <Ionicons
               name='checkmark-circle'
               size={72}
               color='white'
               accessible
               accessibilityRole='image'
-              accessibilityLabel='color selected'
+              accessibilityLabel={`color ${GetColorName(color)} already purchased`}
             />
           </Animated.View>
         ) : (
@@ -69,7 +71,7 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
             style={{ ...styles.price, color: fontColorContrast(color, 0.6) }}
             accessible
             accessibilityRole='text'
-            accessibilityLabel={`price ${price}`}
+            accessibilityLabel={`purchase ${GetColorName(color)} for ${price} coins`}
           >
             {price}
           </Title>

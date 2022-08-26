@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Title, IconButton } from 'react-native-paper';
 import React from 'react';
 import Animated, { SlideInRight } from 'react-native-reanimated';
@@ -16,31 +16,23 @@ const QuizStartPage = ({ color, title, count, onPress }: Props) => {
     <Animated.View
       style={[styles.cardStart, { backgroundColor: color }]}
       entering={SlideInRight.delay(300)}
-      // exiting={SlideOutLeft}
     >
       <Title
         style={{ ...styles.title, color: _fontColor }}
-        accessible
-        accessibilityRole='text'
+        accessibilityLabel={`${title} quiz`}
       >
         {title.toUpperCase()}
       </Title>
-      <Title
-        style={{ ...styles.cardCount, color: _fontColor }}
-        accessible
-        accessibilityRole='text'
-      >
-        {count}
-      </Title>
+      <Title style={{ ...styles.cardCount, color: _fontColor }} accessibilityLabel={`${count} cards`}>{count}</Title>
       <IconButton
         icon='play-circle-outline'
         color={_fontColor}
         size={42}
         style={{ margin: 0 }}
         onPress={onPress}
-        accessible
+        // accessible
         accessibilityRole='imagebutton'
-        accessibilityHint='start quiz'
+        accessibilityLabel='start quiz'
       />
     </Animated.View>
   );

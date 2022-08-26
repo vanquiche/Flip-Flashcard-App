@@ -44,8 +44,6 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
       <Pressable
         onPress={() => setShowAlert(true)}
         disabled={alreadyPurchased}
-        accessible
-        accessibilityRole='menu'
       >
         {alreadyPurchased ? (
           <IconButton
@@ -53,6 +51,9 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
             size={75}
             color='black'
             style={styles.icon}
+            accessible
+            accessibilityRole='image'
+            accessibilityLabel={`${theme.name} theme already purchased`}
           />
         ) : (
           <Title
@@ -60,6 +61,8 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
               ...styles.price,
               color: fontColorContrast(theme.cardColor, 0.6),
             }}
+            accessible
+            accessibilityLabel={`purchased for ${price} coins`}
           >
             {price}
           </Title>

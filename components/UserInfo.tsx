@@ -18,9 +18,7 @@ const UserInfo = ({ username, xp, level, coin, color, image }: Props) => {
   return (
     <>
       <Title
-        style={{ color: color, marginBottom: 10 }}
-        accessible
-        accessibilityRole='text'
+        style={{ color: color, marginBottom: 10 }} accessibilityLabel={`user profile: ${username}`}
       >
         {username.toUpperCase()}
       </Title>
@@ -28,39 +26,33 @@ const UserInfo = ({ username, xp, level, coin, color, image }: Props) => {
       <Image source={image} style={[styles.image, { tintColor: color }]} />
 
       <View style={styles.container}>
-        <View style={styles.itemContainer}>
+        <View
+          style={styles.itemContainer}
+          accessible
+          accessibilityRole='text'
+          accessibilityLabel={`current level: ${level}`}
+        >
           <Title style={propStyle}>LEVEL</Title>
-          <Title
-            style={propStyle}
-            accessible
-            accessibilityRole='text'
-            accessibilityLabel={`level ${level}`}
-          >
-            {level}
-          </Title>
+          <Title style={propStyle}>{level}</Title>
         </View>
-        <View style={styles.itemContainer}>
+        <View
+          style={styles.itemContainer}
+          accessible
+          accessibilityRole='text'
+          accessibilityLabel={`current xp: ${xp}`}
+        >
           <Title style={propStyle}>XP</Title>
-          <Title
-            style={propStyle}
-            accessible
-            accessibilityRole='text'
-            accessibilityLabel={`${xp} xp`}
-          >
-            {xp}
-          </Title>
+          <Title style={propStyle}>{xp}</Title>
         </View>
 
-        <View style={styles.itemContainer}>
+        <View
+          style={styles.itemContainer}
+          accessible
+          accessibilityRole='text'
+          accessibilityLabel={`current coins: ${coin}`}
+        >
           <Title style={propStyle}>COINS</Title>
-          <Title
-            style={propStyle}
-            accessible
-            accessibilityRole='text'
-            accessibilityLabel={`${coin} coin`}
-          >
-            {coin}
-          </Title>
+          <Title style={propStyle}>{coin}</Title>
         </View>
       </View>
     </>

@@ -23,6 +23,9 @@ const CustomTextInput = ({ defaultValue, onChange, style, label }: Props) => {
       defaultValue={defaultValue}
       onChange={({ nativeEvent: { text } }) => onChange(text)}
       style={customStyles}
+      accessible
+      // accessibilityLabel={`${label} textfield`}
+      accessibilityHint={`add or update ${label}`}
     />
   );
 };

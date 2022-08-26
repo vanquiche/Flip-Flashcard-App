@@ -21,14 +21,17 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
         points.toString().split('').splice(1).join('');
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessible={true}
+      accessibilityLabel={`progress for ${title || 'user'}`}
+      accessibilityValue={{ text: `level: ${level}, xp: ${progress}` }}
+    >
       <View>
         {title && (
           <Title
             style={{ color: progressColor, width: 65, flex: 1, fontSize: 14 }}
             numberOfLines={1}
-            accessible={true}
-            accessibilityRole='text'
           >
             {title.toUpperCase()}
           </Title>
@@ -38,8 +41,6 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
       {/* current level */}
       <Title
         style={{ color: progressColor, marginRight: 0 }}
-        accessible={true}
-        accessibilityRole='text'
       >
         {level}
       </Title>
@@ -58,16 +59,12 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
             styles.progress,
             { backgroundColor: progressColor, width: `${progress}%` },
           ]}
-          accessible={true}
-          accessibilityRole='progressbar'
         />
       </View>
 
       {/* next level */}
       <Title
         style={{ color: progressColor, marginLeft: 0 }}
-        accessible={true}
-        accessibilityRole='text'
       >
         {level + 1}
       </Title>

@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Animated, Keyboard, TextInput as TI } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Keyboard,
+  TextInput as TI,
+} from 'react-native';
 import {
   Portal,
   useTheme,
@@ -16,12 +23,12 @@ import Results from './Results';
 import QuizStartPage from './QuizStartPage';
 import AlertDialog from './AlertDialog';
 
-import { Category, Flashcard } from './types';
+import { Category, Flashcard, Set } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import db from '../db-services';
 import { updateUser } from '../redux/userThunkActions';
-import { updateCard } from '../redux/cardThunkActions';
+import { getCards, updateCard } from '../redux/cardThunkActions';
 import checkForLevelUp from '../utility/checkForLevelUp';
 import swatchContext from '../contexts/swatchContext';
 import { DateTime } from 'luxon';
@@ -62,7 +69,7 @@ const Quiz = ({
   const [completeQuiz, setCompleteQuiz] = useState(false);
 
   const insets = useSafeAreaInsets();
-  const textfieldRef = useRef<TI>(null)
+  const textfieldRef = useRef<TI>(null);
   const dt = DateTime;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -73,7 +80,8 @@ const Quiz = ({
   } = useSelector((state: RootState) => state.store);
 
   const selectedQuizSet = useMemo(() => {
-    return quiz.set.find((c) => c._id === setRef);
+    const local = quiz.set.find((c) => c._id === setRef);
+    return local
   }, []);
 
   const { patterns, theme } = useContext(swatchContext);
@@ -103,7 +111,7 @@ const Quiz = ({
   // reset and move to next slide
   const goToNextSlide = () => {
     if (textfieldRef.current) {
-      textfieldRef.current.clear()
+      textfieldRef.current.clear();
     }
     setAnswer('');
     setSubmitted(false);
@@ -157,16 +165,16 @@ const Quiz = ({
         updateUser({
           completedQuiz: update,
           xp: user.xp + awardPoints,
-          heartcoin: awardHeartCoin,
+          heartcoin: user.heartcoin + awardHeartCoin,
         })
       );
     }
   };
 
   const clearTextField = () => {
-    textfieldRef.current && textfieldRef.current.clear()
-    setAnswer('')
-  }
+    textfieldRef.current && textfieldRef.current.clear();
+    setAnswer('');
+  };
 
   // ANIMATION VALUES
   const inputAnimate = useRef<any>(new Animated.Value(0)).current;
@@ -232,7 +240,8 @@ const Quiz = ({
               style={{ position: 'absolute', top: insets.top - 10, left: -25 }}
               accessible
               accessibilityRole='imagebutton'
-              accessibilityHint='cancel and close quiz'
+              accessibilityLabel='quit quiz'
+              accessibilityHint='return to previous screen '
             />
           )}
 
@@ -298,6 +307,7 @@ const Quiz = ({
                     maxLength={42}
                     onChange={({ nativeEvent: { text } }) => setAnswer(text)}
                     disabled={submitted}
+                    accessibilityLabel='user input'
                   />
                   <View
                     style={{

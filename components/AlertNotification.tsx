@@ -22,7 +22,7 @@ const AlertNotification = ({
         visible={visible}
         onDismiss={dismiss}
         contentContainerStyle={[styles.container, { backgroundColor: bgColor }]}
-        overlayAccessibilityLabel='dismiss alert'
+        overlayAccessibilityLabel={message}
       >
         <Title
           style={{ color: textColor }}

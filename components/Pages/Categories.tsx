@@ -139,7 +139,7 @@ const Categories = ({ navigation }: Props) => {
     cardPosition.value = removeFromPositions(cardPosition.value, id);
     dispatch(removeCard({ id, type: 'category' }));
     dispatch(removeFavorite(id));
-    deleteChildPosition(id);
+    deleteChildPosition(id, 'root');
   };
 
   const selectColor = useCallback((color: string) => {
@@ -165,7 +165,7 @@ const Categories = ({ navigation }: Props) => {
       dispatch(removeFavorite(selection[i]));
     }
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
-    multiDeleteChildPosition(selection);
+    multiDeleteChildPosition(selection, 'root');
     cancelMultiDeletion();
   }, [selection]);
 
@@ -194,7 +194,6 @@ const Categories = ({ navigation }: Props) => {
     if (dbPositions) {
       cardPosition.value = dbPositions.positions;
     }
-    setIsLoading(false);
   }, []);
 
   useAnimatedReaction(
@@ -208,31 +207,20 @@ const Categories = ({ navigation }: Props) => {
     }
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      // let unsubscribe = false;
-      // if (!unsubscribe && renderCount.current < 4) {
-        //   console.log('sync categories')
-        //   syncData();
-        // }
-
-      return () => {
-        // unsubscribe = true;
-        setSortCardMode(false);
-        setMultiSelectMode(false);
-      };
-    }, [syncData])
-  );
-
-  // useEffect(() => {
-  //   let unsubscribe = false;
-  //   if (!unsubscribe) {
-  //     syncData();
-  //   }
-  //   return () => {
-  //     unsubscribe = true;
-  //   };
-  // }, [syncData]);
+  useEffect(() => {
+    let unsubscribe = false;
+    if (!unsubscribe) {
+      syncData();
+    }
+    const unsubscribeFocus = navigation.addListener('blur', () => {
+      setSortCardMode(false);
+      setMultiSelectMode(false);
+    });
+    return () => {
+      unsubscribe = true;
+      unsubscribeFocus;
+    };
+  }, [syncData]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -258,48 +246,48 @@ const Categories = ({ navigation }: Props) => {
         message='DELETE SELECTED CATEGORIES?'
       />
 
-      {!isLoading && (
-        <DragSortList
-          scrollViewHeight={cards.category.length * SCROLLVIEW_ITEM_HEIGHT}
-          onLayout={(e) => measureOffset(e, setScrollViewOffset)}
-          scrollY={scrollY}
-        >
-          {cards.category.map((category: Category) => {
-            return (
-              <DraggableWrapper
-                key={category._id}
-                itemHeight={165}
-                itemWidth={100}
-                dataLength={cards.category.length}
-                id={category._id}
-                positions={cardPosition}
-                moveObject={moveObject}
-                scrollY={scrollY}
-                yOffset={scrollViewOffset - insets.top}
-                enableTouch={sortCardMode}
-                onEnd={savePositions}
-              >
-                <TitleCard
-                  card={category}
-                  multiSelect={multiSelectMode}
-                  handleEdit={editCategory}
-                  markForDelete={selectItem}
-                  handleDelete={deleteCategory}
-                  shouldAnimateEntry={true}
-                  selectedForDeletion={selection.includes(category._id)}
-                  disableActions={multiSelectMode || sortCardMode}
-                  onPress={() => {
-                    navigation.navigate('Sets', {
-                      categoryRef: category._id,
-                      screenTitle: category.name,
-                    });
-                  }}
-                />
-              </DraggableWrapper>
-            );
-          })}
-        </DragSortList>
-      )}
+      {/* {!isLoading && ( */}
+      <DragSortList
+        scrollViewHeight={cards.category.length * SCROLLVIEW_ITEM_HEIGHT}
+        onLayout={(e) => measureOffset(e, setScrollViewOffset)}
+        scrollY={scrollY}
+      >
+        {cards.category.map((category: Category) => {
+          return (
+            <DraggableWrapper
+              key={category._id}
+              itemHeight={165}
+              itemWidth={100}
+              dataLength={cards.category.length}
+              id={category._id}
+              positions={cardPosition}
+              moveObject={moveObject}
+              scrollY={scrollY}
+              yOffset={scrollViewOffset - insets.top}
+              enableTouch={sortCardMode}
+              onEnd={savePositions}
+            >
+              <TitleCard
+                card={category}
+                multiSelect={multiSelectMode}
+                handleEdit={editCategory}
+                markForDelete={selectItem}
+                handleDelete={deleteCategory}
+                shouldAnimateEntry={true}
+                selectedForDeletion={selection.includes(category._id)}
+                disableActions={multiSelectMode || sortCardMode}
+                onPress={() => {
+                  navigation.navigate('Sets', {
+                    categoryRef: category._id,
+                    screenTitle: category.name,
+                  });
+                }}
+              />
+            </DraggableWrapper>
+          );
+        })}
+      </DragSortList>
+      {/* )} */}
 
       {/* ADD NEW CATEGORY DIALOG */}
       <ActionDialog

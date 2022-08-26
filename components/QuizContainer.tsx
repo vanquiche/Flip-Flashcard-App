@@ -15,6 +15,7 @@ const QuizContainer = ({ children, color }: Props) => {
       entering={StretchInY}
       exiting={StretchOutY}
       style={[styles.container, { backgroundColor: color }]}
+      accessibilityViewIsModal={true}
     >
       {children}
     </Animated.View>

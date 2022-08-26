@@ -32,7 +32,7 @@ const FavoriteCard = ({ card, onPress, width }: Props) => {
       ]}
       onPress={onPress}
       accessible={true}
-      accessibilityRole='imagebutton'
+      accessibilityRole='button'
       accessibilityLabel='favorite card'
       accessibilityHint='navigate to favorite set'
     >

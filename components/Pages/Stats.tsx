@@ -4,7 +4,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { DateTime } from 'luxon';
 import { Stats as StatsType } from '../types';
-import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
+import {
+  VictoryBar,
+  VictoryChart,
+  VictoryTheme,
+  VictoryTooltip,
+  Bar,
+  VictoryLabel,
+} from 'victory-native';
 import { Button, Title } from 'react-native-paper';
 import swatchContext from '../../contexts/swatchContext';
 import fontColorContrast from 'font-color-contrast';
@@ -88,6 +95,20 @@ const Stats = () => {
     [user.stats, currentWeek, dataType]
   );
 
+  const actionList = useMemo(() => {
+    const actions = data.map((d) => {
+      return {
+        name: d.date,
+        label: `data for ${d.date}: ${
+          dataType === 'avg'
+            ? 'average score: ' + d.datapoints
+            : d.datapoints + `${d.datapoints > 0 ? 'quizes' : 'quiz'}` + 'completed'
+        }`,
+      };
+    });
+    return actions;
+  }, [user.stats, currentWeek, dataType]);
+
   return (
     <View style={styles.container}>
       <View style={styles.btnContainer}>
@@ -141,6 +162,7 @@ const Stats = () => {
         accessible={true}
         accessibilityRole='progressbar'
         accessibilityHint='graph chart of user stats'
+        accessibilityActions={actionList}
       >
         <VictoryChart
           width={SCREEN_WIDTH}
@@ -156,6 +178,9 @@ const Stats = () => {
             x='date'
             y='datapoints'
             style={{ data: { fill: _cardColor, width: 25 } }}
+            labels={({ datum }) =>
+              `${datum.datapoints ? datum.datapoints : ''}`
+            }
           />
         </VictoryChart>
       </View>

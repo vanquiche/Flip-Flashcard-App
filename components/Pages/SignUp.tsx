@@ -45,7 +45,6 @@ const SignUp = () => {
       <View style={[]}>
         <Title
           style={{ textAlign: 'center', color: colors.secondary, fontSize: 22 }}
-          accessible={true}
           accessibilityRole='text'
           accessibilityLabel='create your account'
         >
@@ -74,7 +73,6 @@ const SignUp = () => {
           disabled={
             !newUser || newUser.length < 3
           }
-          accessible={true}
           accessibilityRole='button'
           accessibilityLabel='create'
           accessibilityHint='confirm and create new user'

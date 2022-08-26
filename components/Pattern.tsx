@@ -21,9 +21,6 @@ const Pattern = ({ select, name, patternList, isNull, isSelected }: Props) => {
       disabled={isSelected}
       accessible={true}
       accessibilityRole='menuitem'
-      accessibilityLabel='pattern swatch'
-      accessibilityHint='select pattern'
-      accessibilityState={{ disabled: isSelected }}
     >
       {isSelected && (
         <FontAwesome5
@@ -31,9 +28,6 @@ const Pattern = ({ select, name, patternList, isNull, isSelected }: Props) => {
           size={45}
           color='black'
           style={styles.checkmark}
-          accessible={true}
-          accessiblityRole='image'
-          accessiblityLabel='selected pattern'
         />
       )}
       {!isNull && patternList && (

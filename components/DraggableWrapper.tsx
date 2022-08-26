@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions, StyleSheet } from 'react-native';
+import { View, Text, useWindowDimensions, StyleSheet, LayoutChangeEvent } from 'react-native';
 import React from 'react';
 import Animated, {
   useSharedValue,
@@ -65,7 +65,7 @@ const DraggableWrapper = ({
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
       position: 'absolute',
-      top: itemPosition.value,
+      top: itemPosition.value || 0,
       left: '50%',
       right: 0,
       zIndex: isMoving.value ? 1 : 0,
@@ -148,6 +148,7 @@ const DraggableWrapper = ({
           wrapperAnimatedStyle,
           { transform: [{ translateX: (itemWidth && -itemWidth) || 0 }] },
         ]}
+        accessible={false}
       >
         {children}
       </Animated.View>

@@ -4,9 +4,10 @@ import {
   StyleSheet,
   Dimensions,
   ImageBackground,
+  AccessibilityInfo,
 } from 'react-native';
 import { Text, Title } from 'react-native-paper';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -61,6 +62,7 @@ const Card = ({
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
+  const [screenReader, setScreenReader] = useState(false);
 
   const _fontColor = color ? fontColorContrast(color, 0.6) : 'white';
 
@@ -119,6 +121,23 @@ const Card = ({
     markForDelete(card._id, !selectedForDeletion);
   };
 
+  useEffect(() => {
+    const screenReaderChangedSubscription = AccessibilityInfo.addEventListener(
+      'screenReaderChanged',
+      (screenReaderEnabled) => {
+        setScreenReader(screenReaderEnabled);
+      }
+    );
+
+    AccessibilityInfo.isScreenReaderEnabled().then((screenReaderEnabled) => {
+      setScreenReader(screenReaderEnabled);
+    });
+
+    return () => {
+      screenReaderChangedSubscription.remove();
+    };
+  }, []);
+
   return (
     <>
       <AlertDialog
@@ -142,13 +161,30 @@ const Card = ({
         exiting={ZoomOut}
         entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
         layout={Layout.springify().damping(15).delay(200)}
-        accessible={true}
-        accessibilityRole='imagebutton'
-        accessibilityLabel='flashcard'
-        accessibilityHint={
-          multiSelect ? 'select card to delete' : 'flip card to otherside'
+        accessible
+        accessibilityLabel={
+          cardFacingFront
+            ? `prompt: ${card.prompt}`
+            : `answer: ${card.solution}`
         }
-        accessibilityState={{ disabled: false }}
+        accessibilityActions={
+          !multiSelect
+            ? [
+                { name: 'edit', label: 'edit card' },
+                { name: 'delete', label: 'delete card' },
+              ]
+            : undefined
+        }
+        onAccessibilityAction={(e) => {
+          switch (e.nativeEvent.actionName) {
+            case 'edit':
+              handleEdit(card, card._id);
+              break;
+            case 'delete':
+              setShowAlert(true);
+              break;
+          }
+        }}
       >
         {/* indicator of card selection */}
         {multiSelect && (
@@ -157,12 +193,9 @@ const Card = ({
             size={58}
             color={selectedForDeletion ? 'white' : 'transparent'}
             style={{ position: 'absolute', left: '35%', zIndex: 80 }}
-            accessible={true}
-            accessibilityRole='image'
-            accessibilityLabel='selected for deletion'
           />
         )}
-        {cardFacingFront && (
+        {cardFacingFront && !screenReader && (
           <Animated.View style={styles.btnContainer} entering={FadeIn}>
             <IconButton
               icon='close'
@@ -171,12 +204,8 @@ const Card = ({
               style={[styles.deleteBtn]}
               onPress={() => setShowAlert(true)}
               disabled={disableActions}
-              accessible={true}
-              accessibilityRole='imagebutton'
-              accessibilityLabel='delete card'
-              accessibilityHint='open up dialog to confirm action'
-              accessibilityState={{ disabled: disableActions }}
             />
+
             <IconButton
               icon='dots-horizontal'
               color={_fontColor}
@@ -184,50 +213,40 @@ const Card = ({
               style={[styles.editBtn]}
               onPress={() => handleEdit(card, card._id)}
               disabled={disableActions}
-              accessible={true}
-              accessibilityRole='imagebutton'
-              accessibilityLabel='edit card'
-              accessibilityHint='open up dialog to edit card'
-              accessibilityState={{ disabled: disableActions }}
             />
           </Animated.View>
         )}
-
         {/* FRONT OF CARD */}
-        <Animated.View style={[styles.textContainer, rStyles_card_front]}>
-          {/* CARD DESIGN */}
-
-          <Title
-            style={{
-              ...styles.cardTitle,
-              top: 0,
-              left: 5,
-              color: _fontColor,
-            }}
+        <Animated.View
+          style={[styles.textContainer, rStyles_card_front]}
           >
-            Q .
-          </Title>
-          <Text
-            style={{
-              ...styles.textContent,
-              color: _fontColor,
-            }}
-            numberOfLines={3}
-            accessible={true}
-            accessibilityRole='text'
-            accessibilityLabel='prompt'
-            accessibilityHint={card.prompt}
-          >
-            {card.prompt}
-          </Text>
           <ImageBackground
             style={styles.cardPattern}
             imageStyle={styles.image}
             source={patternList[pattern]}
-            resizeMode='cover'
-          />
+            accessibilityViewIsModal
+          >
+            <Title
+              style={{
+                ...styles.cardTitle,
+                top: 0,
+                left: 5,
+                color: _fontColor,
+              }}
+            >
+              Q .
+            </Title>
+            <Text
+              style={{
+                ...styles.textContent,
+                color: _fontColor,
+              }}
+              numberOfLines={3}
+            >
+              {card.prompt}
+            </Text>
+          </ImageBackground>
         </Animated.View>
-
         {/* BACK OF CARD */}
         <Animated.View style={[styles.textContainer, rStyles_card_back]}>
           <Text
@@ -236,10 +255,6 @@ const Card = ({
               ...styles.cardBackText,
               color: _fontColor,
             }}
-            accessible={true}
-            accessibilityRole='text'
-            accessibilityLabel='answer'
-            accessibilityHint={card.solution}
           >
             {card.solution}
           </Text>
@@ -270,10 +285,11 @@ const styles = StyleSheet.create({
     height: 190,
     // aspectRatio: 1.35,
     padding: 15,
-    marginVertical: 12,
+    // marginVertical: 12,
+    // margin: 5,
     borderRadius: 15,
     backgroundColor: 'white',
-    flex: 1,
+    // flex: 1,
     // position: 'relative'
     overflow: 'hidden',
   },
@@ -335,6 +351,7 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     zIndex: 10,
+    justifyContent: 'center',
   },
   image: {
     tintColor: 'white',

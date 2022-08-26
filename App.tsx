@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ActivityIndicator, StyleSheet, Image, View, Text, StatusBar } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Image,
+  View,
+  Text,
+  StatusBar,
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
@@ -93,9 +100,7 @@ export default function App() {
       <NavigationContainer>
         <PaperProvider theme={theme}>
           <SafeAreaProvider>
-
-              <IndexScreen />
-
+            <IndexScreen />
           </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>

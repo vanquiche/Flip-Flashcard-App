@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { Text, Title, Button } from 'react-native-paper';
 
 import Animated, { SlideInRight } from 'react-native-reanimated';
@@ -36,22 +36,19 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
 
   const quizGrade = Math.floor((score / total) * 100);
 
-  const category = useMemo(
-    () => cards.category.find((c) => c._id === set.categoryRef),
-    [cards.category]
-  );
+  const category = useMemo(() => cards.category.find((c) => c._id === set.categoryRef), []);
 
-  const setCompleted = useMemo(() => user.completedQuiz.includes(set._id), []);
+  const setAlreadyCompleted = useMemo(() => user.completedQuiz.includes(set._id), [])
 
-  const points = category ? category.points : 0;
+  const categoryPoints = category ? category.points : 0;
 
   const getXPpercent = useMemo(() => {
-    const awardedPoints = (points / pointTotal) * 100;
-    if (points > pointTotal) {
-      const subtraction = points.toString().split('').splice(1).join('');
+    const awardedPoints = (categoryPoints / pointTotal) * 100;
+    if (categoryPoints > pointTotal) {
+      const subtraction = categoryPoints.toString().split('').splice(1).join('');
       return parseInt(subtraction);
     } else return awardedPoints;
-  }, [points, pointTotal]);
+  }, [categoryPoints, pointTotal]);
 
   // start animation value
   const xpStart = getXPpercent - score;
@@ -71,18 +68,18 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
 
   return (
     <Animated.View
-      style={[styles.container, { backgroundColor: theme.cardColor }]}
+      style={[styles.container, { backgroundColor: _cardColor }]}
       entering={SlideInRight.delay(500)}
     >
-      <Title
-        style={[{ textAlign: 'center', color: _fontColor }]}
-        accessible
-        accessibilityRole='text'
-      >
+      <Title style={[{ textAlign: 'center', color: _fontColor }]}>
         RESULTS
       </Title>
 
-      <View style={styles.metricContainer}>
+      <View
+        style={styles.metricContainer}
+        accessible
+        accessibilityLabel={`score: ${score} out of ${total}`}
+      >
         <Title style={{ color: _fontColor }}>SCORE</Title>
         <Title
           style={{ color: _fontColor }}
@@ -94,43 +91,41 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
         </Title>
       </View>
 
-      <View style={styles.metricContainer}>
+      <View
+        style={styles.metricContainer}
+        accessible
+        accessibilityRole='text'
+        accessibilityLabel={`grade: ${quizGrade} percent`}
+      >
         <Title style={{ color: _fontColor }}>GRADE</Title>
-        <Title
-          style={{ color: _fontColor }}
-          accessible
-          accessibilityRole='text'
-          accessibilityLabel={`${quizGrade} percentage`}
-        >
-          {quizGrade}%
-        </Title>
+        <Title style={{ color: _fontColor }}>{quizGrade}%</Title>
       </View>
 
-      <View style={styles.progressBarContainer}>
+      <View
+        style={styles.progressBarContainer}
+        accessible
+        accessibilityRole='text'
+        accessibilityLabel={`current level: ${Math.floor(categoryPoints / pointTotal)}`}
+      >
         <Title style={{ color: _fontColor }}>
           {category?.name.toUpperCase()} LEVEL:
         </Title>
-        <Title
-          style={{ color: _fontColor }}
-          accessible
-          accessibilityRole='text'
-          accessibilityLabel={`level ${Math.floor(points / pointTotal)}`}
-        >
-          {Math.floor(points / pointTotal)}
+        <Title style={{ color: _fontColor }}>
+          {Math.floor(categoryPoints / pointTotal)}
         </Title>
       </View>
 
-      <View style={styles.progressBarContainer}>
+      <View
+        style={styles.progressBarContainer}
+        accessible
+        accessibilityRole='text'
+        accessibilityLabel={`${pointTotal - xpEnd} xp to level up`}
+      >
         <Title style={{ color: _fontColor }}>
           {category?.name.toUpperCase()} XP:
         </Title>
-        <Title
-          style={{ color: _fontColor }}
-          accessible
-          accessibilityRole='text'
-          accessibilityLabel={`xp ${xpEnd} out of ${pointTotal}`}
-        >
-          {setCompleted ? (
+        <Title style={{ color: _fontColor }}>
+          {setAlreadyCompleted ? (
             getXPpercent
           ) : (
             <CountUp start={xpStart} end={xpEnd} duration={2.4} isCounting />
@@ -142,7 +137,7 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
       {/* XP BAR */}
 
       <View style={[styles.progressBar, { borderColor: theme.fontColor }]}>
-        {!setCompleted ? (
+        {!setAlreadyCompleted ? (
           <Animated.View
             style={[
               styles.pointBar,
@@ -152,8 +147,8 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
               },
               progressBarAnim,
             ]}
-            accessible
             accessibilityRole='progressbar'
+            accessibilityValue={{ now: getXPpercent, min: 0, max: pointTotal }}
           />
         ) : (
           <View
@@ -164,17 +159,16 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
                 backgroundColor: _xpBarColor,
               },
             ]}
-            accessible
             accessibilityRole='progressbar'
+            accessibilityValue={{ now: getXPpercent, min: 0, max: pointTotal }}
           />
         )}
       </View>
       <Text
         style={{ textAlign: 'center', color: _fontColor }}
-        accessible
         accessibilityRole='text'
       >
-        {setCompleted ? 'daily points reached for this set' : ''}
+        {setAlreadyCompleted ? 'daily points maxed for this set' : ''}
       </Text>
 
       <Button
@@ -183,7 +177,6 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
         style={styles.button}
         labelStyle={[{ fontSize: 16, color: _fontColor }]}
         onPress={dismiss}
-        accessible
         accessibilityRole='button'
         accessibilityHint='go back to flashcard screen'
       >

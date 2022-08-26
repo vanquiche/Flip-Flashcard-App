@@ -133,21 +133,21 @@ const Shop = () => {
   }, [user.collection]);
 
   // strictly for testing purposes
-  const resetPurchase = () => {
-    dispatch(
-      updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
-    );
-  };
+  // const resetPurchase = () => {
+  //   dispatch(
+  //     updateUser({ collection: { colors: [], patterns: {}, themes: [] } })
+  //   );
+  // };
 
   // strictly for testing purposes
-  const addCoins = () => {
-    debounceBtn();
-    setCountUpValue((prev) => ({
-      start: prev.end,
-      end: prev.end + 25,
-    }));
-    dispatch(updateUser({ heartcoin: user.heartcoin + 25 }));
-  };
+  // const addCoins = () => {
+  //   debounceBtn();
+  //   setCountUpValue((prev) => ({
+  //     start: prev.end,
+  //     end: prev.end + 25,
+  //   }));
+  //   dispatch(updateUser({ heartcoin: user.heartcoin + 25 }));
+  // };
 
   return (
     <>
@@ -214,7 +214,7 @@ const Shop = () => {
           })}
         </ShopCatalogue>
         {/* strictly for testing purposes */}
-        <Button
+        {/* <Button
           color='black'
           onPress={resetPurchase}
           disabled={!emptyCollection}
@@ -247,7 +247,7 @@ const Shop = () => {
           }}
         >
           This is just for testing purposes, but go crazy in the meantime
-        </Text>
+        </Text> */}
       </ScrollView>
     </>
   );

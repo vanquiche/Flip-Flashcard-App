@@ -58,15 +58,52 @@ const LoginGoal = ({ dates, streak }: Props) => {
     });
   };
 
+  const getDateName = (dayNumber: number) => {
+    switch (dayNumber) {
+      case 1:
+        return 'monday';
+      case 2:
+        return 'tuesday';
+      case 3:
+        return 'wednsday';
+      case 4:
+        return 'thursday';
+      case 5:
+        return 'friday';
+      case 6:
+        return 'saturday';
+      case 7:
+        return 'sunday';
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.cardColor }]}>
-      <Title style={{ color: theme.fontColor }} accessible={true} accessibilityRole='text' accessibilityLabel='days logged in'>DAYS LOGGED IN</Title>
+      <Title
+        style={{ color: theme.fontColor }}
+        accessible={true}
+        accessibilityRole='text'
+        accessibilityLabel='days logged in'
+      >
+        DAYS LOGGED IN
+      </Title>
 
       <View style={styles.weekContainer}>
         {displayWeek.map((d, index) => {
           const loggedInDay = checkDates(d.date);
+          const dateName = getDateName(d.date);
           return (
-            <View key={index} style={[styles.dayCard]}>
+            <View
+              key={index}
+              style={[styles.dayCard]}
+              accessible
+              accessibilityRole='text'
+              accessibilityLabel={
+                loggedInDay?.loggedIn ? `logged in ${dateName}` : dateName
+              }
+            >
               {loggedInDay?.loggedIn && (
                 <AntDesign
                   name='star'
@@ -82,9 +119,6 @@ const LoginGoal = ({ dates, streak }: Props) => {
                     ? { color: theme.cardColor }
                     : { color: theme.fontColor },
                 ]}
-                accessible={true}
-                accessibilityRole='text'
-                accessibilityLabel={d.name}
               >
                 {d.name}
               </Title>
@@ -92,7 +126,14 @@ const LoginGoal = ({ dates, streak }: Props) => {
           );
         })}
       </View>
-      <Title style={{ color: theme.fontColor }} accessible={true} accessibilityRole='text' accessibilityLabel={`login streak ${streak}`} >LOGIN STREAK: {streak}</Title>
+      <Title
+        style={{ color: theme.fontColor }}
+        accessible={true}
+        accessibilityRole='text'
+        accessibilityLabel={`login streak ${streak}`}
+      >
+        LOGIN STREAK: {streak}
+      </Title>
     </View>
   );
 };
