@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import React, { useContext } from 'react';
-import { IconButton, Title, Button } from 'react-native-paper';
+import { Title, Button } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ const Profile = ({ navigation }: Props) => {
   const { user, cards, levelUpCondition } = useSelector(
     (state: RootState) => state.store
   );
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const { theme } = useContext(swatchContext);
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
@@ -33,9 +33,9 @@ const Profile = ({ navigation }: Props) => {
   //   user.login[user.login.length - 1]
   // ).toFormat('ff');
 
-  const deleteCurrentUser = () => {
-    dispatch(deleteUser());
-  };
+  // const deleteCurrentUser = () => {
+  //   dispatch(deleteUser());
+  // };
 
   return (
     <View style={s.screenWrapper}>
