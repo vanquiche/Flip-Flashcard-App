@@ -31,6 +31,7 @@ import { defaultTheme } from '../components/types';
 import Loader from '../components/Loader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import fontColorContrast from 'font-color-contrast';
+import SignUpScreen from './SignUpScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -113,11 +114,19 @@ const IndexScreen = () => {
     dispatch(hydrateData());
   }, []);
 
-  const statusBarColor = fontColorContrast(theme.headerColor, 0.5);
+  const statusBarColor =
+    user && user._id
+      ? fontColorContrast(theme.headerColor, 0.5)
+      : fontColorContrast('lightblue', 0.5);
 
   return (
     <swatchContext.Provider value={{ colors, patterns, theme }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.headerColor }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: user && user._id ? theme.headerColor : 'lightblue',
+        }}
+      >
         <AlertNotification
           dismiss={clearNotification}
           visible={notification.show}
@@ -137,7 +146,6 @@ const IndexScreen = () => {
           screenOptions={{
             tabBarStyle: {
               backgroundColor: theme.tabColor,
-              // height: 70,
             },
             tabBarShowLabel: false,
             headerShown: false,
@@ -147,8 +155,8 @@ const IndexScreen = () => {
           {/* if user is undefined or if user object exist but has not been initialized yet */}
           {!user || (user && !user._id) ? (
             <Tab.Screen
-              name='SignUp'
-              component={SignUp}
+              name='Walkthrough'
+              component={SignUpScreen}
               options={{
                 tabBarIconStyle: { display: 'none' },
                 tabBarStyle: { display: 'none' },
