@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     minHeight: 75,
     height: '15%',
+    maxHeight: 85
   },
   favoriteMessage: {
     textAlign: 'center',

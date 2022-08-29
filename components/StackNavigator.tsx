@@ -16,18 +16,19 @@ interface Screen {
 interface Props {
   screens: Screen[];
   id?: string;
+  hideHeader?: boolean;
 }
 
-const StackNavigator = ({ screens, id }: Props) => {
+const StackNavigator = ({ screens, id, hideHeader }: Props) => {
   const { theme } = useContext(swatchContext);
 
   return (
     <Stack.Navigator
       id={id}
       screenOptions={{
+        headerShown: hideHeader ? !hideHeader : true,
         headerStyle: {
           backgroundColor: theme.headerColor,
-          // height: 70,
         },
         headerTintColor: 'white',
         headerTitleStyle: {

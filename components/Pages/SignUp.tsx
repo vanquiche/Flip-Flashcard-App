@@ -37,7 +37,7 @@ const SignUp = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFADC6' }}>
+    <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior='padding'
@@ -48,7 +48,7 @@ const SignUp = () => {
           <Title
             style={{
               textAlign: 'center',
-              color: 'white',
+              color: 'black',
               fontSize: 22,
               marginTop: 20,
             }}
@@ -63,7 +63,7 @@ const SignUp = () => {
             mode='outlined'
             style={styles.input}
             outlineColor='transparent'
-            activeOutlineColor='tomato'
+            activeOutlineColor='#499feb'
             maxLength={32}
             value={newUser}
             onChangeText={(text) => setNewUser(text)}
@@ -84,7 +84,7 @@ const SignUp = () => {
           </Button>
         </View>
       </KeyboardAvoidingView>
-      <Text style={{ color: 'white', textAlign: 'center', paddingBottom: 10 }}>
+      <Text style={{ color: 'black', textAlign: 'center', paddingBottom: 10 }}>
         HAPPY CLOVER STUDIO
       </Text>
     </View>
