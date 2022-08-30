@@ -30,6 +30,8 @@ const IntroSlide = ({ slide }: Props) => {
         alignItems: 'center',
         paddingHorizontal: 10,
       }}
+      accessible
+      accessibilityLabel={slide.text}
     >
       {firstSlide && (
         <Image

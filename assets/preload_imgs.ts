@@ -1,6 +1,8 @@
 import { PRELOAD_PATTERNS } from "./patterns/patterns";
 
+// add images to here to be preloaded
 const images = [
+  require('./adaptive-icon.png'),
   require('./images/profile-user.png'),
   require('./images/walkthrough-slide_001.png'),
   require('./images/walkthrough-slide_002.png'),

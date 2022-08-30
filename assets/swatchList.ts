@@ -1,3 +1,5 @@
+// add new swatch list here to be added into app
+
 const DEFAULT_SWATCH_LIST = [
   'tomato',
   '#F8A323',
