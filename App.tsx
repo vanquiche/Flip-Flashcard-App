@@ -1,17 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  ActivityIndicator,
-  StyleSheet,
   Image,
-  View,
-  Text,
-  StatusBar,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import { PRELOAD_PATTERNS } from './assets/patterns/patterns';
+import PRELOAD_IMAGES from './assets/preload_imgs';
 
 import 'react-native-gesture-handler';
 
@@ -80,7 +75,7 @@ export default function App() {
   };
 
   const loadAssets = async () => {
-    const imgAsset = cacheImages(PRELOAD_PATTERNS);
+    const imgAsset = cacheImages(PRELOAD_IMAGES);
     const fontAsset = loadFonts();
 
     await Promise.all([fontAsset, imgAsset]);
@@ -108,14 +103,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  spinner: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

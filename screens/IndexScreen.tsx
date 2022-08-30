@@ -6,7 +6,6 @@ import HomeScreen from './HomeScreen';
 import CategoryScreen from './CategoryScreen';
 import ShopScreen from './ShopScreen';
 import ProfileScreen from './ProfileScreen';
-import SignUp from '../components/Pages/SignUp';
 import AlertNotification from '../components/AlertNotification';
 import TabIcon from '../components/TabIcon';
 

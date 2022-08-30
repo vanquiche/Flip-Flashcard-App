@@ -124,7 +124,7 @@ export const saveCardPosition = (obj: CardPosition) => {
     } else {
       db.insert(obj, (err: Error, doc: any) => {
         // if (err) console.log(err);
-        console.log(doc)
+
       });
     }
   });
@@ -136,8 +136,8 @@ export const deleteChildPosition = (id: string, location: 'ref' | 'root') => {
     { type: 'position', [location]: id },
     { multi: true },
     (err: Error, numRemoved: number) => {
-      if (err) console.log(err);
-      console.log('child positions removed: ' + numRemoved);
+      // if (err) console.log(err);
+      // console.log('child positions removed: ' + numRemoved);
     }
   );
 };
@@ -151,7 +151,7 @@ export const multiDeleteChildPosition = (ids: string[], location: 'ref' | 'root'
       { multi: true },
       (err: Error, numRemoved: number) => {
         // if (numRemoved) removed += numRemoved;
-        console.log(numRemoved)
+        // console.log(numRemoved)
       }
     );
   }
