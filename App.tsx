@@ -94,9 +94,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <PaperProvider theme={theme}>
-          <SafeAreaProvider>
             <IndexScreen />
-          </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>
     </Provider>
