@@ -30,7 +30,7 @@ const Shop = () => {
     start: user.heartcoin,
     end: user.heartcoin,
   });
-  const [delayButton, setDelayButton] = useState(false);
+  // const [delayButton, setDelayButton] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -112,25 +112,25 @@ const Shop = () => {
 
   // prevents user from pressing 'get coins'
   // too frequently in a short time
-  const debounceBtn = () => {
-    setDelayButton(true);
-    setTimeout(() => {
-      setDelayButton(false);
-    }, 900);
-  };
+  // const debounceBtn = () => {
+  //   setDelayButton(true);
+  //   setTimeout(() => {
+  //     setDelayButton(false);
+  //   }, 900);
+  // };
 
   // disable 'reset purchases' btn if
   // collection is already empty
-  const emptyCollection = useMemo(() => {
-    const isEmpty = Object.values(user.collection).some((item) => {
-      if (Array.isArray(item)) {
-        return item.length > 0;
-      } else {
-        return Object.values(item).length > 0;
-      }
-    });
-    return isEmpty;
-  }, [user.collection]);
+  // const emptyCollection = useMemo(() => {
+  //   const isEmpty = Object.values(user.collection).some((item) => {
+  //     if (Array.isArray(item)) {
+  //       return item.length > 0;
+  //     } else {
+  //       return Object.values(item).length > 0;
+  //     }
+  //   });
+  //   return isEmpty;
+  // }, [user.collection]);
 
   // strictly for testing purposes
   // const resetPurchase = () => {
@@ -151,9 +151,28 @@ const Shop = () => {
 
   return (
     <>
-      <View style={{ padding: 5, paddingHorizontal: 20 }}>
+      <View
+        style={{
+          width: 75,
+          height: 75,
+          backgroundColor: theme.cardColor,
+          zIndex: 100,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 40,
+          position: 'absolute',
+          right: 15,
+          top: 10,
+          // shadowOffset: {
+          //   width: 2,
+          //   height: 2
+          // },
+          // shadowRadius: 6,
+          // shadowOpacity: 0.3
+        }}
+      >
         <Title
-          style={{ color: titleColor, textAlign: 'right', marginRight: 20 }}
+          style={{ color: theme.fontColor, paddingRight: 18, paddingTop: 5 }}
           accessible={true}
           accessibilityLabel={`${countUpValue.end} coins`}
           accessibilityRole='text'
@@ -166,15 +185,14 @@ const Shop = () => {
             isCounting={countUpValue.start !== countUpValue.end}
           />
         </Title>
-
-        <FontAwesome5
-          name='coins'
-          size={20}
-          color={titleColor}
-          style={{ position: 'absolute', right: 15, top: 12 }}
-        />
+          <FontAwesome5
+            name='coins'
+            size={20}
+            color={theme.fontColor}
+            style={{ position: 'absolute', right: 12, top: 28 }}
+          />
       </View>
-      <ScrollView>
+      <ScrollView style={{ overflow: 'visible' }}>
         {/* SWATCH COLORS */}
         <ShopCatalogue title='CARD COLORS' titleColor={titleColor}>
           {STORE_SWATCH_LIST.map((d, i) => (
