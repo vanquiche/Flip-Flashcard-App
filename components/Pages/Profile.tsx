@@ -39,14 +39,14 @@ const Profile = ({ navigation }: Props) => {
 
   return (
     <View style={s.screenWrapper}>
-      <Button
+      {/* <Button
         style={{ position: 'absolute', right: 0 }}
         onPress={() => navigation.navigate('Themes')}
         accessible={true}
         accessibilityRole='button'
         accessibilityHint='navigate to themes screen'
         accessibilityLabel='themes'
-      >
+      > */}
         {/* <IconButton
           style={{ position: 'absolute', right: 0 }}
           size={32}
@@ -54,8 +54,8 @@ const Profile = ({ navigation }: Props) => {
           color={fontColor}
         /> */}
 
-        <FontAwesome5 name='paint-roller' size={24} color={fontColor} />
-      </Button>
+        {/* <FontAwesome5 name='paint-roller' size={24} color={fontColor} />
+      </Button> */}
 
       {/* <Text>Last Login: {lastLoginDate}</Text> */}
 
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 30,
+    marginTop: 5,
     marginBottom: 15,
   },
   themeButton: {

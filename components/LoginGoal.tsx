@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { Title } from 'react-native-paper';
+import { Title, Text } from 'react-native-paper';
 import React, { useContext, useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
 import { AntDesign } from '@expo/vector-icons';
@@ -104,24 +104,26 @@ const LoginGoal = ({ dates, streak }: Props) => {
                 loggedInDay?.loggedIn ? `logged in ${dateName}` : dateName
               }
             >
-              {loggedInDay?.loggedIn && (
-                <AntDesign
-                  name='star'
-                  size={38}
-                  color='yellow'
-                  style={{ position: 'absolute', top: -6, right: 1 }}
-                />
-              )}
-              <Title
+              <Text
                 style={[
-                  { position: 'absolute' },
+                  {
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24,
+                    zIndex: 30,
+                  },
                   loggedInDay?.loggedIn
                     ? { color: theme.cardColor }
                     : { color: theme.fontColor },
                 ]}
               >
                 {d.name}
-              </Title>
+              </Text>
+              {loggedInDay?.loggedIn && (
+                <View style={{ position: 'absolute', top: -3, right: 1, zIndex: 10 }}>
+                  <AntDesign name='star' size={38} color='yellow' />
+                </View>
+              )}
             </View>
           );
         })}
@@ -140,26 +142,32 @@ const LoginGoal = ({ dates, streak }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: 185,
-    height: '35%',
+    minHeight: 150,
+    height: '30%',
     borderRadius: 15,
-    marginVertical: 15,
+    marginVertical: 10,
     marginHorizontal: 15,
+    marginBottom: 0,
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    overflow: 'visible'
   },
   weekContainer: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
+    paddingHorizontal: 10
   },
   dayCard: {
     margin: 5,
-    height: 35,
-    aspectRatio: 1,
-    position: 'relative',
+    // height: 35,
+    // aspectRatio: 1,
+    // position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    // borderWidth: 2,
   },
 });
 

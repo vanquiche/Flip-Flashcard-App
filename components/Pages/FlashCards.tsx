@@ -33,7 +33,6 @@ import swatchContext from '../../contexts/swatchContext';
 import useRenderCounter from '../../hooks/useRenderCounter';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
-import { useFocusEffect } from '@react-navigation/native';
 
 import DragSortList from '../DragSortList';
 import DraggableWrapper from '../DraggableWrapper';
@@ -223,7 +222,7 @@ const FlashCards = ({ navigation, route }: Props) => {
   useEffect(() => {
     let unsubscribe = false;
     if (!unsubscribe) {
-      syncData();
+      syncData()
     }
     const unsubscribeFocus = navigation.addListener('blur', () => {
       setSortMode(false);
