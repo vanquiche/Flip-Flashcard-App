@@ -1,5 +1,5 @@
-import { View, Pressable, StyleSheet, ImageBackground } from 'react-native';
-import { Title } from 'react-native-paper';
+import { Pressable, StyleSheet, ImageBackground } from 'react-native';
+import { Title, Text } from 'react-native-paper';
 import React, { useContext } from 'react';
 import fontColorContrast from 'font-color-contrast';
 import swatchContext from '../contexts/swatchContext';
@@ -16,11 +16,12 @@ interface FavoriteCard {
 
 interface Props {
   card: FavoriteCard;
+  parentName?: string;
   onPress?: () => void;
   width?: number | string;
 }
 
-const FavoriteCard = ({ card, onPress, width }: Props) => {
+const FavoriteCard = ({ card, onPress, width, parentName }: Props) => {
   const _fontColor = fontColorContrast(card.color, 0.6);
   const { patterns } = useContext(swatchContext);
 
@@ -31,17 +32,12 @@ const FavoriteCard = ({ card, onPress, width }: Props) => {
         { backgroundColor: card.color, width: width, aspectRatio: 1.2 },
       ]}
       onPress={onPress}
-      accessible={true}
-      accessibilityRole='button'
-      accessibilityLabel='favorite card'
-      accessibilityHint='navigate to favorite set'
+      accessible
+      accessibilityLabel={'favorite set: ' + card.name}
+      accessibilityHint={'navigate to set: ' + card.name}
     >
-      <Title
-        style={[styles.textContent, { color: _fontColor }]}
-        accessible={true}
-        accessibilityRole='text'
-        accessibilityLabel={card.name}
-      >
+      <Text style={{ color: _fontColor }}>{parentName}</Text>
+      <Title style={[styles.textContent, { color: _fontColor }]}>
         {card.name}
       </Title>
       {card.design && (
@@ -99,6 +95,7 @@ export default React.memo(FavoriteCard, (prevProps, nextProps) => {
     prevProps.card.name === nextProps.card.name &&
     prevProps.card.color === nextProps.card.color &&
     prevProps.card.design === nextProps.card.design &&
+    prevProps.parentName === nextProps.parentName &&
     prevProps.card.favorite === nextProps.card.favorite
   )
     return true;

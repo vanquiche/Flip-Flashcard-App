@@ -4,8 +4,8 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from 'react-native';
-import React, { Suspense, useCallback, useContext } from 'react';
-import { ActivityIndicator, Button, Text, Title } from 'react-native-paper';
+import React, { useCallback, useContext } from 'react';
+import { Button, Text, Title } from 'react-native-paper';
 
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
@@ -21,11 +21,16 @@ import { checkLogin } from '../../redux/userThunkActions';
 import s from '../styles/styles';
 import useCheckDate from '../../hooks/useCheckDate';
 import swatchContext from '../../contexts/swatchContext';
+import StatusCard from '../StatusCard';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface Props extends StackNavigationTypes {}
 
 const Home = ({ navigation }: Props) => {
-  const { user, favoriteSets } = useSelector((state: RootState) => state.store);
+  const { user, favoriteSets, levelUpCondition, cards } = useSelector(
+    (state: RootState) => state.store
+  );
   const { theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -36,6 +41,7 @@ const Home = ({ navigation }: Props) => {
   const titleColor = fontColorContrast(theme.bgColor, 0.6);
 
   const navigateToFavorite = useCallback((set: Set) => {
+    const parent = cards.category.find((c) => c._id === set.categoryRef);
     navigation.dispatch({
       ...CommonActions.reset({
         index: 0,
@@ -51,6 +57,7 @@ const Home = ({ navigation }: Props) => {
                   name: 'Sets',
                   params: {
                     categoryRef: set.categoryRef,
+                    screenTitle: parent?.name,
                   },
                 },
                 {
@@ -89,85 +96,113 @@ const Home = ({ navigation }: Props) => {
 
   return (
     <View style={s.screenWrapper}>
-      <Suspense fallback={<ActivityIndicator />}>
+      <View
+        style={styles.buttonCardContainer}
+      >
         <View
           style={{
-            ...styles.infoCardContainer,
+            ...styles.buttonCard,
             backgroundColor: _cardColor,
           }}
         >
           <Button
             color={_fontColor}
-            labelStyle={{ fontSize: 20 }}
+            labelStyle={{ fontSize: 18, color: _fontColor }}
             onPress={() => navigation.navigate('Stats')}
-            accessible={true}
-            accessibilityRole='button'
             accessibilityLabel='statistics'
             accessibilityHint='navigate to stats screen'
-            accessibilityState={{
-              disabled: false,
-            }}
           >
-            STATISTICS
+            STATS
           </Button>
+          <Ionicons
+            name='stats-chart'
+            size={24}
+            color={_fontColor}
+            style={{ position: 'absolute', right: 30, paddingBottom: 10 }}
+          />
         </View>
-
-        <LoginGoal dates={user.login} streak={user.streak} />
-
-        <Title
-          style={{ textAlign: 'center', color: titleColor, height: '6%' }}
-          accessible={true}
-          accessibilityRole='text'
-        >
-          FAVORITE SETS
-        </Title>
 
         <View
           style={{
-            height: '34%',
+            ...styles.buttonCard,
+            backgroundColor: _cardColor,
           }}
         >
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={[
-              styles.favoritesContainer,
-              {
-                width:
-                  favoriteSets.length === 0
-                    ? '100%'
-                    : (dimension.width / 2) * favoriteSets.length,
-              },
-            ]}
+          <Button
+            color={_fontColor}
+            labelStyle={{ fontSize: 18, color: _fontColor }}
+            onPress={() => navigation.navigate('Themes')}
+            accessibilityLabel='themes'
+            accessibilityHint='navigate to themes screen'
           >
-            {favoriteSets.length === 0 && (
-              <Text
-                style={{
-                  color: titleColor,
-                  ...styles.favoriteMessage,
-                }}
-                accessible={true}
-                accessibilityLabel='no favorite sets'
-                accessibilityHint='text'
-              >
-                NO FAVORITES
-              </Text>
-            )}
-            {favoriteSets
-              .filter((fav) => fav.favorite === true)
-              .map((set) => {
-                return (
-                  <FavoriteCard
-                    key={set._id}
-                    card={set}
-                    onPress={() => navigateToFavorite(set)}
-                    width={dimension.width * 0.45}
-                  />
-                );
-              })}
-          </ScrollView>
+            THEMES
+          </Button>
+          <MaterialCommunityIcons
+            name='brush-variant'
+            size={24}
+            color={_fontColor}
+            style={{ position: 'absolute', right: 23, paddingBottom: 5 }}
+          />
         </View>
-      </Suspense>
+      </View>
+
+      <StatusCard
+        bgColor={_cardColor}
+        fontColor={theme.fontColor}
+        user={user}
+        levelUpCondition={levelUpCondition}
+      />
+
+      <LoginGoal dates={user.login} streak={user.streak} />
+
+      <View
+        style={styles.favoritesCardContainer}
+      >
+        <Title style={{ textAlign: 'center', color: titleColor }}>
+          FAVORITE SETS
+        </Title>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.favoritesContainer,
+            {
+              width:
+                favoriteSets.length === 0
+                  ? '100%'
+                  : (dimension.width / 2) * favoriteSets.length,
+            },
+          ]}
+        >
+          {favoriteSets.length === 0 && (
+            <Text
+              style={{
+                color: titleColor,
+                ...styles.favoriteMessage,
+              }}
+              accessibilityElementsHidden
+            >
+              NO FAVORITES
+            </Text>
+          )}
+          {favoriteSets
+            .filter((fav) => fav.favorite === true)
+            .map((set) => {
+              const parent = cards.category.find(
+                (c) => c._id === set.categoryRef
+              );
+              return (
+                <FavoriteCard
+                  key={set._id}
+                  card={set}
+                  onPress={() => navigateToFavorite(set)}
+                  width={dimension.width * 0.45}
+                  parentName={parent?.name}
+                />
+              );
+            })}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -177,19 +212,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  infoCardContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 15,
-    marginTop: 10,
+  buttonCard: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 13,
-    minHeight: 75,
-    height: '15%',
-    maxHeight: 85
+    borderRadius: 10,
+    height: '100%',
+    width: '49%',
   },
   favoriteMessage: {
     textAlign: 'center',
+  },
+  buttonCardContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 15,
+    marginVertical: 10,
+    height: '10%',
+  },
+  favoritesCardContainer: {
+    height: '35%',
   },
 });
 
