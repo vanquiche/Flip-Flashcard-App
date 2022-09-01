@@ -14,7 +14,7 @@ interface Props {
 const StatusCard = ({ bgColor, fontColor, user, levelUpCondition }: Props) => {
   const dt = DateTime;
   const weekDay = dt.now().weekdayShort.toUpperCase();
-  const dayCycle = dt.now().hour > 18 ? 'moon' : 'sunny';
+  const dayCycle = dt.now().hour > 17 ? 'moon' : 'sunny';
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
   return (
@@ -45,7 +45,7 @@ const StatusCard = ({ bgColor, fontColor, user, levelUpCondition }: Props) => {
         <Ionicons
           name={dayCycle}
           size={28}
-          color='white'
+          color={fontColor || 'white'}
           style={{ paddingBottom: 5 }}
         />
 
