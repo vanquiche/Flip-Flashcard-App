@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Image } from 'react-native';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { Button, Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +24,8 @@ import fontColorContrast from 'font-color-contrast';
 const Shop = () => {
   const { user } = useSelector((state: RootState) => state.store);
   const { theme } = useContext(swatchContext);
+
+  const coinIcon = require('../../assets/images/HeartCoinImage.png')
 
   // start and end value for countUp animation
   const [countUpValue, setCountUpValue] = useState({
@@ -153,26 +155,29 @@ const Shop = () => {
     <>
       <View
         style={{
-          width: 75,
-          height: 75,
+          width: 90,
+          height: 70,
           backgroundColor: theme.cardColor,
           zIndex: 100,
           justifyContent: 'center',
           alignItems: 'center',
-          borderRadius: 40,
+          borderRadius: 10,
           position: 'absolute',
           right: 15,
           top: 10,
-          // shadowOffset: {
-          //   width: 2,
-          //   height: 2
-          // },
-          // shadowRadius: 6,
-          // shadowOpacity: 0.3
+          flexDirection: 'row',
+          // borderWidth: 2,
+          paddingHorizontal: 4,
+          shadowOffset: {
+            width: 2,
+            height: 2
+          },
+          shadowRadius: 6,
+          shadowOpacity: 0.3
         }}
       >
         <Title
-          style={{ color: theme.fontColor, paddingRight: 18, paddingTop: 5 }}
+          style={{ color: theme.fontColor, paddingTop: 5 }}
           accessible={true}
           accessibilityLabel={`${countUpValue.end} coins`}
           accessibilityRole='text'
@@ -185,12 +190,20 @@ const Shop = () => {
             isCounting={countUpValue.start !== countUpValue.end}
           />
         </Title>
-          <FontAwesome5
+        {/* <FontAwesome5
             name='coins'
             size={20}
             color={theme.fontColor}
             style={{ position: 'absolute', right: 12, top: 28 }}
-          />
+          /> */}
+        <Image
+          source={coinIcon}
+          style={{
+            height: 25,
+            width: 25,
+            tintColor: theme.fontColor
+          }}
+        />
       </View>
       <ScrollView style={{ overflow: 'visible' }}>
         {/* SWATCH COLORS */}

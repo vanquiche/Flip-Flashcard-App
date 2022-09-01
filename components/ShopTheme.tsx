@@ -1,13 +1,14 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
 import { Theme } from './types';
 import ThemeDisplay from './ThemeDisplay';
 import AlertDialog from './AlertDialog';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { IconButton, Title } from 'react-native-paper';
+import { IconButton, Title, Text } from 'react-native-paper';
 import fontColorContrast from 'font-color-contrast';
 
+const coinIcon = require('../assets/images/HeartCoinImage.png');
 interface Props {
   theme: Theme;
   price: number;
@@ -41,10 +42,7 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
         }
         disable={!canAfford}
       />
-      <Pressable
-        onPress={() => setShowAlert(true)}
-        disabled={alreadyPurchased}
-      >
+      <Pressable onPress={() => setShowAlert(true)} disabled={alreadyPurchased}>
         {alreadyPurchased ? (
           <IconButton
             icon='check-circle'
@@ -56,16 +54,43 @@ const ShopTheme = ({ theme, price, onPress }: Props) => {
             accessibilityLabel={`${theme.name} theme already purchased`}
           />
         ) : (
-          <Title
+          // <View
+          //   style={{
+          //     flexDirection: 'row',
+          //     justifyContent: 'space-evenly',
+          //     width: '60%',
+          //     alignItems: 'center',
+          //   }}
+          // >
+          <View
             style={{
-              ...styles.price,
-              color: fontColorContrast(theme.cardColor, 0.6),
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: '30%',
+              // borderWidth: 2,
+              alignItems: 'center',
+              position: 'absolute',
+              top: '42%',
+              left: '35%',
+              zIndex: 100,
             }}
-            accessible
-            accessibilityLabel={`purchased for ${price} coins`}
           >
-            {price}
-          </Title>
+            <Text
+              style={{
+                ...styles.price,
+                color: fontColorContrast(theme.cardColor, 0.6),
+              }}
+              accessible
+              accessibilityLabel={`purchased for ${price} coins`}
+            >
+              {price}
+            </Text>
+            <Image
+              source={coinIcon}
+              style={{ width: 25, height: 25 }}
+            />
+          </View>
+          // </View>
         )}
 
         <ThemeDisplay theme={theme} style={{ marginHorizontal: 10 }} />
@@ -78,10 +103,10 @@ const styles = StyleSheet.create({
   price: {
     color: 'white',
     fontSize: 26,
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 20,
-    left: '42%',
-    top: '44%',
+    // left: '42%',
+    // top: '44%',
   },
   icon: {
     position: 'absolute',

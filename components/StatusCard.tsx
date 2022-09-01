@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Title } from 'react-native-paper';
 import React from 'react';
 import { DateTime } from 'luxon';
@@ -10,37 +10,29 @@ interface Props {
   fontColor?: string;
   user: User;
   levelUpCondition: number;
+  hour: number
 }
-const StatusCard = ({ bgColor, fontColor, user, levelUpCondition }: Props) => {
+const StatusCard = ({ bgColor, fontColor, user, levelUpCondition, hour }: Props) => {
   const dt = DateTime;
   const weekDay = dt.now().weekdayShort.toUpperCase();
-  const dayCycle = dt.now().hour > 17 ? 'moon' : 'sunny';
+  const dayCycle = hour > 17 ? 'moon' : 'sunny';
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
   return (
     <View
-      style={{
-        height: '18%',
-        backgroundColor: bgColor || 'black',
-        marginHorizontal: 15,
-        borderRadius: 13,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        paddingHorizontal: 30,
-      }}
+      style={[
+        styles.cardContainer,
+        {
+          backgroundColor: bgColor || 'black',
+        },
+      ]}
     >
       <Title style={{ color: fontColor || 'white' }}>
         HELLO {user.username?.toUpperCase()}
       </Title>
 
       <View
-        style={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexDirection: 'row',
-          width: '100%',
-        }}
+        style={styles.info}
       >
         <Ionicons
           name={dayCycle}
@@ -62,5 +54,24 @@ const StatusCard = ({ bgColor, fontColor, user, levelUpCondition }: Props) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    height: '18%',
+    marginHorizontal: 15,
+    borderRadius: 13,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    paddingHorizontal: 30,
+    overflow: 'hidden',
+  },
+  info: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+  },
+});
 
 export default StatusCard;

@@ -3,10 +3,10 @@ import { IconButton } from 'react-native-paper';
 interface Props {
   icon: string;
   color?: string;
-  focused?: boolean;
+
 }
 
-const TabIcon = ({ icon, color, focused }: Props) => {
+const TabIcon = ({ icon, color }: Props) => {
   return (
     <IconButton
       icon={icon}

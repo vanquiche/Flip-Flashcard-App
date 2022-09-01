@@ -122,13 +122,13 @@ const styles = StyleSheet.create({
   rightArrow: {
     position: 'absolute',
     right: 5,
-    top: '46%',
+    top: '47%',
     zIndex: 100,
   },
   leftArrow: {
     position: 'absolute',
     left: 5,
-    top: '46%',
+    top: '47%',
     zIndex: 100,
   },
 });

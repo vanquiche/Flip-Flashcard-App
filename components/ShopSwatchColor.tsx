@@ -1,5 +1,5 @@
-import { View, Pressable, StyleSheet } from 'react-native';
-import { Title } from 'react-native-paper';
+import { View, Pressable, StyleSheet, Image } from 'react-native';
+import { Text, Title } from 'react-native-paper';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { ZoomIn, ZoomOut } from 'react-native-reanimated';
 import { GetColorName } from 'hex-color-to-color-name';
 
+const coinIcon = require('../assets/images/HeartCoinImage.png');
 interface Props {
   color: string;
   price: number;
@@ -18,6 +19,8 @@ interface Props {
 const ShopSwatchColor = ({ color, price, onPress }: Props) => {
   const { user } = useSelector((state: RootState) => state.store);
   const [showAlert, setShowAlert] = useState(false);
+
+  const _fontColor = fontColorContrast(color, 0.6)
 
   const alreadyPurchased = user.collection.colors?.includes(color); // const alreadyPurchased = false
 
@@ -63,18 +66,39 @@ const ShopSwatchColor = ({ color, price, onPress }: Props) => {
               color='white'
               accessible
               accessibilityRole='image'
-              accessibilityLabel={`color ${GetColorName(color)} already purchased`}
+              accessibilityLabel={`color ${GetColorName(
+                color
+              )} already purchased`}
             />
           </Animated.View>
         ) : (
-          <Title
-            style={{ ...styles.price, color: fontColorContrast(color, 0.6) }}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: '55%',
+              alignItems: 'center',
+            }}
             accessible
             accessibilityRole='text'
-            accessibilityLabel={`purchase ${GetColorName(color)} for ${price} coins`}
+            accessibilityLabel={`purchase ${GetColorName(
+              color
+            )} for ${price} coins`}
           >
-            {price}
-          </Title>
+            <Text
+              style={{ ...styles.price, color: _fontColor }}
+            >
+              {price}
+            </Text>
+            <Image
+              source={coinIcon}
+              style={{
+                width: 25,
+                height: 25,
+                tintColor: _fontColor,
+              }}
+            />
+          </View>
         )}
       </Pressable>
     </>
@@ -94,7 +118,6 @@ const styles = StyleSheet.create({
   price: {
     color: 'white',
     fontSize: 26,
-    paddingTop: 10,
   },
   name: {
     color: 'white',

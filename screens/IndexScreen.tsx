@@ -1,4 +1,4 @@
-import { StatusBar } from 'react-native';
+import { Image, StatusBar } from 'react-native';
 import React, { useEffect } from 'react';
 
 // COMPONENTS
@@ -33,6 +33,7 @@ import fontColorContrast from 'font-color-contrast';
 import SignUpScreen from './SignUpScreen';
 
 const Tab = createBottomTabNavigator();
+const heartIcoin = require('../assets/images/HeartCoinImage.png');
 
 // animation values
 const SPIN_START = 0;
@@ -133,7 +134,6 @@ const IndexScreen = () => {
           bgColor={theme.cardColor}
           textColor={theme.fontColor}
         />
-        <Loader visible={loading} />
 
         <StatusBar
           barStyle={
@@ -221,12 +221,22 @@ const IndexScreen = () => {
                 options={{
                   tabBarIcon: ({ focused }) => (
                     <Animated.View style={shopAnimate}>
-                      <TabIcon
+                      {/* <TabIcon
                         icon='circle'
                         focused={focused}
                         color={
                           focused ? theme.actionIconColor : theme.iconColor
                         }
+                      /> */}
+                      <Image
+                        source={heartIcoin}
+                        style={{
+                          width: 25,
+                          height: 25,
+                          tintColor: focused
+                            ? theme.actionIconColor
+                            : theme.iconColor,
+                        }}
                       />
                     </Animated.View>
                   ),
@@ -250,7 +260,6 @@ const IndexScreen = () => {
                     <Animated.View style={profileAnimate}>
                       <TabIcon
                         icon='heart'
-                        focused={focused}
                         color={
                           focused ? theme.actionIconColor : theme.iconColor
                         }

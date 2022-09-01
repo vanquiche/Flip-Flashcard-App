@@ -4,7 +4,7 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from 'react-native';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Button, Text, Title } from 'react-native-paper';
 
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
@@ -24,6 +24,7 @@ import swatchContext from '../../contexts/swatchContext';
 import StatusCard from '../StatusCard';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { DateTime } from 'luxon';
 
 interface Props extends StackNavigationTypes {}
 
@@ -31,6 +32,8 @@ const Home = ({ navigation }: Props) => {
   const { user, favoriteSets, levelUpCondition, cards } = useSelector(
     (state: RootState) => state.store
   );
+  const dt = DateTime;
+  const [dayCycle, setDayCycle] = useState(dt.now().hour);
   const { theme } = useContext(swatchContext);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -78,10 +81,14 @@ const Home = ({ navigation }: Props) => {
     });
   }, []);
 
-  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
 
   useFocusEffect(
     useCallback(() => {
+      const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+      const hour = dt.now().hour;
+      if (hour !== dayCycle) {
+        setDayCycle(hour)
+      }
       if (!isSameDay) {
         dispatch(
           checkLogin({
@@ -91,14 +98,12 @@ const Home = ({ navigation }: Props) => {
           })
         );
       }
-    }, [isSameDay])
+    }, [])
   );
 
   return (
     <View style={s.screenWrapper}>
-      <View
-        style={styles.buttonCardContainer}
-      >
+      <View style={styles.buttonCardContainer}>
         <View
           style={{
             ...styles.buttonCard,
@@ -151,13 +156,12 @@ const Home = ({ navigation }: Props) => {
         fontColor={theme.fontColor}
         user={user}
         levelUpCondition={levelUpCondition}
+        hour={dayCycle}
       />
 
       <LoginGoal dates={user.login} streak={user.streak} />
 
-      <View
-        style={styles.favoritesCardContainer}
-      >
+      <View style={styles.favoritesCardContainer}>
         <Title style={{ textAlign: 'center', color: titleColor }}>
           FAVORITE SETS
         </Title>

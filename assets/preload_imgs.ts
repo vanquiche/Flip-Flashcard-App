@@ -14,6 +14,7 @@ const images = [
   require('./images/walkthrough-slide_008.png'),
   require('./images/walkthrough-slide_009.png'),
   require('./images/walkthrough-slide_010.png'),
+  require('./images/HeartCoinImage.png')
 ]
 
 const PRELOAD_IMAGES = images.concat(PRELOAD_PATTERNS)

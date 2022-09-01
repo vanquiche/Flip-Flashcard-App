@@ -6,6 +6,7 @@ import { RootState } from '../redux/store';
 import AlertDialog from './AlertDialog';
 import { Ionicons } from '@expo/vector-icons';
 
+const coinIcon = require('../assets/images/HeartCoinImage.png');
 interface Props {
   pattern: any[];
   price: number;
@@ -60,14 +61,26 @@ const ShopSwatchPattern = ({ pattern, price, onPress }: Props) => {
             accessibilityLabel={`pattern ${pattern[0]} already purchased`}
           />
         ) : (
-          <Title
-            style={styles.price}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: '55%',
+              alignItems: 'center',
+            }}
             accessible
             accessibilityRole='text'
             accessibilityLabel={`purchase ${pattern[0]} pattern for ${price} coins`}
           >
-            {price}
-          </Title>
+            <Text style={styles.price}>{price}</Text>
+            <Image
+              source={coinIcon}
+              style={{
+                width: 25,
+                height: 25,
+              }}
+            />
+          </View>
         )}
       </Pressable>
     </>
@@ -89,7 +102,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 26,
     // borderWidth: 2,
-    paddingTop: 10,
   },
   name: {
     color: 'white',
