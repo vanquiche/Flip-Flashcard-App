@@ -176,7 +176,6 @@ const FlashCards = ({ navigation, route }: Props) => {
   };
 
   const savePositions = () => {
-    // console.log('saved positions list');
     const list: CardPosition = {
       ref: setRef,
       type: 'position',
@@ -187,24 +186,26 @@ const FlashCards = ({ navigation, route }: Props) => {
   };
 
   const syncData = useCallback(async () => {
-    // console.log(setRef)
-    if (screenTitle) {
-      navigation.setOptions({
-        title: screenTitle,
+    try {
+      if (screenTitle) {
+        navigation.setOptions({
+          title: screenTitle,
+        });
+        setName.current = screenTitle;
+      }
+      db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
+        categoryXP.current = !err && doc ? doc.points : 0;
       });
-      setName.current = screenTitle;
+      const data: any = await dispatch(
+        getCards({
+          type: 'flashcard',
+          query: { type: 'flashcard', setRef: setRef },
+        })
+      );
+      cardPosition.value = data.payload.positions;
+    } finally {
+      setIsLoading(false);
     }
-    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
-      categoryXP.current = !err && doc ? doc.points : 0;
-    });
-    const data: any = await dispatch(
-      getCards({
-        type: 'flashcard',
-        query: { type: 'flashcard', setRef: setRef },
-      })
-    );
-    cardPosition.value = data.payload.positions;
-    setIsLoading(false);
   }, [screenTitle, setRef, categoryRef]);
 
   // listen for changes in cardPosition and save any changes
@@ -220,16 +221,12 @@ const FlashCards = ({ navigation, route }: Props) => {
   );
 
   useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData()
-    }
+    syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
       setSortMode(false);
       setMultiSelectMode(false);
     });
     return () => {
-      unsubscribe = true;
       unsubscribeFocus;
     };
   }, [syncData]);

@@ -203,17 +203,20 @@ const Sets = ({ navigation, route }: Props) => {
   };
 
   const syncData = useCallback(async () => {
-    navigation.setOptions({
-      title: screenTitle,
-    });
-    const data: any = await dispatch(
-      getCards({
-        type: 'set',
-        query: { type: 'set', categoryRef: categoryRef },
-      })
-    );
-    cardPosition.value = data.payload.positions;
-    setIsLoading(false);
+    try {
+      navigation.setOptions({
+        title: screenTitle,
+      });
+      const data: any = await dispatch(
+        getCards({
+          type: 'set',
+          query: { type: 'set', categoryRef: categoryRef },
+        })
+      );
+      cardPosition.value = data.payload.positions;
+    } finally {
+      setIsLoading(false);
+    }
   }, [screenTitle, categoryRef]);
 
   useAnimatedReaction(
@@ -228,16 +231,12 @@ const Sets = ({ navigation, route }: Props) => {
   );
 
   useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData();
-    }
+    syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
       setSortMode(false);
       setMultiSelectMode(false);
     });
     return () => {
-      unsubscribe = true;
       unsubscribeFocus;
     };
   }, [syncData]);

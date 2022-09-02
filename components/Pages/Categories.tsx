@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, InteractionManager } from 'react-native';
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
@@ -113,11 +113,11 @@ const Categories = ({ navigation }: Props) => {
         createdAt: DateTime.now().toISO(),
         points: 0,
       };
+      closeDialog();
       cardPosition.value = addToPositions(cardPosition.value, id);
 
       dispatch(addCategoryCard(newDoc));
     }
-    closeDialog();
   };
 
   const editCategory = (category: Category) => {
@@ -135,7 +135,6 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const deleteCategory = (id: string) => {
-    cardPosition.value = removeFromPositions(cardPosition.value, id);
     dispatch(removeCard({ id, type: 'category' }));
     dispatch(removeFavorite(id));
     deleteChildPosition(id, 'root');
@@ -207,16 +206,12 @@ const Categories = ({ navigation }: Props) => {
   );
 
   useEffect(() => {
-    let unsubscribe = false;
-    if (!unsubscribe) {
-      syncData();
-    }
+    syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
       setSortCardMode(false);
       setMultiSelectMode(false);
     });
     return () => {
-      unsubscribe = true;
       unsubscribeFocus;
     };
   }, [syncData]);
