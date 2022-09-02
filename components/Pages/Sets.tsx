@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, InteractionManager } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 
@@ -33,7 +33,6 @@ import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
-import { useFocusEffect } from '@react-navigation/native';
 import { useSharedValue } from 'react-native-reanimated';
 import {
   addToPositions,
@@ -106,6 +105,7 @@ const Sets = ({ navigation, route }: Props) => {
 
     // create payload to dispatch into db
     if (!exist) {
+      closeDialog();
       const id = uuid.v4().toString();
       const newSet: Set = {
         _id: id,
@@ -117,14 +117,17 @@ const Sets = ({ navigation, route }: Props) => {
         createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
       };
-      dispatch(addSetCard(newSet));
+      InteractionManager.runAfterInteractions(() => {
+        dispatch(addSetCard(newSet));
+      });
       cardPosition.value = addToPositions(cardPosition.value, id);
     }
-    closeDialog();
   };
 
   const deleteSet = (id: string) => {
-    dispatch(removeCard({ id, type: 'set' }));
+    InteractionManager.runAfterInteractions(() => {
+      dispatch(removeCard({ id, type: 'set' }));
+    });
     cardPosition.value = removeFromPositions(cardPosition.value, id);
     deleteChildPosition(id, 'ref');
   };
@@ -167,9 +170,11 @@ const Sets = ({ navigation, route }: Props) => {
 
   const deleteSelection = useCallback(() => {
     cancelMultiDeletion();
-    for (let i = 0; i < selection.length; i++) {
-      dispatch(removeCard({ id: selection[i], type: 'set' }));
-    }
+    InteractionManager.runAfterInteractions(() => {
+      for (let i = 0; i < selection.length; i++) {
+        dispatch(removeCard({ id: selection[i], type: 'set' }));
+      }
+    });
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
     multiDeleteChildPosition(selection, 'ref');
   }, [selection]);
@@ -227,7 +232,8 @@ const Sets = ({ navigation, route }: Props) => {
           runOnJS(savePositions)();
         }
       }
-    }
+    },
+    [cardPosition.value]
   );
 
   useEffect(() => {

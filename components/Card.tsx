@@ -160,7 +160,7 @@ const Card = ({
         onPress={multiSelect ? toggleSelection : flipCard}
         exiting={ZoomOut}
         entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
-        layout={Layout.springify().damping(15).delay(200)}
+        // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityLabel={
           cardFacingFront

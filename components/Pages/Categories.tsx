@@ -101,6 +101,7 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const addNewCategory = () => {
+    closeDialog();
     const exist = checkDuplicate(category.name, 'name', cards.category);
 
     if (!exist) {
@@ -113,10 +114,10 @@ const Categories = ({ navigation }: Props) => {
         createdAt: DateTime.now().toISO(),
         points: 0,
       };
-      closeDialog();
       cardPosition.value = addToPositions(cardPosition.value, id);
-
-      dispatch(addCategoryCard(newDoc));
+      InteractionManager.runAfterInteractions(() => {
+        dispatch(addCategoryCard(newDoc));
+      });
     }
   };
 
@@ -135,9 +136,12 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const deleteCategory = (id: string) => {
-    dispatch(removeCard({ id, type: 'category' }));
-    dispatch(removeFavorite(id));
-    deleteChildPosition(id, 'root');
+    InteractionManager.runAfterInteractions(() => {
+      dispatch(removeCard({ id, type: 'category' }));
+      dispatch(removeFavorite(id));
+      deleteChildPosition(id, 'root');
+    });
+    cardPosition.value = removeFromPositions(cardPosition.value, id);
   };
 
   const selectColor = useCallback((color: string) => {
@@ -158,10 +162,12 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const deleteSelection = useCallback(() => {
-    for (let i = 0; i < selection.length; i++) {
-      dispatch(removeCard({ id: selection[i], type: 'category' }));
-      dispatch(removeFavorite(selection[i]));
-    }
+    InteractionManager.runAfterInteractions(() => {
+      for (let i = 0; i < selection.length; i++) {
+        dispatch(removeCard({ id: selection[i], type: 'category' }));
+        dispatch(removeFavorite(selection[i]));
+      }
+    });
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
     multiDeleteChildPosition(selection, 'root');
     cancelMultiDeletion();
@@ -202,7 +208,8 @@ const Categories = ({ navigation }: Props) => {
           runOnJS(savePositions)();
         }
       }
-    }
+    },
+    [cardPosition.value]
   );
 
   useEffect(() => {

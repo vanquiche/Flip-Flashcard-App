@@ -4,6 +4,7 @@ import React, { useContext, useMemo } from 'react';
 import { DateTime, WeekdayNumbers } from 'luxon';
 import { AntDesign } from '@expo/vector-icons';
 import swatchContext from '../contexts/swatchContext';
+import fontColorContrast from 'font-color-contrast';
 
 const displayWeek = [
   { name: 'S', date: 7 },
@@ -110,7 +111,7 @@ const LoginGoal = ({ dates, streak }: Props) => {
                   justifyContent: 'center',
                   fontSize: 24,
                   zIndex: 30,
-                  color: theme.fontColor,
+                  color: loggedInDay?.loggedIn ? fontColorContrast('yellow', 0.6): theme.fontColor,
                 }}
               >
                 {d.name}

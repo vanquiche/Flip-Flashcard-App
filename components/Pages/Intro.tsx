@@ -28,11 +28,9 @@ const Intro = ({ navigation }: Props) => {
     {
       key: 2,
 
-      image: require('../../assets/images/walkthrough-slide_002.png'),
-      // backgroundColor: 'lightblue',
       title: 'Data + Charts = \u2764',
       text: 'Track your progress over time.',
-      // image: require('../../assets/images/walkthrough-slide_004.png'),
+      image: require('../../assets/images/walkthrough-slide_002.png'),
       backgroundColor: 'lightblue',
     },
     {

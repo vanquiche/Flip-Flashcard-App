@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { InteractionManager, View } from 'react-native';
 import React, {
   useState,
   useEffect,
@@ -109,6 +109,7 @@ const FlashCards = ({ navigation, route }: Props) => {
     const exist = checkDuplicate(flashcard.prompt, 'prompt', cards.flashcard);
 
     if (!exist) {
+      closeDialog();
       const id = uuid.v4().toString();
       const newCard: Flashcard = {
         _id: id,
@@ -119,14 +120,17 @@ const FlashCards = ({ navigation, route }: Props) => {
         categoryRef: categoryRef,
         setRef: setRef,
       };
-      dispatch(addFlashCard(newCard));
+      InteractionManager.runAfterInteractions(() => {
+        dispatch(addFlashCard(newCard));
+      });
       cardPosition.value = addToPositions(cardPosition.value, id);
     }
-    closeDialog();
   };
 
   const deleteCard = (id: string) => {
-    dispatch(removeCard({ id, type: 'flashcard' }));
+    InteractionManager.runAfterInteractions(() => {
+      dispatch(removeCard({ id, type: 'flashcard' }));
+    });
     cardPosition.value = removeFromPositions(cardPosition.value, id);
   };
 
@@ -160,9 +164,11 @@ const FlashCards = ({ navigation, route }: Props) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     cancelMultiDeletion();
-    for (let i = 0; i < selection.length; i++) {
-      dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
-    }
+    InteractionManager.runAfterInteractions(() => {
+      for (let i = 0; i < selection.length; i++) {
+        dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
+      }
+    });
     cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
   };
 
@@ -217,7 +223,8 @@ const FlashCards = ({ navigation, route }: Props) => {
           runOnJS(savePositions)();
         }
       }
-    }
+    },
+    [cardPosition.value]
   );
 
   useEffect(() => {
@@ -259,8 +266,6 @@ const FlashCards = ({ navigation, route }: Props) => {
           }}
           onPress={() => setStartQuiz(true)}
           disabled={cards.flashcard.length === 0 || sortMode}
-          accessible={true}
-          accessibilityRole='button'
           accessibilityHint='start quiz'
           accessibilityState={{
             disabled: cards.flashcard.length === 0 || sortMode,
