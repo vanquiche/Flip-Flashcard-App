@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Image } from 'react-native';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { Button, Title } from 'react-native-paper';
+import React, { useCallback, useContext, useState } from 'react';
+import { Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { updateUser } from '../../redux/userThunkActions';
@@ -14,7 +14,6 @@ import { STORE_THEMES } from '../../assets/theme/userTheme';
 
 import ShopSwatchPattern from '../ShopSwatchPattern';
 import ShopTheme from '../ShopTheme';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { CountUp } from 'use-count-up';
 
 import { Theme } from '../types';
@@ -166,7 +165,6 @@ const Shop = () => {
           right: 15,
           top: 10,
           flexDirection: 'row',
-          // borderWidth: 2,
           paddingHorizontal: 4,
           shadowOffset: {
             width: 2,
@@ -190,12 +188,6 @@ const Shop = () => {
             isCounting={countUpValue.start !== countUpValue.end}
           />
         </Title>
-        {/* <FontAwesome5
-            name='coins'
-            size={20}
-            color={theme.fontColor}
-            style={{ position: 'absolute', right: 12, top: 28 }}
-          /> */}
         <Image
           source={coinIcon}
           style={{

@@ -105,22 +105,25 @@ const LoginGoal = ({ dates, streak }: Props) => {
               }
             >
               <Text
-                style={[
-                  {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 24,
-                    zIndex: 30,
-                  },
-                  loggedInDay?.loggedIn
-                    ? { color: theme.cardColor }
-                    : { color: theme.fontColor },
-                ]}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24,
+                  zIndex: 30,
+                  color: theme.fontColor,
+                }}
               >
                 {d.name}
               </Text>
               {loggedInDay?.loggedIn && (
-                <View style={{ position: 'absolute', top: -3, right: 1, zIndex: 10 }}>
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -3,
+                    right: 1,
+                    zIndex: 10,
+                  }}
+                >
                   <AntDesign name='star' size={38} color='yellow' />
                 </View>
               )}
@@ -150,13 +153,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    overflow: 'visible'
+    overflow: 'visible',
   },
   weekContainer: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   dayCard: {
     margin: 5,

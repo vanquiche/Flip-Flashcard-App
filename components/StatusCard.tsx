@@ -15,7 +15,7 @@ interface Props {
 const StatusCard = ({ bgColor, fontColor, user, levelUpCondition, hour }: Props) => {
   const dt = DateTime;
   const weekDay = dt.now().weekdayShort.toUpperCase();
-  const dayCycle = hour > 17 ? 'moon' : 'sunny';
+  const dayCycle = hour >= 17 ? 'moon' :  hour < 5 ? 'moon' : 'sunny';
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
   return (

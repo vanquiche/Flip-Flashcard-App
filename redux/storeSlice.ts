@@ -232,7 +232,7 @@ export const storeSlice = createSlice({
           Object.assign(state.user, action.payload);
           if (action.payload.inStreak) {
             state.notification.show = true;
-            state.notification.message = 'login streak bonus: 5 heartcoins';
+            state.notification.message = 'login streak bonus: \n5 heartcoins';
           }
         }
         // return original state if no payload recieved

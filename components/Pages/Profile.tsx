@@ -29,36 +29,12 @@ const Profile = ({ navigation }: Props) => {
 
   const fontColor = fontColorContrast(theme.bgColor, 0.6);
 
-  // const lastLoginDate = DateTime.fromISO(
-  //   user.login[user.login.length - 1]
-  // ).toFormat('ff');
-
   // const deleteCurrentUser = () => {
   //   dispatch(deleteUser());
   // };
 
   return (
     <View style={s.screenWrapper}>
-      {/* <Button
-        style={{ position: 'absolute', right: 0 }}
-        onPress={() => navigation.navigate('Themes')}
-        accessible={true}
-        accessibilityRole='button'
-        accessibilityHint='navigate to themes screen'
-        accessibilityLabel='themes'
-      > */}
-        {/* <IconButton
-          style={{ position: 'absolute', right: 0 }}
-          size={32}
-          icon='brush-variant'
-          color={fontColor}
-        /> */}
-
-        {/* <FontAwesome5 name='paint-roller' size={24} color={fontColor} />
-      </Button> */}
-
-      {/* <Text>Last Login: {lastLoginDate}</Text> */}
-
       {/* <Button
       mode='text'
       color='tomato'
