@@ -15,10 +15,10 @@ const sortWeek = (week: string[]) => {
   if (loginDay === today) {
     // if same day then do nothing
     return week;
-  } else if (week.length > 6 || weekExpired || startOfNewWeek) {
+  } else if (weekExpired || startOfNewWeek) {
     // if login days are not in same week
     // if week have exceeded 7 logins
-    // if new week has started i.e. Sunday 
+    // if new week has started i.e. Sunday
     return [dt.now().toISO()];
   } else return week.concat(dt.now().toISO())
 };

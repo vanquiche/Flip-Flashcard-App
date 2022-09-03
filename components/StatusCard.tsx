@@ -10,12 +10,18 @@ interface Props {
   fontColor?: string;
   user: User;
   levelUpCondition: number;
-  hour: number
+  hour: number;
 }
-const StatusCard = ({ bgColor, fontColor, user, levelUpCondition, hour }: Props) => {
+const StatusCard = ({
+  bgColor,
+  fontColor,
+  user,
+  levelUpCondition,
+  hour,
+}: Props) => {
   const dt = DateTime;
   const weekDay = dt.now().weekdayShort.toUpperCase();
-  const dayCycle = hour >= 17 ? 'moon' :  hour < 5 ? 'moon' : 'sunny';
+  const dayCycle = hour >= 17 ? 'moon' : hour < 5 ? 'moon' : 'sunny';
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
   return (
@@ -31,9 +37,7 @@ const StatusCard = ({ bgColor, fontColor, user, levelUpCondition, hour }: Props)
         HELLO {user.username?.toUpperCase()}
       </Title>
 
-      <View
-        style={styles.info}
-      >
+      <View style={styles.info}>
         <Ionicons
           name={dayCycle}
           size={28}
@@ -74,4 +78,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StatusCard;
+export default React.memo(StatusCard, (prev, next) => {
+  if (prev.hour === next.hour) return true;
+  else return false;
+});

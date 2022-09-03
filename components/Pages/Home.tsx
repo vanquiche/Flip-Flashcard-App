@@ -82,10 +82,10 @@ const Home = ({ navigation }: Props) => {
   }, []);
 
 
+  const hour = dt.now().hour;
+  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
   useFocusEffect(
     useCallback(() => {
-      const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
-      const hour = dt.now().hour;
       if (hour !== dayCycle) {
         setDayCycle(hour)
       }
@@ -98,7 +98,7 @@ const Home = ({ navigation }: Props) => {
           })
         );
       }
-    }, [])
+    }, [isSameDay, hour])
   );
 
   return (
