@@ -1,4 +1,4 @@
-import { View, StyleSheet, InteractionManager } from 'react-native';
+import { View, StyleSheet, InteractionManager, ActivityIndicator } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 
@@ -246,6 +246,10 @@ const Sets = ({ navigation, route }: Props) => {
       unsubscribeFocus;
     };
   }, [syncData]);
+
+  if (isLoading) {
+    return <ActivityIndicator size='large' />;
+  }
 
   return (
     <View style={{ flex: 1 }}>

@@ -6,7 +6,7 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-import { Button } from 'react-native-paper';
+import { ActivityIndicator, Button } from 'react-native-paper';
 import ActionDialog from '../ActionDialog';
 import Card from '../Card';
 import Quiz from '../Quiz';
@@ -237,6 +237,10 @@ const FlashCards = ({ navigation, route }: Props) => {
       unsubscribeFocus;
     };
   }, [syncData]);
+
+  if (isLoading) {
+    return <ActivityIndicator size='large' />
+  }
 
   return (
     <View style={{ flex: 1 }}>

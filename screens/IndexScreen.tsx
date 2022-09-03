@@ -1,5 +1,5 @@
-import { Image, StatusBar } from 'react-native';
-import React, { useEffect } from 'react';
+import { ActivityIndicator, Image, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
 // COMPONENTS
 import HomeScreen from './HomeScreen';
@@ -42,9 +42,10 @@ const SCALE_START = 1;
 const SCALE_END = 1.2;
 
 const IndexScreen = () => {
-  const { user, notification, loading } = useSelector(
+  const { user, notification } = useSelector(
     (state: RootState) => state.store
   );
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
 
   const homeIconSpin = useSharedValue(SPIN_START);
@@ -109,15 +110,27 @@ const IndexScreen = () => {
     dispatch(dismissNotification());
   };
 
+  const initializeData = async () => {
+    try {
+      await dispatch(hydrateData());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // HYDRATE DATA
   useEffect(() => {
-    dispatch(hydrateData());
+    initializeData();
   }, []);
 
   const statusBarColor =
     user && user._id
       ? fontColorContrast(theme.headerColor, 0.5)
       : fontColorContrast('lightblue', 0.5);
+
+  if (isLoading) {
+    return <ActivityIndicator size='large' />
+  }
 
   return (
     <swatchContext.Provider value={{ colors, patterns, theme }}>
