@@ -80,7 +80,7 @@ export const checkLogin = createAsyncThunk(
         // if user is in streak then increment
         // coins and streak count
         const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
-        const streak = inStreak ? payload.streak + 1 : 0;
+        const streak = payload.streak === 0 ? 1 : inStreak ? payload.streak + 1 : 0;
 
         const updateData: LoginObject = {
           streak: streak,

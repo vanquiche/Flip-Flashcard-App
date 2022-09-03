@@ -24,7 +24,7 @@ const SignUp = () => {
       achievements: [],
       completedQuiz: [],
       login: [dt.now().toISO()],
-      streak: 0,
+      streak: 1,
       theme: defaultTheme,
       stats: [],
       collection: {
