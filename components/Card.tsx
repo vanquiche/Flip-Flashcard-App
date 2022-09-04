@@ -38,7 +38,6 @@ interface Props {
   patternList: Record<string, any>;
   multiSelect: boolean;
   selectedForDeletion: boolean;
-  shouldAnimateEntry?: boolean;
   handleEdit: (card: Flashcard, id: string) => void;
   handleDelete: (docId: string) => void;
   handleColor?: () => void;
@@ -53,7 +52,6 @@ const Card = ({
   pattern,
   patternList,
   multiSelect,
-  shouldAnimateEntry,
   selectedForDeletion,
   handleEdit,
   handleDelete,
@@ -158,8 +156,8 @@ const Card = ({
           cardOpacityAnimatedStyle,
         ]}
         onPress={multiSelect ? toggleSelection : flipCard}
-        exiting={ZoomOut}
-        entering={shouldAnimateEntry ? SlideInLeft.delay(300) : undefined}
+        // exiting={ZoomOut}
+        // entering={FadeIn.delay(300)}
         // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityLabel={

@@ -8,6 +8,7 @@ import Animated, {
   SlideInLeft,
   ZoomOut,
   withSpring,
+  FadeIn,
 } from 'react-native-reanimated';
 import fontColorContrast from 'font-color-contrast';
 
@@ -31,7 +32,6 @@ interface Props {
   color?: string;
   card: Collection;
   multiSelect?: boolean;
-  shouldAnimateEntry?: boolean;
   selectedForDeletion: boolean;
   onPress?: () => void;
   handleColor?: () => void;
@@ -44,7 +44,6 @@ interface Props {
 const TitleCard = ({
   card,
   multiSelect,
-  shouldAnimateEntry,
   selectedForDeletion,
   disableActions,
   onPress,
@@ -96,11 +95,11 @@ const TitleCard = ({
         onPress={
           multiSelect ? toggleSelection : disableActions ? null : onPress
         }
-        exiting={ZoomOut}
-        entering={
-          shouldAnimateEntry ? SlideInLeft.delay(200).duration(350) : undefined
-        }
-        layout={Layout.springify().damping(15).delay(200)}
+        // exiting={ZoomOut}
+        // entering={
+        //   shouldAnimateEntry ? FadeIn.delay(200) : undefined
+        // }
+        // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityRole='button'
         accessibilityLabel={`card for ${card.name}`}

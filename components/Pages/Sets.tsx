@@ -1,4 +1,9 @@
-import { View, StyleSheet, InteractionManager, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  InteractionManager,
+  ActivityIndicator,
+} from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 
@@ -207,22 +212,19 @@ const Sets = ({ navigation, route }: Props) => {
     saveCardPosition(list);
   };
 
-  const syncData = useCallback(async () => {
-    try {
-      navigation.setOptions({
-        title: screenTitle,
-      });
-      const data: any = await dispatch(
-        getCards({
-          type: 'set',
-          query: { type: 'set', categoryRef: categoryRef },
-        })
-      );
-      cardPosition.value = data.payload.positions;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [screenTitle, categoryRef]);
+  async function syncData() {
+    navigation.setOptions({
+      title: screenTitle,
+    });
+    const data: any = await dispatch(
+      getCards({
+        type: 'set',
+        query: { type: 'set', categoryRef: categoryRef },
+      })
+    );
+    cardPosition.value = data.payload.positions;
+    setIsLoading(false);
+  }
 
   useAnimatedReaction(
     () => cardPosition.value,
@@ -239,14 +241,15 @@ const Sets = ({ navigation, route }: Props) => {
   useEffect(() => {
     syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
-      setSortMode(false);
-      setMultiSelectMode(false);
+      if (sortMode || multiSelectMode) {
+        setSortMode(false);
+        setMultiSelectMode(false);
+      }
     });
     return () => {
       unsubscribeFocus;
     };
-  }, [syncData]);
-
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -273,14 +276,13 @@ const Sets = ({ navigation, route }: Props) => {
         message='DELETE SELECTED SETS?'
       />
 
-      {!isLoading && (
-        <DragSortList
-          scrollY={scrollY}
-          scrollViewHeight={cards.set.length * SCROLLVIEW_ITEM_HEIGHT}
-          onLayout={(e) => measureOffset(e, setScrollViewOffset)}
-        >
-          {cards.set.map((set: Set, i) => {
-            // console.log(setCardPositions.value)
+      <DragSortList
+        scrollY={scrollY}
+        scrollViewHeight={cards.set.length * SCROLLVIEW_ITEM_HEIGHT}
+        onLayout={(e) => measureOffset(e, setScrollViewOffset)}
+      >
+        {!isLoading &&
+          cards.set.map((set: Set) => {
             return (
               <DraggableWrapper
                 key={set._id}
@@ -302,7 +304,6 @@ const Sets = ({ navigation, route }: Props) => {
                   handleEdit={editSet}
                   markForDelete={selectItem}
                   handleDelete={deleteSet}
-                  shouldAnimateEntry={renderCount.current > 4 ? true : false}
                   selectedForDeletion={selection.includes(set._id)}
                   disableActions={multiSelectMode || sortMode}
                   onPress={() =>
@@ -318,8 +319,7 @@ const Sets = ({ navigation, route }: Props) => {
               </DraggableWrapper>
             );
           })}
-        </DragSortList>
-      )}
+      </DragSortList>
 
       {/* ADD/EDIT CATEGORY DIALOG */}
       <ActionDialog

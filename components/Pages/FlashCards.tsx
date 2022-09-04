@@ -109,7 +109,6 @@ const FlashCards = ({ navigation, route }: Props) => {
     const exist = checkDuplicate(flashcard.prompt, 'prompt', cards.flashcard);
 
     if (!exist) {
-      closeDialog();
       const id = uuid.v4().toString();
       const newCard: Flashcard = {
         _id: id,
@@ -120,18 +119,17 @@ const FlashCards = ({ navigation, route }: Props) => {
         categoryRef: categoryRef,
         setRef: setRef,
       };
-      InteractionManager.runAfterInteractions(() => {
-        dispatch(addFlashCard(newCard));
-      });
       cardPosition.value = addToPositions(cardPosition.value, id);
+      setTimeout(() => dispatch(addFlashCard(newCard)), 290);
     }
+    closeDialog();
   };
 
   const deleteCard = (id: string) => {
+    cardPosition.value = removeFromPositions(cardPosition.value, id);
     InteractionManager.runAfterInteractions(() => {
       dispatch(removeCard({ id, type: 'flashcard' }));
     });
-    cardPosition.value = removeFromPositions(cardPosition.value, id);
   };
 
   const editCard = (card: Flashcard) => {
@@ -164,12 +162,17 @@ const FlashCards = ({ navigation, route }: Props) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     cancelMultiDeletion();
+    requestAnimationFrame(() => {
+      cardPosition.value = removeManyFromPositions(
+        cardPosition.value,
+        selection
+      );
+    });
     InteractionManager.runAfterInteractions(() => {
       for (let i = 0; i < selection.length; i++) {
         dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
       }
     });
-    cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
   };
 
   const startMultiSelectMode = () => {
@@ -191,28 +194,27 @@ const FlashCards = ({ navigation, route }: Props) => {
     saveCardPosition(list);
   };
 
-  const syncData = useCallback(async () => {
-    try {
-      if (screenTitle) {
-        navigation.setOptions({
-          title: screenTitle,
-        });
-        setName.current = screenTitle;
-      }
-      db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
-        categoryXP.current = !err && doc ? doc.points : 0;
+  async function syncData() {
+    const data: any = await dispatch(
+      getCards({
+        type: 'flashcard',
+        query: { type: 'flashcard', setRef: setRef },
+      })
+    );
+    cardPosition.value = data.payload.positions;
+
+    if (screenTitle) {
+      navigation.setOptions({
+        title: screenTitle,
       });
-      const data: any = await dispatch(
-        getCards({
-          type: 'flashcard',
-          query: { type: 'flashcard', setRef: setRef },
-        })
-      );
-      cardPosition.value = data.payload.positions;
-    } finally {
-      setIsLoading(false);
+      setName.current = screenTitle;
     }
-  }, [screenTitle, setRef, categoryRef]);
+    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
+      categoryXP.current = !err && doc ? doc.points : 0;
+    });
+
+    setIsLoading(false);
+  }
 
   // listen for changes in cardPosition and save any changes
   useAnimatedReaction(
@@ -230,13 +232,15 @@ const FlashCards = ({ navigation, route }: Props) => {
   useEffect(() => {
     syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
-      setSortMode(false);
-      setMultiSelectMode(false);
+      if (sortMode || multiSelectMode) {
+        setSortMode(false);
+        setMultiSelectMode(false);
+      }
     });
     return () => {
       unsubscribeFocus;
     };
-  }, [syncData]);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -296,13 +300,13 @@ const FlashCards = ({ navigation, route }: Props) => {
         message='DELETE SELECTED SETS?'
       />
 
-      {!isLoading && (
-        <DragSortList
-          scrollY={scrollY}
-          scrollViewHeight={cards.flashcard.length * SCROLLVIEW_ITEM_HEIGHT}
-          onLayout={(e) => measureOffset(e, setScrollViewOffset)}
-        >
-          {cards.flashcard.map((card: Flashcard) => {
+      <DragSortList
+        scrollY={scrollY}
+        scrollViewHeight={cards.flashcard.length * SCROLLVIEW_ITEM_HEIGHT}
+        onLayout={(e) => measureOffset(e, setScrollViewOffset)}
+      >
+        {!isLoading &&
+          cards.flashcard.map((card: Flashcard) => {
             return (
               <DraggableWrapper
                 key={card._id}
@@ -327,15 +331,14 @@ const FlashCards = ({ navigation, route }: Props) => {
                   handleEdit={editCard}
                   handleDelete={deleteCard}
                   markForDelete={selectItem}
-                  shouldAnimateEntry={renderCount.current > 3 ? true : false}
                   selectedForDeletion={selection.includes(card._id)}
                   disableActions={sortMode || multiSelectMode}
                 />
               </DraggableWrapper>
             );
           })}
-        </DragSortList>
-      )}
+      </DragSortList>
+
       <ActionDialog
         visible={showDialog}
         dismiss={() => setShowDialog(false)}

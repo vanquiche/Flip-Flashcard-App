@@ -215,13 +215,15 @@ const Categories = ({ navigation }: Props) => {
   useEffect(() => {
     syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
-      setSortCardMode(false);
-      setMultiSelectMode(false);
+      if ((sortCardMode || multiSelectMode)) {
+        setSortCardMode(false);
+        setMultiSelectMode(false);
+      }
     });
     return () => {
       unsubscribeFocus;
     };
-  }, [syncData]);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -273,7 +275,6 @@ const Categories = ({ navigation }: Props) => {
                 handleEdit={editCategory}
                 markForDelete={selectItem}
                 handleDelete={deleteCategory}
-                shouldAnimateEntry={true}
                 selectedForDeletion={selection.includes(category._id)}
                 disableActions={multiSelectMode || sortCardMode}
                 onPress={() => {
