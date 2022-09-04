@@ -21,7 +21,7 @@ const StatusCard = ({
 }: Props) => {
   const dt = DateTime;
   const weekDay = dt.now().weekdayShort.toUpperCase();
-  const dayCycle = hour >= 17 ? 'moon' : hour < 5 ? 'moon' : 'sunny';
+  const dayCycle = hour >= 16 ? 'moon' : hour < 5 ? 'moon' : 'sunny';
 
   const level = user.xp / 100 < 1 ? 1 : Math.floor(user.xp / levelUpCondition);
   return (
@@ -78,7 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(StatusCard, (prev, next) => {
-  if (prev.hour === next.hour) return true;
-  else return false;
-});
+export default StatusCard;

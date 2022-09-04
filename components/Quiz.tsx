@@ -303,6 +303,7 @@ const Quiz = ({
                     style={styles.input}
                     activeOutlineColor='black'
                     outlineColor='lightgrey'
+                    autoComplete='off'
                     label='ANSWER'
                     maxLength={42}
                     onChange={({ nativeEvent: { text } }) => setAnswer(text)}

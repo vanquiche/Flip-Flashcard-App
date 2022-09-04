@@ -238,10 +238,6 @@ const FlashCards = ({ navigation, route }: Props) => {
     };
   }, [syncData]);
 
-  if (isLoading) {
-    return <ActivityIndicator size='large' />
-  }
-
   return (
     <View style={{ flex: 1 }}>
       {/* CONTROL BUTTONS  */}

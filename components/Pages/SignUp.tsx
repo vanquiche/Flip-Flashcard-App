@@ -64,7 +64,7 @@ const SignUp = () => {
             style={styles.input}
             outlineColor='transparent'
             activeOutlineColor='#499feb'
-            maxLength={32}
+            maxLength={20}
             value={newUser}
             onChangeText={(text) => setNewUser(text)}
           />

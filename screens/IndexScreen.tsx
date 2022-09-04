@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, StatusBar } from 'react-native';
+import { ActivityIndicator, Image, StatusBar, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 // COMPONENTS
@@ -42,9 +42,7 @@ const SCALE_START = 1;
 const SCALE_END = 1.2;
 
 const IndexScreen = () => {
-  const { user, notification } = useSelector(
-    (state: RootState) => state.store
-  );
+  const { user, notification } = useSelector((state: RootState) => state.store);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -129,7 +127,11 @@ const IndexScreen = () => {
       : fontColorContrast('lightblue', 0.5);
 
   if (isLoading) {
-    return <ActivityIndicator size='large' />
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
   }
 
   return (
