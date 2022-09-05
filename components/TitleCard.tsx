@@ -98,9 +98,9 @@ const TitleCard = ({
           multiSelect ? toggleSelection : disableActions ? null : onPress
         }
         // exiting={ZoomOut}
-        entering={
-          animateEntry ? SlideInLeft.delay(200) : undefined
-        }
+        // entering={
+        //   shouldAnimateEntry ? FadeIn.delay(200) : undefined
+        // }
         // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityRole='button'
