@@ -46,14 +46,14 @@ const Results = ({ total, set, score, pointTotal, dismiss }: Props) => {
     const awardedPoints = (categoryPoints / pointTotal) * 100;
     if (categoryPoints > pointTotal) {
       const subtraction = categoryPoints.toString().split('').splice(1).join('');
-      return parseInt(subtraction);
-    } else return awardedPoints;
+      return Math.floor(parseInt(subtraction));
+    } else return Math.floor(awardedPoints);
   }, [categoryPoints, pointTotal]);
 
   // start animation value
-  const xpStart = getXPpercent - score;
+  const xpStart = Math.floor(getXPpercent - score);
   // end animation value
-  const xpEnd = getXPpercent + score;
+  const xpEnd = Math.floor(getXPpercent + score);
 
   const progressBarStart = useSharedValue(xpStart);
   const progressBarAnim = useAnimatedStyle(() => {
