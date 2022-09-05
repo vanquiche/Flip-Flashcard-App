@@ -10,6 +10,7 @@ import { Button, Text, Title } from 'react-native-paper';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
 import FavoriteCard from '../FavoriteCard';
+import { AntDesign } from '@expo/vector-icons';
 
 import { Set, StackNavigationTypes } from '../types';
 import fontColorContrast from 'font-color-contrast';
@@ -82,12 +83,12 @@ const Home = ({ navigation }: Props) => {
   }, []);
 
   const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
-  
+
   useFocusEffect(
     useCallback(() => {
       const hour = dt.now().hour;
       if (hour !== dayCycle) {
-        setDayCycle(hour)
+        setDayCycle(hour);
       }
       if (!isSameDay) {
         dispatch(
@@ -165,6 +166,19 @@ const Home = ({ navigation }: Props) => {
         <Title style={{ textAlign: 'center', color: titleColor }}>
           FAVORITE SETS
         </Title>
+        {favoriteSets.length > 2 && (
+          <AntDesign
+            name='caretright'
+            size={24}
+            color='black'
+            style={{
+              position: 'absolute',
+              left: dimension.width * 0.9,
+              bottom: '35%',
+              zIndex: 100,
+            }}
+          />
+        )}
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -189,6 +203,7 @@ const Home = ({ navigation }: Props) => {
               NO FAVORITES
             </Text>
           )}
+
           {favoriteSets
             .filter((fav) => fav.favorite === true)
             .map((set) => {
