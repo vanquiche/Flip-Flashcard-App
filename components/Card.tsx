@@ -158,7 +158,7 @@ const Card = ({
           cardOpacityAnimatedStyle,
         ]}
         onPress={multiSelect ? toggleSelection : flipCard}
-        // exiting={ZoomOut}
+        exiting={ZoomOut}
         entering={animateEntry ? SlideInLeft.delay(200) : undefined}
         // layout={Layout.springify().damping(15).delay(200)}
         accessible
