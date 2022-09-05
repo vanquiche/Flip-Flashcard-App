@@ -25,7 +25,7 @@ const AlertNotification = ({
         overlayAccessibilityLabel={message}
       >
         <Title
-          style={{ color: textColor }}
+          style={{ color: textColor, textAlign: 'center' }}
           accessible={true}
           accessibilityRole='text'
           accessibilityLabel={message}

@@ -39,11 +39,7 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
       </View>
 
       {/* current level */}
-      <Title
-        style={{ color: progressColor, marginRight: 0 }}
-      >
-        {level}
-      </Title>
+      <Title style={{ color: progressColor, marginRight: 0 }}>{level}</Title>
 
       {/* progress bar container */}
       <View
@@ -63,11 +59,7 @@ const PointTracker = ({ total, points, title, progressColor }: Props) => {
       </View>
 
       {/* next level */}
-      <Title
-        style={{ color: progressColor, marginLeft: 0 }}
-      >
-        {level + 1}
-      </Title>
+      <Title style={{ color: progressColor, marginLeft: 0 }}>{level + 1}</Title>
     </View>
   );
 };
@@ -101,7 +93,11 @@ const styles = StyleSheet.create({
 });
 
 export default React.memo(PointTracker, (prev, next) => {
-  if (prev.points === next.points && prev.progressColor === next.progressColor)
+  if (
+    prev.points === next.points &&
+    prev?.title === next?.title &&
+    prev.progressColor === next.progressColor
+  )
     return true;
   return false;
 });

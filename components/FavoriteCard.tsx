@@ -36,7 +36,7 @@ const FavoriteCard = ({ card, onPress, width, parentName }: Props) => {
       accessibilityLabel={'favorite set: ' + card.name}
       accessibilityHint={'navigate to set: ' + card.name}
     >
-      <Text style={{ color: _fontColor, zIndex: 100 }}>{parentName}</Text>
+      <Text style={{ color: _fontColor, zIndex: 100, fontSize: 18 }}>{parentName}</Text>
       <Title style={[styles.textContent, { color: _fontColor }]}>
         {card.name}
       </Title>
