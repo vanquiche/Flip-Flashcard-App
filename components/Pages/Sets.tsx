@@ -122,10 +122,8 @@ const Sets = ({ navigation, route }: Props) => {
         createdAt: DateTime.now().toISO(),
         categoryRef: categoryRef,
       };
-      InteractionManager.runAfterInteractions(() => {
-        dispatch(addSetCard(newSet));
-      });
       cardPosition.value = addToPositions(cardPosition.value, id);
+      setTimeout(() => dispatch(addSetCard(newSet)), 290);
     }
   };
 

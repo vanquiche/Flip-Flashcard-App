@@ -115,9 +115,7 @@ const Categories = ({ navigation }: Props) => {
         points: 0,
       };
       cardPosition.value = addToPositions(cardPosition.value, id);
-      InteractionManager.runAfterInteractions(() => {
-        dispatch(addCategoryCard(newDoc));
-      });
+      setTimeout(() => dispatch(addCategoryCard(newDoc)), 290);
     }
   };
 
@@ -139,9 +137,9 @@ const Categories = ({ navigation }: Props) => {
     InteractionManager.runAfterInteractions(() => {
       dispatch(removeCard({ id, type: 'category' }));
       dispatch(removeFavorite(id));
-      deleteChildPosition(id, 'root');
     });
     cardPosition.value = removeFromPositions(cardPosition.value, id);
+    deleteChildPosition(id, 'root');
   };
 
   const selectColor = useCallback((color: string) => {
@@ -215,7 +213,7 @@ const Categories = ({ navigation }: Props) => {
   useEffect(() => {
     syncData();
     const unsubscribeFocus = navigation.addListener('blur', () => {
-      if ((sortCardMode || multiSelectMode)) {
+      if (sortCardMode || multiSelectMode) {
         setSortCardMode(false);
         setMultiSelectMode(false);
       }
