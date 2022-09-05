@@ -1,5 +1,11 @@
-import { View, Text, StyleSheet, InteractionManager } from 'react-native';
-import React, { useState, useCallback, useContext, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import React, {
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 import uuid from 'react-native-uuid';
 import { DateTime } from 'luxon';
 import {
@@ -50,7 +56,6 @@ import { removeFavorite } from '../../redux/storeSlice';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
 import useRenderCounter from '../../hooks/useRenderCounter';
 
 const SCROLLVIEW_ITEM_HEIGHT = 165;
@@ -68,6 +73,8 @@ interface Props extends StackNavigationTypes {}
 
 const Categories = ({ navigation }: Props) => {
   const [category, setCategory] = useState(INITIAL_STATE);
+  const [isLoading, setIsLoading] = useState(true)
+  const animateEntryId = useRef('');
 
   // view state
   const [editMode, setEditMode] = useState(false);
@@ -89,8 +96,6 @@ const Categories = ({ navigation }: Props) => {
 
   // hooks
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  const { renderCount } = useRenderCounter();
-  renderCount.current++;
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -106,6 +111,7 @@ const Categories = ({ navigation }: Props) => {
 
     if (!exist) {
       const id = uuid.v4().toString();
+      animateEntryId.current = id;
       const newDoc: Category = {
         _id: id,
         name: category.name,
@@ -114,8 +120,9 @@ const Categories = ({ navigation }: Props) => {
         createdAt: DateTime.now().toISO(),
         points: 0,
       };
+      // delay adding card until cards have moved into updated position
       cardPosition.value = addToPositions(cardPosition.value, id);
-      setTimeout(() => dispatch(addCategoryCard(newDoc)), 290);
+      setTimeout(() => dispatch(addCategoryCard(newDoc)), 200);
     }
   };
 
@@ -133,14 +140,15 @@ const Categories = ({ navigation }: Props) => {
     closeDialog();
   };
 
-  const deleteCategory = (id: string) => {
-    InteractionManager.runAfterInteractions(() => {
-      dispatch(removeCard({ id, type: 'category' }));
-      dispatch(removeFavorite(id));
-    });
-    cardPosition.value = removeFromPositions(cardPosition.value, id);
+  const deleteCategory = useCallback((id: string) => {
+    dispatch(removeCard({ id, type: 'category' }));
+    dispatch(removeFavorite(id));
     deleteChildPosition(id, 'root');
-  };
+    // delay updating card positions until card has been removed for transition
+    setTimeout(() => {
+      cardPosition.value = removeFromPositions(cardPosition.value, id);
+    }, 100);
+  }, []);
 
   const selectColor = useCallback((color: string) => {
     setCategory((prev) => ({ ...prev, color }));
@@ -160,15 +168,21 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const deleteSelection = useCallback(() => {
-    InteractionManager.runAfterInteractions(() => {
-      for (let i = 0; i < selection.length; i++) {
-        dispatch(removeCard({ id: selection[i], type: 'category' }));
-        dispatch(removeFavorite(selection[i]));
-      }
-    });
-    cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
-    multiDeleteChildPosition(selection, 'root');
     cancelMultiDeletion();
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'category' }));
+      dispatch(removeFavorite(selection[i]));
+      // when operation is completed then update card positions
+      if (i === selection.length - 1) {
+        setTimeout(() => {
+          cardPosition.value = removeManyFromPositions(
+            cardPosition.value,
+            selection
+          );
+        }, 100);
+      }
+    }
+    multiDeleteChildPosition(selection, 'root');
   }, [selection]);
 
   const startMultiSelectMode = () => {
@@ -181,7 +195,6 @@ const Categories = ({ navigation }: Props) => {
   };
 
   const savePositions = () => {
-    // console.log('saved positions list');
     const list: CardPosition = {
       ref: 'categories',
       type: 'position',
@@ -191,12 +204,13 @@ const Categories = ({ navigation }: Props) => {
     saveCardPosition(list);
   };
 
-  const syncData = useCallback(async () => {
+  async function syncData() {
     const dbPositions = await getCardPosition('categories');
     if (dbPositions) {
       cardPosition.value = dbPositions.positions;
     }
-  }, []);
+    setIsLoading(false)
+  };
 
   useAnimatedReaction(
     () => cardPosition.value,
@@ -252,7 +266,7 @@ const Categories = ({ navigation }: Props) => {
         onLayout={(e) => measureOffset(e, setScrollViewOffset)}
         scrollY={scrollY}
       >
-        {cards.category.map((category: Category) => {
+        {!isLoading && cards.category.map((category: Category) => {
           return (
             <DraggableWrapper
               key={category._id}
@@ -281,6 +295,7 @@ const Categories = ({ navigation }: Props) => {
                     screenTitle: category.name,
                   });
                 }}
+                animateEntry={category._id === animateEntryId.current}
               />
             </DraggableWrapper>
           );

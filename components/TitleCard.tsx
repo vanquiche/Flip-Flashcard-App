@@ -39,6 +39,7 @@ interface Props {
   handleDelete: (docId: string) => void;
   markForDelete: (id: any, state: boolean) => void;
   disableActions?: boolean;
+  animateEntry?: boolean;
 }
 
 const TitleCard = ({
@@ -50,6 +51,7 @@ const TitleCard = ({
   handleEdit,
   handleDelete,
   markForDelete,
+  animateEntry
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const { patterns } = useContext(swatchContext);
@@ -96,9 +98,9 @@ const TitleCard = ({
           multiSelect ? toggleSelection : disableActions ? null : onPress
         }
         // exiting={ZoomOut}
-        // entering={
-        //   shouldAnimateEntry ? FadeIn.delay(200) : undefined
-        // }
+        entering={
+          animateEntry ? SlideInLeft.delay(200) : undefined
+        }
         // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityRole='button'

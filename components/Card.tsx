@@ -44,6 +44,7 @@ interface Props {
   onPress?: () => void;
   markForDelete: (id: any, state: boolean) => void;
   disableActions?: boolean;
+  animateEntry?: boolean;
 }
 
 const Card = ({
@@ -57,6 +58,7 @@ const Card = ({
   handleDelete,
   markForDelete,
   disableActions,
+  animateEntry
 }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const [cardFacingFront, setCardFacingFront] = useState(true);
@@ -157,7 +159,7 @@ const Card = ({
         ]}
         onPress={multiSelect ? toggleSelection : flipCard}
         // exiting={ZoomOut}
-        // entering={FadeIn.delay(300)}
+        entering={animateEntry ? SlideInLeft.delay(200) : undefined}
         // layout={Layout.springify().damping(15).delay(200)}
         accessible
         accessibilityLabel={

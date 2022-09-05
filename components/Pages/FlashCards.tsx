@@ -1,12 +1,11 @@
-import { InteractionManager, View } from 'react-native';
+import { View } from 'react-native';
 import React, {
   useState,
   useEffect,
   useRef,
   useContext,
-  useCallback,
 } from 'react';
-import { ActivityIndicator, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import ActionDialog from '../ActionDialog';
 import Card from '../Card';
 import Quiz from '../Quiz';
@@ -30,7 +29,6 @@ import {
 } from '../../redux/cardThunkActions';
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
-import useRenderCounter from '../../hooks/useRenderCounter';
 import CustomTextInput from '../CustomTextInput';
 import ModifcationBar from '../ModifcationBar';
 
@@ -65,6 +63,7 @@ interface Props extends StackNavigationTypes {}
 const FlashCards = ({ navigation, route }: Props) => {
   const { setRef, categoryRef, color, design, screenTitle } = route.params;
   const [flashcard, setFlashcard] = useState(INITIAL_STATE);
+  const animateEntryId = useRef('');
 
   // view states
   const [editMode, setEditMode] = useState(false);
@@ -92,9 +91,6 @@ const FlashCards = ({ navigation, route }: Props) => {
 
   // hooks
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  // counter to dictate whether cards and control bar should animate on mount
-  const { renderCount } = useRenderCounter();
-  renderCount.current++;
 
   const closeDialog = () => {
     setShowDialog(false);
@@ -110,6 +106,7 @@ const FlashCards = ({ navigation, route }: Props) => {
 
     if (!exist) {
       const id = uuid.v4().toString();
+      animateEntryId.current = id;
       const newCard: Flashcard = {
         _id: id,
         type: 'flashcard',
@@ -120,16 +117,18 @@ const FlashCards = ({ navigation, route }: Props) => {
         setRef: setRef,
       };
       cardPosition.value = addToPositions(cardPosition.value, id);
-      setTimeout(() => dispatch(addFlashCard(newCard)), 290);
+      // delay adding card until cards have moved into their updated positions
+      setTimeout(() => dispatch(addFlashCard(newCard)), 200);
     }
     closeDialog();
   };
 
   const deleteCard = (id: string) => {
-    cardPosition.value = removeFromPositions(cardPosition.value, id);
-    InteractionManager.runAfterInteractions(() => {
-      dispatch(removeCard({ id, type: 'flashcard' }));
-    });
+    dispatch(removeCard({ id, type: 'flashcard' }));
+    // once card has been removed then update positions for smooth transition
+    setTimeout(() => {
+      cardPosition.value = removeFromPositions(cardPosition.value, id);
+    }, 300);
   };
 
   const editCard = (card: Flashcard) => {
@@ -162,17 +161,18 @@ const FlashCards = ({ navigation, route }: Props) => {
   const deleteSelection = () => {
     // cycle through selection and delete each ID
     cancelMultiDeletion();
-    requestAnimationFrame(() => {
-      cardPosition.value = removeManyFromPositions(
-        cardPosition.value,
-        selection
-      );
-    });
-    InteractionManager.runAfterInteractions(() => {
-      for (let i = 0; i < selection.length; i++) {
-        dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'flashcard' }));
+      if (i === selection.length - 1) {
+        // after operation has completed, update card positions
+        setTimeout(() => {
+          cardPosition.value = removeManyFromPositions(
+            cardPosition.value,
+            selection
+          );
+        }, 100);
       }
-    });
+    }
   };
 
   const startMultiSelectMode = () => {
@@ -333,6 +333,7 @@ const FlashCards = ({ navigation, route }: Props) => {
                   markForDelete={selectItem}
                   selectedForDeletion={selection.includes(card._id)}
                   disableActions={sortMode || multiSelectMode}
+                  animateEntry={animateEntryId.current === card._id}
                 />
               </DraggableWrapper>
             );

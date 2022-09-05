@@ -1,11 +1,12 @@
-import {
-  View,
-  StyleSheet,
-  InteractionManager,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
-import React, { useState, useCallback, useContext, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 
 // UTILITIES
 import uuid from 'react-native-uuid';
@@ -32,7 +33,6 @@ import {
   removeCard,
   updateCard,
 } from '../../redux/cardThunkActions';
-import useRenderCounter from '../../hooks/useRenderCounter';
 
 import s from '../styles/styles';
 import swatchContext from '../../contexts/swatchContext';
@@ -68,6 +68,7 @@ const INITIAL_STATE: Set = {
 interface Props extends StackNavigationTypes {}
 
 const Sets = ({ navigation, route }: Props) => {
+  const animateEntryId = useRef('');
   const { categoryRef, screenTitle } = route.params;
   const [cardSet, setCardSet] = useState(INITIAL_STATE);
 
@@ -91,9 +92,6 @@ const Sets = ({ navigation, route }: Props) => {
 
   // hooks
   const { selection, selectItem, clearSelection } = useMarkSelection();
-  // track renders to dictate whether card and control bar should animate onMount
-  const { renderCount } = useRenderCounter();
-  renderCount.current++;
 
   // CRUD functions
   const closeDialog = () => {
@@ -112,6 +110,7 @@ const Sets = ({ navigation, route }: Props) => {
     if (!exist) {
       closeDialog();
       const id = uuid.v4().toString();
+      animateEntryId.current = id;
       const newSet: Set = {
         _id: id,
         type: 'set',
@@ -123,15 +122,17 @@ const Sets = ({ navigation, route }: Props) => {
         categoryRef: categoryRef,
       };
       cardPosition.value = addToPositions(cardPosition.value, id);
-      setTimeout(() => dispatch(addSetCard(newSet)), 290);
+      // delay dispatch until cards have moved into their new positions
+      setTimeout(() => dispatch(addSetCard(newSet)), 200);
     }
   };
 
   const deleteSet = (id: string) => {
-    InteractionManager.runAfterInteractions(() => {
-      dispatch(removeCard({ id, type: 'set' }));
-    });
-    cardPosition.value = removeFromPositions(cardPosition.value, id);
+    dispatch(removeCard({ id, type: 'set' }));
+    // once card has been removed then update positions for smooth transition
+    setTimeout(() => {
+      cardPosition.value = removeFromPositions(cardPosition.value, id);
+    }, 300);
     deleteChildPosition(id, 'ref');
   };
 
@@ -173,12 +174,18 @@ const Sets = ({ navigation, route }: Props) => {
 
   const deleteSelection = useCallback(() => {
     cancelMultiDeletion();
-    InteractionManager.runAfterInteractions(() => {
-      for (let i = 0; i < selection.length; i++) {
-        dispatch(removeCard({ id: selection[i], type: 'set' }));
+    for (let i = 0; i < selection.length; i++) {
+      dispatch(removeCard({ id: selection[i], type: 'set' }));
+      // once operation has complete, update positions for smooth transition
+      if (i === selection.length - 1) {
+        setTimeout(() => {
+          cardPosition.value = removeManyFromPositions(
+            cardPosition.value,
+            selection
+          );
+        }, 100);
       }
-    });
-    cardPosition.value = removeManyFromPositions(cardPosition.value, selection);
+    }
     multiDeleteChildPosition(selection, 'ref');
   }, [selection]);
 
@@ -200,7 +207,6 @@ const Sets = ({ navigation, route }: Props) => {
   };
 
   const savePositions = () => {
-    // console.log('saved positions list');
     const list: CardPosition = {
       ref: categoryRef,
       type: 'position',
@@ -313,6 +319,7 @@ const Sets = ({ navigation, route }: Props) => {
                       screenTitle: set.name,
                     })
                   }
+                  animateEntry={animateEntryId.current === set._id}
                 />
               </DraggableWrapper>
             );
