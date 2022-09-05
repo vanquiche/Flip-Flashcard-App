@@ -226,15 +226,6 @@ const Categories = ({ navigation }: Props) => {
 
   useEffect(() => {
     syncData();
-    const unsubscribeFocus = navigation.addListener('blur', () => {
-      if (sortCardMode || multiSelectMode) {
-        setSortCardMode(false);
-        setMultiSelectMode(false);
-      }
-    });
-    return () => {
-      unsubscribeFocus;
-    };
   }, []);
 
   return (

@@ -244,15 +244,6 @@ const Sets = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     syncData();
-    const unsubscribeFocus = navigation.addListener('blur', () => {
-      if (sortMode || multiSelectMode) {
-        setSortMode(false);
-        setMultiSelectMode(false);
-      }
-    });
-    return () => {
-      unsubscribeFocus;
-    };
   }, []);
 
   return (
