@@ -166,19 +166,6 @@ const Home = ({ navigation }: Props) => {
         <Title style={{ textAlign: 'center', color: titleColor }}>
           FAVORITE SETS
         </Title>
-        {favoriteSets.length > 2 && (
-          <AntDesign
-            name='caretright'
-            size={24}
-            color='black'
-            style={{
-              position: 'absolute',
-              left: dimension.width * 0.9,
-              bottom: '35%',
-              zIndex: 100,
-            }}
-          />
-        )}
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -229,7 +216,9 @@ const Home = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   favoritesContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    // borderWidth: 2,
+    padding: 10
   },
   buttonCard: {
     justifyContent: 'center',
