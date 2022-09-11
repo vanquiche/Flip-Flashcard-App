@@ -174,7 +174,7 @@ const Home = ({ navigation }: Props) => {
             {
               width:
                 favoriteSets.length === 0
-                  ? '100%'
+                  ? dimension.width
                   : (dimension.width / 2) * favoriteSets.length,
             },
           ]}
@@ -184,6 +184,7 @@ const Home = ({ navigation }: Props) => {
               style={{
                 color: titleColor,
                 ...styles.favoriteMessage,
+                width: dimension.width
               }}
               accessibilityElementsHidden
             >
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // justifyContent: 'center',
     // borderWidth: 2,
-    padding: 10
+    padding: 10,
   },
   buttonCard: {
     justifyContent: 'center',
@@ -229,6 +230,8 @@ const styles = StyleSheet.create({
   },
   favoriteMessage: {
     textAlign: 'center',
+    position: 'absolute',
+    // borderWidth: 2,
   },
   buttonCardContainer: {
     flexDirection: 'row',

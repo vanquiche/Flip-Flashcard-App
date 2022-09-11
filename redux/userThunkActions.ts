@@ -80,14 +80,14 @@ export const checkLogin = createAsyncThunk(
         // if user is in streak then increment
         // coins and streak count
         const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
-        const streak = payload.streak === 0 ? 1 : inStreak ? payload.streak + 1 : 0;
+        const streak = inStreak || !sameday ? payload.streak + 1 : 0;
 
         const updateData: LoginObject = {
           streak: streak,
           heartcoin: coins,
           completedQuiz: [],
           login: updatedWeek,
-          inStreak: inStreak ? true : false
+          inStreak: inStreak ? true : false,
         };
 
         db.update(
@@ -123,7 +123,11 @@ export const completeQuiz = createAsyncThunk(
 );
 
 export const hydrateData = createAsyncThunk('store/hydrateData', () => {
-  return new Promise<{user: User, favorites: Set[], categoryCards: Category[]}>(async (resolve, reject) => {
+  return new Promise<{
+    user: User;
+    favorites: Set[];
+    categoryCards: Category[];
+  }>(async (resolve, reject) => {
     let data: any = {};
     try {
       await db.findOne({ type: 'user' }, (err: Error, doc: any) => {
@@ -138,10 +142,10 @@ export const hydrateData = createAsyncThunk('store/hydrateData', () => {
       await db.find({ type: 'category' }, (err: Error, docs: any[]) => {
         if (docs) data.categoryCards = docs;
       });
-    } catch(err: any) {
-      reject(err)
+    } catch (err: any) {
+      reject(err);
     } finally {
-      resolve(data)
+      resolve(data);
     }
   });
 });
