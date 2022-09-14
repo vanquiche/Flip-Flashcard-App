@@ -1,10 +1,5 @@
 import { View } from 'react-native';
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-} from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Button } from 'react-native-paper';
 import ActionDialog from '../ActionDialog';
 import Card from '../Card';
@@ -194,28 +189,6 @@ const FlashCards = ({ navigation, route }: Props) => {
     saveCardPosition(list);
   };
 
-  async function syncData() {
-    const data: any = await dispatch(
-      getCards({
-        type: 'flashcard',
-        query: { type: 'flashcard', setRef: setRef },
-      })
-    );
-    cardPosition.value = data.payload.positions;
-
-    if (screenTitle) {
-      navigation.setOptions({
-        title: screenTitle,
-      });
-      setName.current = screenTitle;
-    }
-    db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
-      categoryXP.current = !err && doc ? doc.points : 0;
-    });
-
-    setIsLoading(false);
-  }
-
   // listen for changes in cardPosition and save any changes
   useAnimatedReaction(
     () => cardPosition.value,
@@ -230,6 +203,27 @@ const FlashCards = ({ navigation, route }: Props) => {
   );
 
   useEffect(() => {
+    async function syncData() {
+      const data: any = await dispatch(
+        getCards({
+          type: 'flashcard',
+          query: { type: 'flashcard', setRef: setRef },
+        })
+      );
+      cardPosition.value = data.payload.positions;
+
+      if (screenTitle) {
+        navigation.setOptions({
+          title: screenTitle,
+        });
+        setName.current = screenTitle;
+      }
+      db.findOne({ _id: categoryRef }, (err: Error, doc: any) => {
+        categoryXP.current = !err && doc ? doc.points : 0;
+      });
+
+      setIsLoading(false);
+    }
     syncData();
   }, []);
 

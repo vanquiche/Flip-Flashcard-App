@@ -73,7 +73,7 @@ interface Props extends StackNavigationTypes {}
 
 const Categories = ({ navigation }: Props) => {
   const [category, setCategory] = useState(INITIAL_STATE);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   const animateEntryId = useRef('');
 
   // view state
@@ -204,14 +204,6 @@ const Categories = ({ navigation }: Props) => {
     saveCardPosition(list);
   };
 
-  async function syncData() {
-    const dbPositions = await getCardPosition('categories');
-    if (dbPositions) {
-      cardPosition.value = dbPositions.positions;
-    }
-    setIsLoading(false)
-  };
-
   useAnimatedReaction(
     () => cardPosition.value,
     (curPositions, prevPositions) => {
@@ -225,6 +217,13 @@ const Categories = ({ navigation }: Props) => {
   );
 
   useEffect(() => {
+    async function syncData() {
+      const dbPositions = await getCardPosition('categories');
+      if (dbPositions) {
+        cardPosition.value = dbPositions.positions;
+      }
+      setIsLoading(false);
+    }
     syncData();
   }, []);
 
@@ -257,40 +256,41 @@ const Categories = ({ navigation }: Props) => {
         onLayout={(e) => measureOffset(e, setScrollViewOffset)}
         scrollY={scrollY}
       >
-        {!isLoading && cards.category.map((category: Category) => {
-          return (
-            <DraggableWrapper
-              key={category._id}
-              itemHeight={165}
-              itemWidth={100}
-              dataLength={cards.category.length}
-              id={category._id}
-              positions={cardPosition}
-              moveObject={moveObject}
-              scrollY={scrollY}
-              yOffset={scrollViewOffset - insets.top}
-              enableTouch={sortCardMode}
-              onEnd={savePositions}
-            >
-              <TitleCard
-                card={category}
-                multiSelect={multiSelectMode}
-                handleEdit={editCategory}
-                markForDelete={selectItem}
-                handleDelete={deleteCategory}
-                selectedForDeletion={selection.includes(category._id)}
-                disableActions={multiSelectMode || sortCardMode}
-                onPress={() => {
-                  navigation.navigate('Sets', {
-                    categoryRef: category._id,
-                    screenTitle: category.name,
-                  });
-                }}
-                animateEntry={category._id === animateEntryId.current}
-              />
-            </DraggableWrapper>
-          );
-        })}
+        {!isLoading &&
+          cards.category.map((category: Category) => {
+            return (
+              <DraggableWrapper
+                key={category._id}
+                itemHeight={165}
+                itemWidth={100}
+                dataLength={cards.category.length}
+                id={category._id}
+                positions={cardPosition}
+                moveObject={moveObject}
+                scrollY={scrollY}
+                yOffset={scrollViewOffset - insets.top}
+                enableTouch={sortCardMode}
+                onEnd={savePositions}
+              >
+                <TitleCard
+                  card={category}
+                  multiSelect={multiSelectMode}
+                  handleEdit={editCategory}
+                  markForDelete={selectItem}
+                  handleDelete={deleteCategory}
+                  selectedForDeletion={selection.includes(category._id)}
+                  disableActions={multiSelectMode || sortCardMode}
+                  onPress={() => {
+                    navigation.navigate('Sets', {
+                      categoryRef: category._id,
+                      screenTitle: category.name,
+                    });
+                  }}
+                  animateEntry={category._id === animateEntryId.current}
+                />
+              </DraggableWrapper>
+            );
+          })}
       </DragSortList>
 
       {/* ADD NEW CATEGORY DIALOG */}

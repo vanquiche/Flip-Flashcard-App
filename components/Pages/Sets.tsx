@@ -216,20 +216,6 @@ const Sets = ({ navigation, route }: Props) => {
     saveCardPosition(list);
   };
 
-  async function syncData() {
-    navigation.setOptions({
-      title: screenTitle,
-    });
-    const data: any = await dispatch(
-      getCards({
-        type: 'set',
-        query: { type: 'set', categoryRef: categoryRef },
-      })
-    );
-    cardPosition.value = data.payload.positions;
-    setIsLoading(false);
-  }
-
   useAnimatedReaction(
     () => cardPosition.value,
     (curPositions, prevPositions) => {
@@ -243,6 +229,19 @@ const Sets = ({ navigation, route }: Props) => {
   );
 
   useEffect(() => {
+    async function syncData() {
+      navigation.setOptions({
+        title: screenTitle,
+      });
+      const data: any = await dispatch(
+        getCards({
+          type: 'set',
+          query: { type: 'set', categoryRef: categoryRef },
+        })
+      );
+      cardPosition.value = data.payload.positions;
+      setIsLoading(false);
+    }
     syncData();
   }, []);
 
