@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import React from 'react';
 import { Theme } from './types';
 import { IconButton, Title } from 'react-native-paper';
@@ -21,24 +21,15 @@ const ThemeDisplay = ({ theme, style }: Props) => {
       accessibilityLabel={`${theme.name} theme`}
       accessibilityElementsHidden={true}
     >
-      <Title style={[styles.title, { color: 'white' }]}>
-        {theme.name.toUpperCase()}
-      </Title>
-      <View style={[styles.header, { backgroundColor: theme.headerColor }]} />
-      <View style={[styles.card1, { backgroundColor: theme.accentColor }]} />
-      <View style={[styles.card4, { backgroundColor: theme.cardColor }]}>
-        <Title
-          style={{
-            textAlign: 'center',
-            color: theme.fontColor,
-            paddingTop: 60,
-          }}
-        >
-          FLIP
+      <View style={[styles.header, { backgroundColor: theme.headerColor }]}>
+        <Title style={[styles.title, { color: 'white' }]}>
+          {theme.name.toUpperCase()}
         </Title>
       </View>
-      <View style={[styles.card2, { backgroundColor: theme.cardColor }]} />
-      <View style={[styles.card3, { backgroundColor: theme.cardColor }]} />
+
+      <View style={[styles.card, { backgroundColor: theme.cardColor }]}>
+        <View style={[styles.btn, { backgroundColor: theme.accentColor }]} />
+      </View>
       <View style={[styles.tab, { backgroundColor: theme.tabColor }]}>
         {exampleIcons.map((icon, index) => (
           <IconButton
@@ -62,25 +53,25 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: 'grey',
   },
   title: {
-    position: 'absolute',
     width: '100%',
     zIndex: 20,
-    top: 8,
     textAlign: 'center',
   },
   header: {
-    height: '12%',
+    height: '10%',
     width: '100%',
     backgroundColor: 'black',
     position: 'absolute',
     top: 0,
+    justifyContent: 'center',
   },
   tab: {
-    height: '12%',
+    height: '10%',
     width: '100%',
     bottom: 0,
     backgroundColor: 'black',
@@ -90,44 +81,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
   },
-  card1: {
-    width: '80%',
-    height: '12%',
-    backgroundColor: 'black',
-    position: 'absolute',
-    top: '65%',
-    left: '10%',
-    borderRadius: 10,
-    zIndex: 20,
-  },
-  card2: {
-    width: '42%',
+  btn: {
+    width: '85%',
     height: '20%',
     backgroundColor: 'black',
     position: 'absolute',
-    top: '18%',
-    right: '6%',
+    bottom: '10%',
     borderRadius: 10,
     zIndex: 20,
   },
-  card3: {
-    width: '42%',
-    height: '20%',
-    backgroundColor: 'black',
-    position: 'absolute',
-    top: '18%',
-    left: '5%',
-    borderRadius: 10,
-  },
-  card4: {
+  card: {
     width: '90%',
-    height: '40%',
+    height: '60%',
     backgroundColor: 'black',
-    position: 'absolute',
-    top: '42%',
-    left: '5%',
     borderRadius: 10,
     zIndex: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
 export default React.memo(ThemeDisplay);
