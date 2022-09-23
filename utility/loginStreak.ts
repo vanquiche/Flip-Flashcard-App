@@ -14,9 +14,8 @@ const loginStreak = (login: string) => {
 
     const outOfStreak = today.diff(lastLogin, 'days').days > 2;
 
-    if (sameday) return null;
+    if (sameday || inStreak) return true;
     else if (outOfStreak) return false;
-    else if (inStreak) return true;
     else return null;
   }
 };

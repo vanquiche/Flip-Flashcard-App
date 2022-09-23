@@ -4,6 +4,7 @@ import db from '../db-services';
 import { DateTime } from 'luxon';
 import loginStreak from '../utility/loginStreak';
 import sortWeek from '../utility/sortWeek';
+import checkDate from '../utility/checkDate';
 
 export const createNewUser = createAsyncThunk(
   'user/createUser',
@@ -63,11 +64,11 @@ export const checkLogin = createAsyncThunk(
   'store/checkLogin',
   (payload: { login: string[]; streak: number; heartcoin: number }) => {
     return new Promise<void | LoginObject>((resolve, reject) => {
-      const dt = DateTime;
 
       const loggedInLast = payload.login[payload.login.length - 1];
 
-      const sameday = dt.now().weekday === dt.fromISO(loggedInLast).weekday;
+      // const sameday = dt.now().weekday === dt.fromISO(loggedInLast).weekday;
+      const sameday = checkDate(loggedInLast);
 
       if (sameday) {
         // if checkin is no older than 24h then do nothing
@@ -80,7 +81,7 @@ export const checkLogin = createAsyncThunk(
         // if user is in streak then increment
         // coins and streak count
         const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
-        const streak = inStreak || !sameday ? payload.streak + 1 : 0;
+        const streak = inStreak ? payload.streak + 1 : 1;
 
         const updateData: LoginObject = {
           streak: streak,

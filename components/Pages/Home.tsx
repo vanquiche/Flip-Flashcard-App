@@ -10,7 +10,6 @@ import { Button, Text, Title } from 'react-native-paper';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
 import FavoriteCard from '../FavoriteCard';
-import { AntDesign } from '@expo/vector-icons';
 
 import { Set, StackNavigationTypes } from '../types';
 import fontColorContrast from 'font-color-contrast';
@@ -20,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { checkLogin } from '../../redux/userThunkActions';
 import s from '../styles/styles';
-import useCheckDate from '../../hooks/useCheckDate';
+import checkDate from '../../utility/checkDate';
 import swatchContext from '../../contexts/swatchContext';
 import StatusCard from '../StatusCard';
 import { Ionicons } from '@expo/vector-icons';
@@ -82,7 +81,7 @@ const Home = ({ navigation }: Props) => {
     });
   }, []);
 
-  const { isSameDay } = useCheckDate(user.login[user.login.length - 1]);
+  const isSameDay = checkDate(user.login[user.login.length - 1]);
 
   useFocusEffect(
     useCallback(() => {
