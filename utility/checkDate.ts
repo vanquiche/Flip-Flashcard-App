@@ -5,7 +5,7 @@ const checkDate = (loginDate: string ) => {
   const today = dt.now()
   const userLogin = dt.fromISO(loginDate);
 
-  const isSameDay = today.weekday === userLogin.weekday && today.weekNumber === userLogin.weekNumber
+  const isSameDay = today.weekday === userLogin.weekday
 
   return isSameDay
 }
