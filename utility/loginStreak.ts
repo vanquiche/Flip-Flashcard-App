@@ -8,13 +8,16 @@ const loginStreak = (login: string) => {
     const dt = DateTime;
     const lastLogin = dt.fromISO(login);
     const today = dt.now();
+    const yesterday = dt.now().minus({ days: 1 });
 
-    const sameday = lastLogin.weekday === today.weekday;
-    const inStreak = dt.now().minus({ days: 1 }).weekday === lastLogin.weekday;
+    // check if login is consequtive
+    const inStreak =
+      yesterday.weekday === lastLogin.weekday &&
+      today.weekNumber === lastLogin.weekNumber;
 
     const outOfStreak = today.diff(lastLogin, 'days').days > 2;
 
-    if (sameday || inStreak) return true;
+    if (inStreak) return true;
     else if (outOfStreak) return false;
     else return null;
   }

@@ -1,14 +1,16 @@
 import { DateTime } from 'luxon';
 import loginStreak from '../loginStreak';
 
-const dt = DateTime
+const dt = DateTime;
 
 // represent logins
-const loggedInYesterday = dt.now().minus({days: 1}).toISO();
-const loggedInTwoDaysAgo = dt.now().minus({days: 2}).toISO();
+const loggedInYesterday = dt.now().minus({ days: 1 }).toISO();
+const loggedInTwoDaysAgo = dt.now().minus({ days: 2 }).toISO();
 const today = dt.now().toISO();
 
-xdescribe('loginStreak function test', () => {
+const thisDayOneWeekAgo = dt.now().minus({ days: 7 }).toISO();
+
+describe('loginStreak function test', () => {
   test('last login: yesterday', () => {
     expect(loginStreak(loggedInYesterday)).toBe(true);
   });
@@ -26,6 +28,10 @@ xdescribe('loginStreak function test', () => {
   });
 
   test('logged In today', () => {
-    expect(loginStreak(today)).toBe(true);
-  })
+    expect(loginStreak(today)).toBe(null);
+  });
+
+  test('same weekday, different weeknumber', () => {
+    expect(loginStreak(thisDayOneWeekAgo)).toBe(false);
+  });
 });

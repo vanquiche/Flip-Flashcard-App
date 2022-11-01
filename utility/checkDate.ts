@@ -7,8 +7,8 @@ const checkDate = (loginDate: string) => {
 
   // check if same weekday (M - F) and same weeknumber (1 - 52)
   const isSameDay =
-    today.weekday === userLogin.weekday
-    && today.weekNumber === userLogin.weekNumber;
+    today.weekday === userLogin.weekday &&
+    today.weekNumber === userLogin.weekNumber;
 
   return isSameDay;
 };

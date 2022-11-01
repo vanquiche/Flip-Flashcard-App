@@ -1,27 +1,20 @@
 import { DateTime } from 'luxon';
 
 const sortWeek = (week: string[]) => {
-  const latestLogin = week[week.length - 1];
   const dt = DateTime;
+  // get start of current week
+  const startOfWeek = dt.now().startOf('week').minus({ days: 1 }).toMillis();
 
-  const today = dt.now().weekday;
-  const loginDay = dt.fromISO(latestLogin).weekday;
-  const weekExpired = week.some((w) => {
-    const { days } = dt.now().diff(dt.fromISO(w), 'days').toObject();
-    return days && days >= 7 ? true : false;
+  const newWeek = week.filter((w) => {
+    const date = dt.fromISO(w).toMillis();
+    // filter dates later than start of current week
+    if (date >= startOfWeek) {
+      return w;
+    }
   });
-  const startOfNewWeek = today === 7
 
-  if (loginDay === today) {
-    // if same day then do nothing
-    return week;
-  } else if (weekExpired || startOfNewWeek) {
-    // if login days are not in same week
-    // if week have exceeded 7 logins
-    // if new week has started i.e. Sunday
-    return [dt.now().toISO()];
-  } else return week.concat(dt.now().toISO())
+  // return latest week with todays date
+  return newWeek.concat(dt.now().toISO());
 };
-
 
 export default sortWeek;
