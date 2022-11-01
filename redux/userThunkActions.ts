@@ -64,45 +64,35 @@ export const checkLogin = createAsyncThunk(
   'store/checkLogin',
   (payload: { login: string[]; streak: number; heartcoin: number }) => {
     return new Promise<void | LoginObject>((resolve, reject) => {
-
       const loggedInLast = payload.login[payload.login.length - 1];
 
-      // const sameday = dt.now().weekday === dt.fromISO(loggedInLast).weekday;
-      const sameday = checkDate(loggedInLast);
+      const updatedWeek = sortWeek(payload.login);
+      // check if user is in streak
+      const inStreak = loginStreak(loggedInLast);
+      // if user is in streak then increment
+      // coins and streak count
+      const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
+      const streak = inStreak ? payload.streak + 1 : 1;
 
-      if (sameday) {
-        // if checkin is no older than 24h then do nothing
-        resolve();
-      } else if (!sameday) {
-        // return an updated array of logins
-        const updatedWeek = sortWeek(payload.login);
-        // check if user is in streak
-        const inStreak = loginStreak(loggedInLast);
-        // if user is in streak then increment
-        // coins and streak count
-        const coins = inStreak ? payload.heartcoin + 5 : payload.heartcoin;
-        const streak = inStreak ? payload.streak + 1 : 1;
+      const updateData: LoginObject = {
+        streak: streak,
+        heartcoin: coins,
+        completedQuiz: [],
+        login: updatedWeek,
+        inStreak: inStreak ? true : false,
+      };
 
-        const updateData: LoginObject = {
-          streak: streak,
-          heartcoin: coins,
-          completedQuiz: [],
-          login: updatedWeek,
-          inStreak: inStreak ? true : false,
-        };
-
-        db.update(
-          { type: 'user' },
-          {
-            $set: updateData,
-          },
-          (err: Error, numReplaced: number) => {
-            if (err) reject(err);
-            // if (err) console.log(err)
-            resolve(updateData);
-          }
-        );
-      } else resolve();
+      db.update(
+        { type: 'user' },
+        {
+          $set: updateData,
+        },
+        (err: Error, numReplaced: number) => {
+          if (err) reject(err);
+          // if (err) console.log(err)
+          resolve(updateData);
+        }
+      );
     });
   }
 );
